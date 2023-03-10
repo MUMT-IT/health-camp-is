@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <h1 class="title">Client Registration</h1>
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="field">
+            <label class="label">{{form.firstname.label}}</label>
+            <div class="control">
+              {{ form.firstname(class="input") }}
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">{{form.lastname.label}}</label>
+            <div class="control">
+              {{ form.lastname(class="input") }}
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">{{form.dob.label}}</label>
+            <div class="control">
+              {{ form.dob(class="input") }}
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">{{form.pid.label}}</label>
+            <div class="control">
+              {{ form.pid(class="input") }}
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">{{form.client_number.label}}</label>
+            <div class="control">
+              {{ form.client_number(class="input") }}
+            </div>
+          </div>
+          <div class="field">
+            <div class="buttons is-centered"></div>
+            <a class="button is-light" href="{{ url_for('services.index') }}">Cancel</a>
+            <input class="button is-primary" type="submit" value="Submit">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
