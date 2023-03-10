@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <h1 class="title has-text-centered">Profile</h1>
+        <table class="table is-fullwidth">
+          <tr>
+            <td>Client Number</td><td>{{client.client_number}}</td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td>{{client.firstname}} {{client.lastname}}</td>
+          </tr>
+          <tr>
+            <td>PID</td>
+            <td>{{client.pid}}</td>
+          </tr>
+          <tr>
+            <td>Date of birth</td>
+            <td>{{client.dob}}
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

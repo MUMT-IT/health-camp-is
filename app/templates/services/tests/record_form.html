@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <h1 class="title has-text-centered">New Record</h1>
+        <h1 class="subtitle has-text-centered">การทดสอบ {{test.name}}</h1>
+        <div class="box">
+          <p>
+            Name: <strong>{{client.fullname}}</strong>
+          </p>
+          <p>
+            Client number: <strong>{{client.client_number}}</strong>
+          </p>
+        </div>
+        <form method="post">
+          {{form.hidden_tag()}}
+          <label class="label">{{form.value.label}}</label>
+          <div class="field has-addons">
+            <div class="control">
+              {{form.value(class="input")}}
+            </div>
+            <p class="control">
+              <a class="button is-static">
+                {{test.unit}}
+              </a>
+            </p>
+          </div>
+          <div class="field">
+            <label class="label">{{form.note.label}}</label>
+            {{form.note(class="textarea")}}
+          </div>
+          <div class="field">
+            <div class="buttons is-centered">
+              <input type="submit" value="Submit" class="button is-primary">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

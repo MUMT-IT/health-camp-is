@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title has-text-centered">Test List</h1>
+        {% include "messages.html" %}
+        <div class="columns">
+            <div class="column">
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                    <th>Name</th>
+                    <th>Updated At</th>
+                    <th></th>
+                    </thead>
+                    <tbody>
+                    {% for test in tests %}
+                    <tr>
+                        <td>{{test.name}}</td>
+                        <td>{{test.updated_at}}</td>
+                        <td>
+                            <a class="button is-success"
+                               href="{{url_for('services.test_record_main', test_id=test.id)}}">
+                                add record
+                            </a>
+                            <a class="button"
+                               href="{{url_for('services.edit_test', test_id=test.id)}}">
+                                edit
+                            </a>
+                            <a class="button is-danger"
+                               href="{{url_for('services.edit_test', test_id=test.id)}}">
+                                delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="buttons is-centered">
+                    <a class="button is-light" href="{{url_for('services.index')}}">
+                        Home
+                    </a>
+                    <a class="button is-primary" href="{{url_for('services.register_test')}}">Add</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

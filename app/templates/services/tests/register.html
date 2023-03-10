@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title has-text-centered">New Test</h1>
+    <div class="columns">
+      <div class="column">
+        <form method="post">
+          {{form.hidden_tag()}}
+          <div class="field">
+            <div class="label">{{form.name.label}}</div>
+            {{form.name(class='input')}}
+          </div>
+          <div class="field">
+            <div class="label">{{form.unit.label}}</div>
+            {{form.unit(class='input')}}
+          </div>
+          <div class="field">
+            <div class="label">{{form.reference.label}}</div>
+            {{form.reference(class='input')}}
+          </div>
+          <div class="field">
+            <div class="buttons is-centered">
+              <a href="{{url_for('services.list_tests')}}" class="button is-light">Cancel</a>
+              <input class="button is-primary" type="submit" value="Submit">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

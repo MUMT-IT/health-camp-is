@@ -21,3 +21,13 @@ class ClientForm(ModelForm):
 class ClientPhysicalProfileForm(ModelForm):
     class Meta:
         model = ClientPhysicalProfile
+
+
+class TestForm(ModelForm):
+    class Meta:
+        model = Test
+
+
+class TestRecordForm(ModelForm):
+    class Meta:
+        model = TestRecord
