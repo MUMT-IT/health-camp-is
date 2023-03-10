@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms_alchemy import model_form_factory
 
 from app import db
-from app.services.models import Client
+from app.services.models import *
 
 BaseModelForm = model_form_factory(FlaskForm)
 
@@ -16,3 +16,8 @@ class ModelForm(BaseModelForm):
 class ClientForm(ModelForm):
     class Meta:
         model = Client
+
+
+class ClientPhysicalProfileForm(ModelForm):
+    class Meta:
+        model = ClientPhysicalProfile

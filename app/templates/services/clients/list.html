@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <h1 class="title has-text-centered">All Clients</h1>
+        <table class="table is-striped is-fullwidth">
+          <thead>
+          <th>Client Number</th>
+          <th>Name</th>
+          <th>Date of Birth</th>
+          <th>PID</th>
+          <th></th>
+          </thead>
+          <tbody>
+            {% for c in clients %}
+            <tr>
+              <td>{{c.client_number}}</td>
+              <td>{{c.firstname}}{{c.lastname}}</td>
+              <td>{{c.dob}}</td>
+              <td>{{c.pid}}</td>
+              <td>
+                <a class="button">profile</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

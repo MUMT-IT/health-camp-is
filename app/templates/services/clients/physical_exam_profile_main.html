@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <form method="get">
+                    <div class="field">
+                        <input class="input" name="client_number" placeholder="Client Number">
+                    </div>
+                    <div class="field">
+                        <div class="buttons is-centered">
+                            <a class="button is-light" href="{{url_for('services.index')}}">Back</a>
+                            <input class="button" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
