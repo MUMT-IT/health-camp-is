@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -22,8 +22,11 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app)
 
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    from app.services import service_bp
+    app.register_blueprint(service_bp)
+
+    @app.route('/')
+    def index():
+        return render_template('index.html')
 
     return app

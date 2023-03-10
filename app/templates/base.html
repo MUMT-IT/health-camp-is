@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    {% endblock head %}
+    {% block styles %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulmaswatch/0.8.1/flatly/bulmaswatch.min.css" integrity="sha512-hSxz8mu0dPSuJp2B3YZoLjUZoPQsVk+6FdQGoO0EByCHP9JdFa9MlRaM/cXXMFwl4Zt4sNDGlB3K4jupWx615w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+{% endblock %}
+{% block scripts %}
+{% endblock %}
+</body>
+</html>
