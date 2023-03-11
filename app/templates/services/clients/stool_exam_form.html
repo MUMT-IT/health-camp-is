@@ -6,51 +6,84 @@
     {% include "messages.html" %}
     <div class="columns">
       <div class="column">
-        {% if client %}
-        <h1 class="title has-text-centered">Previous Records</h1>
-        <table class="table is-fullwidth">
-          <thead>
-          <th>No.</th>
-          <th>Updated at</th>
-          <th></th>
-          </thead>
-          <tbody>
-          {% for rec in client.physical_profiles %}
-          <tr>
-            <td>{{loop.index}}</td>
-            <td>{{rec.updated_at}}</td>
-            <td>
-              <a class="button" href="{{url_for('services.edit_physical_exam_profile', rec_id=rec.id)}}">edit</a>
-              <a class="button is-danger">delete</a>
-            </td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-        {% endif %}
         <h1 class="title has-text-centered">New/Edit Record</h1>
-        <form method="post" class="box">
-          {{form.hidden_tag()}}
-          <div class="field">
-            <label class="label">{{form.weight.label}}</label>
-            {{form.weight(class="input")}}
+        <form method="post">
+          <div class="box">
+            {{form.hidden_tag()}}
+            <div class="field">
+              <label class="label">{{form.lab_number.label}}</label>
+              <div class="control">
+                {{form.lab_number(class="input", readonly=True)}}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{{form.color.label}}</label>
+              <div class="select">
+                {{form.color()}}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{{form.form.label}}</label>
+              <div class="select">
+                {{form.form()}}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{{form.note.label}}</label>
+              {{form.note(class="textarea")}}
+            </div>
+          </div>
+          <div id="items">
+            {% for item_form in form.items.entries %}
+            <div class="box">
+              {{item_form.hidden_tag()}}
+              <div class="field">
+                <label class="label">{{item_form.organism.label}}</label>
+                <div class="select">
+                  {{item_form.organism()}}
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">{{item_form.stage.label}}</label>
+                <div class="select">
+                  {{item_form.stage()}}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
           </div>
           <div class="field">
-            <label class="label">{{form.height.label}}</label>
-            {{form.height(class="input")}}
-          </div>
-          <div class="field">
-            <label class="label">{{form.systolic.label}}</label>
-            {{form.systolic(class="input")}}
-          </div>
-          <div class="field">
-            <label class="label">{{form.diastolic.label}}</label>
-            {{form.diastolic(class="input")}}
+            <div class="buttons">
+              <button class="button is-success"
+                      hx-post="{{ url_for('services.add_stool_report_item_entry') }}"
+                      hx-target="#items" hx-swap="beforeend">
+                <span class="icon">
+                  <i class="fa-solid fa-plus"></i>
+                </span>
+                <span>entry</span>
+              </button>
+              <button class="button is-danger"
+                      hx-post="{{ url_for('services.remove_stool_report_item_entry') }}"
+                      hx-target="#items" hx-swap="innerHTML">
+                <span class="icon">
+                  <i class="fa-solid fa-minus"></i>
+                </span>
+                <span>remove</span>
+            </button>
+            </div>
           </div>
           <div class="field">
             <div class="buttons is-centered">
-              <a class="button is-light" href="{{url_for('services.physical_exam_profile_main')}}">Cancel</a>
-              <input class="button is-primary" type="submit" value="Submit">
+              <a class="button is-light" href="{{ next_url or url_for('services.stool_exam_main')}}">Cancel</a>
+              <input class="button is-primary" type="submit" value="Save"/>
+              <a class="button is-success">
+                <span class="icon">
+                  <i class="fa-solid fa-paper-plane"></i>
+                </span>
+                <span>
+                  Report
+                </span>
+              </a>
             </div>
           </div>
         </form>

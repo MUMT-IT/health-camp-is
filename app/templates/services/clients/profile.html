@@ -23,6 +23,43 @@
             <td>{{client.dob}}
           </tr>
         </table>
+        <h1 class="title">Stool Examination Tests</h1>
+        <table class="table is-striped">
+          <thead>
+          <th>Lab Number</th>
+          <th>Registered At</th>
+          <th>Reported At</th>
+          <th></th>
+          </thead>
+          <tbody>
+            {% for stool_record in client.stool_exam_records %}
+            <tr>
+              <td>{{ stool_record.lab_number }}</td>
+              <td>{{ stool_record.updated_at }}</td>
+              <td>{{ stool_record.reported_at or 'Unfinished' }}</td>
+              <td>
+                <a class="button" href="{{url_for('services.edit_stool_exam_record', record_id=stool_record.id, next=request.url)}}">
+                  edit
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="box">
+          <h1 class="title">Register Stool Examination</h1>
+          <form method="get" action="{{url_for('services.stool_exam_main', client_id=client.id, next=request.url)}}">
+            <div class="field">
+              <input class="input" name="lab_number">
+            </div>
+            <div class="field">
+              <input type="submit" value="Submit" class="button is-primary">
+            </div>
+          </form>
+        </div>
+        <div class="buttons is-centered">
+          <a href="{{url_for('services.index')}}" class="button is-light">Home</a>
+        </div>
       </div>
     </div>
   </div>

@@ -1,10 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    {% include "messages.html" %}
+    <div class="columns">
+      <div class="column">
+        <h1 class="title has-text-centered">Stool Examination</h1>
+        <form method="get">
+          <div class="field">
+            <input class="input" name="lab_number" placeholder="Lab Number">
+          </div>
+          <div class="field">
+            <div class="buttons is-centered">
+              <a class="button is-light" href="{{url_for('services.index')}}">Back</a>
+              <input class="button" type="submit" value="Submit">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

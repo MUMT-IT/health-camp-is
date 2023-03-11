@@ -1,9 +1,9 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, make_response
 
 from app import db
 from app.services import service_bp as services
-from app.services.forms import ClientForm, ClientPhysicalProfileForm, TestForm, TestRecordForm
-from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord
+from app.services.forms import ClientForm, ClientPhysicalProfileForm, TestForm, TestRecordForm, StoolTestForm
+from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord, StoolTestRecord
 
 
 @services.route('/')
@@ -137,3 +137,96 @@ def add_test_record(test_id, client_id):
         flash('Test has been updated.', 'success')
         return redirect(url_for('services.test_record_main', test_id=test_id))
     return render_template('services/tests/record_form.html', form=form, test=test, client=client)
+
+
+@services.route('/stool-exam')
+@services.route('/clients/<int:client_id>/stool-exam')
+def stool_exam_main(client_id=None):
+    lab_number = request.args.get('lab_number')
+    if lab_number:
+        record = StoolTestRecord.query.filter_by(lab_number=lab_number).first()
+        if not record:
+            print('lab number not found')
+            record = StoolTestRecord(lab_number=lab_number)
+            record.client_id = client_id
+            db.session.add(record)
+            db.session.commit()
+            flash('New stool specimens has been registered.', 'success')
+            return redirect(request.args.get('next', url_for('services.index')))
+        else:
+            print(record)
+            return redirect(url_for('services.edit_stool_exam_record', record_id=record.id))
+    return render_template('services/clients/stool_exam_main.html')
+
+
+@services.route('/stool-exam/records/<int:record_id>', methods=['GET', 'POST'])
+def edit_stool_exam_record(record_id):
+    record = StoolTestRecord.query.get(record_id)
+    form = StoolTestForm(obj=record)
+    if form.validate_on_submit():
+        form.populate_obj(record)
+        db.session.add(record)
+        db.session.commit()
+        flash('Data have been saved.', 'success')
+    else:
+        for field in form.errors:
+            flash(f'{field} {form.errors[field]}', 'danger')
+    return render_template('services/clients/stool_exam_form.html', form=form,
+                           next_url=request.args.get('next'))
+
+
+@services.route('/add-report-item-entry', methods=['POST'])
+def add_stool_report_item_entry():
+    form = StoolTestForm()
+    form.items.append_entry()
+    item_form = form.items[-1]
+    return f'''
+          <div class="box">
+            {item_form.hidden_tag()}
+            <div class="field">
+              <label class="label">{item_form.organism.label}</label>
+              <div class="select">
+                {item_form.organism()}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{item_form.stage.label}</label>
+              <div class="select">
+                {item_form.stage()}
+              </div>
+            </div>
+          </div>
+          '''
+
+
+@services.route('/remove-report-item-entry', methods=['POST'])
+def remove_stool_report_item_entry():
+    form = StoolTestForm()
+    if len(form.items.entries) > 1:
+        entry_ = form.items.pop_entry()
+    content = ''
+    for item_form in form.items.entries:
+        content += f'''
+              <div class="box">
+                {item_form.hidden_tag()}
+                <div class="field">
+                  <label class="label">{item_form.organism.label}</label>
+                  <div class="select">
+                    {item_form.organism()}
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">{item_form.stage.label}</label>
+                  <div class="select">
+                    {item_form.stage()}
+                  </div>
+                </div>
+              </div>
+              '''
+    if len(form.items.entries) == 1:
+        content += '''<span class="has-text-danger">
+                At least one report item is needed.
+                </span>
+            '''
+    resp = make_response(content)
+    return resp

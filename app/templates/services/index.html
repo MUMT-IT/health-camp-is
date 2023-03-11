@@ -5,32 +5,38 @@
   <div class="container">
     {% include "messages.html" %}
     <div class="columns">
-      <div class="column is-one-third is-offset-4">
+      <div class="column is-two-thirds is-offset-2">
         <nav class="panel is-primary">
           <p class="panel-heading">
             Menu
           </p>
           <a class="panel-block is-active" href="{{url_for('services.register_client')}}">
             <span class="panel-icon">
-              <i class="fa-solid fa-users"></i>
+              <i class="fa-solid fa-chevron-right"></i>
             </span>
             Client Registration
           </a>
           <a class="panel-block is-active" href="{{url_for('services.list_clients')}}">
             <span class="panel-icon">
-              <i class="fa-solid fa-users"></i>
+              <i class="fa-solid fa-chevron-right"></i>
             </span>
             Client List
           </a>
           <a class="panel-block is-active" href="{{url_for('services.physical_exam_profile_main')}}">
             <span class="panel-icon">
-              <i class="fa-solid fa-users"></i>
+              <i class="fa-solid fa-chevron-right"></i>
             </span>
             Physical Examination
           </a>
+          <a class="panel-block is-active" href="{{url_for('services.stool_exam_main')}}">
+            <span class="panel-icon">
+              <i class="fa-solid fa-chevron-right"></i>
+            </span>
+            Stool Examination
+          </a>
           <a class="panel-block is-active" href="{{url_for('services.list_tests')}}">
             <span class="panel-icon">
-              <i class="fa-solid fa-users"></i>
+              <i class="fa-solid fa-chevron-right"></i>
             </span>
             Tests
           </a>
