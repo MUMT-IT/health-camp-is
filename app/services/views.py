@@ -1,3 +1,4 @@
+import arrow
 from flask import render_template, redirect, url_for, flash, request, make_response
 
 from app import db
@@ -151,7 +152,6 @@ def stool_exam_main(client_id=None):
     if lab_number:
         record = StoolTestRecord.query.filter_by(lab_number=lab_number).first()
         if not record:
-            print('lab number not found')
             record = StoolTestRecord(lab_number=lab_number)
             record.client_id = client_id
             db.session.add(record)
@@ -159,7 +159,6 @@ def stool_exam_main(client_id=None):
             flash('New stool specimens has been registered.', 'success')
             return redirect(request.args.get('next', url_for('services.index')))
         else:
-            print(record)
             return redirect(url_for('services.edit_stool_exam_record', record_id=record.id))
     return render_template('services/clients/stool_exam_main.html')
 
@@ -176,8 +175,24 @@ def edit_stool_exam_record(record_id):
     else:
         for field in form.errors:
             flash(f'{field} {form.errors[field]}', 'danger')
-    return render_template('services/clients/stool_exam_form.html', form=form,
+    return render_template('services/clients/stool_exam_form.html',
+                           form=form,
+                           record=record,
                            next_url=request.args.get('next'))
+
+
+@services.route('/stool-exam/records/<int:record_id>/report', methods=['GET', 'POST'])
+def report_stool_exam_record(record_id):
+    record = StoolTestRecord.query.get(record_id)
+    if record:
+        record.reported_at = arrow.now('Asia/Bangkok').datetime
+        db.session.add(record)
+        db.session.commit()
+        flash('The record have been reported.', 'success')
+    else:
+        flash('The record was not found.', 'danger')
+    return redirect(request.args.get('next') or url_for('services.stool_exam_main',
+                                                        client_id=record.client_id))
 
 
 @services.route('/add-report-item-entry', methods=['POST'])
