@@ -29,6 +29,12 @@
               </div>
             </div>
             <div class="field">
+              <label class="label">{{form.occult_blood.label}}</label>
+              <div class="select">
+                {{form.occult_blood()}}
+              </div>
+            </div>
+            <div class="field">
               <label class="label">{{form.note.label}}</label>
               {{form.note(class="textarea")}}
             </div>

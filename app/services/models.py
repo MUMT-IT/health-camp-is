@@ -84,6 +84,9 @@ class StoolTestRecord(db.Model):
                                                   'choices': [(c, c) for c in ['เหลือง', 'น้ำตาล', 'เขียว', 'ดำ', 'แดง', 'เทา']]})
     form = db.Column('form', db.String(), info={'label': 'Form',
                                                 'choices': [(c, c) for c in ['แข็ง', 'นุ่ม', 'เหลวเป็นน้ำ', 'มีมูกเลือดปน']]})
+    occult_blood = db.Column('occult_blood',
+                             db.String(), info={'label': 'Occult blood',
+                                                'choices': [(c,c) for c in ['ไม่ได้ทดสอบ', 'บวก', 'ลบ']]})
     # TODO: add others
     reported_at = db.Column('reported_at', db.DateTime())
 
