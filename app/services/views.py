@@ -13,7 +13,12 @@ def index():
 
 @services.route('/clients/registration', methods=['GET', 'POST'])
 def register_client():
-    form = ClientForm()
+    pid = request.args.get('pid')
+    client = Client.query.filter_by(pid=pid).first()
+    if client:
+        form = ClientForm(obj=client)
+    else:
+        form = ClientForm()
     if form.validate_on_submit():
         client = Client()
         form.populate_obj(client)
