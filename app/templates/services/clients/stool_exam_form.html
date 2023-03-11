@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    {% include "messages.html" %}
+    <div class="columns">
+      <div class="column">
+        {% if client %}
+        <h1 class="title has-text-centered">Previous Records</h1>
+        <table class="table is-fullwidth">
+          <thead>
+          <th>No.</th>
+          <th>Updated at</th>
+          <th></th>
+          </thead>
+          <tbody>
+          {% for rec in client.physical_profiles %}
+          <tr>
+            <td>{{loop.index}}</td>
+            <td>{{rec.updated_at}}</td>
+            <td>
+              <a class="button" href="{{url_for('services.edit_physical_exam_profile', rec_id=rec.id)}}">edit</a>
+              <a class="button is-danger">delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        <h1 class="title has-text-centered">New/Edit Record</h1>
+        <form method="post" class="box">
+          {{form.hidden_tag()}}
+          <div class="field">
+            <label class="label">{{form.weight.label}}</label>
+            {{form.weight(class="input")}}
+          </div>
+          <div class="field">
+            <label class="label">{{form.height.label}}</label>
+            {{form.height(class="input")}}
+          </div>
+          <div class="field">
+            <label class="label">{{form.systolic.label}}</label>
+            {{form.systolic(class="input")}}
+          </div>
+          <div class="field">
+            <label class="label">{{form.diastolic.label}}</label>
+            {{form.diastolic(class="input")}}
+          </div>
+          <div class="field">
+            <div class="buttons is-centered">
+              <a class="button is-light" href="{{url_for('services.physical_exam_profile_main')}}">Cancel</a>
+              <input class="button is-primary" type="submit" value="Submit">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

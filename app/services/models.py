@@ -16,6 +16,8 @@ class Client(db.Model):
     def fullname(self):
         return f'{self.firstname} {self.lastname}'
 
+    # TODO: age calculation
+
 
 class ClientPhysicalProfile(db.Model):
     __tablename__ = 'client_physical_profiles'
@@ -46,7 +48,8 @@ class TestRecord(db.Model):
     __tablename__ = 'test_records'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     client_id = db.Column('client_id', db.ForeignKey('clients.id'))
-    client = db.relationship(Client, backref=db.backref('clients', cascade='all, delete-orphan'))
+    client = db.relationship(Client, backref=db.backref('test_records',
+                                                        cascade='all, delete-orphan'))
     test_id = db.Column('test_id', db.ForeignKey('tests.id'))
     test = db.relationship(Test, backref=db.backref('records', cascade='all, delete-orphan'))
     value = db.Column('value', db.String())
@@ -54,3 +57,44 @@ class TestRecord(db.Model):
                            server_default=func.now(), onupdate=func.now())
     note = db.Column('note', db.Text())
 
+
+class Organism(db.Model):
+    __tablename__ = 'organisms'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column('name', db.String(), nullable=False)
+
+
+class Stage(db.Model):
+    __tablename__ = 'stages'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    stage = db.Column('stage', db.String(), nullable=False)
+
+
+class StoolTestRecord(db.Model):
+    __tablename__ = 'stool_test_records'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    lab_number = db.Column('lab_number', db.String(), nullable=False, unique=True)
+    client_id = db.Column('client_id', db.ForeignKey('clients.id'))
+    client = db.relationship(Client, backref=db.backref('stool_exam_records',
+                                                        cascade='all, delete-orphan'))
+    updated_at = db.Column('updated_at', db.DateTime(),
+                           server_default=func.now(), onupdate=func.now())
+    note = db.Column('note', db.Text())
+    color = db.Column('color', db.String(), info={"label": 'Color',
+                                                  'choices': [(c, c) for c in ['เหลือง', 'น้ำตาล', 'เขียว', 'ดำ', 'แดง', 'เทา']]})
+    form = db.Column('form', db.String(), info={'label': 'Form',
+                                                'choices': [(c, c) for c in ['แข็ง', 'นุ่ม', 'เหลวเป็นน้ำ', 'มีมูกเลือดปน']]})
+    # TODO: add others
+    reported_at = db.Column('reported_at', db.DateTime())
+
+
+class StoolTestReportItem(db.Model):
+    __tablename__ = 'stool_test_report_items'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    org_id = db.Column('org_id', db.ForeignKey('organisms.id'))
+    stage_id = db.Column('stage_id', db.ForeignKey('stages.id'))
+    organism = db.relationship(Organism)
+    stage = db.relationship(Stage)
+    record_id = db.Column('record_id', db.ForeignKey('stool_test_records.id'))
+    record = db.relationship(StoolTestRecord,
+                             backref=db.backref('items', cascade='all, delete-orphan'))
