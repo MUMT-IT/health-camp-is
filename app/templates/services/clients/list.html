@@ -6,7 +6,7 @@
     <div class="columns">
       <div class="column">
         <h1 class="title has-text-centered">All Clients</h1>
-        <table class="table is-striped is-fullwidth">
+        <table id="clientTable" class="table is-striped is-fullwidth">
           <thead>
           <th>Client Number</th>
           <th>Name</th>
@@ -18,7 +18,7 @@
             {% for c in clients %}
             <tr>
               <td>{{c.client_number}}</td>
-              <td>{{c.firstname}}{{c.lastname}}</td>
+              <td>{{c.fullname}}</td>
               <td>{{c.dob}}</td>
               <td>{{c.pid}}</td>
               <td>
@@ -32,4 +32,12 @@
     </div>
   </div>
 </section>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+  $('document').ready(()=>{
+    $('#clientTable').DataTable();
+  })
+</script>
 {% endblock %}
