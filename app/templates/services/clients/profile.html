@@ -26,6 +26,10 @@
             <td>Gender</td>
             <td>{{client.gender}}
           </tr>
+          <tr>
+            <td>Last update</td>
+            <td>{{client.updated_at|localdatetime}}
+          </tr>
         </table>
         <div class="buttons is-centered">
           <a href="{{url_for('services.edit_client', client_id=client.id)}}" class="button is-primary">Edit</a>
@@ -42,8 +46,8 @@
             {% for stool_record in client.stool_exam_records %}
             <tr>
               <td>{{ stool_record.lab_number }}</td>
-              <td>{{ stool_record.updated_at }}</td>
-              <td>{{ stool_record.reported_at or 'Unfinished' }}</td>
+              <td>{{ stool_record.updated_at|localdatetime }}</td>
+              <td>{{ stool_record.reported_at|localdatetime or 'Unfinished' }}</td>
               <td>
                 <a class="button" href="{{url_for('services.edit_stool_exam_record', record_id=stool_record.id, next=request.url)}}">
                   edit

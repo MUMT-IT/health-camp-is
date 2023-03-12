@@ -176,7 +176,8 @@ def stool_exam_main(client_id=None):
             return redirect(request.args.get('next', url_for('services.index')))
         else:
             return redirect(url_for('services.edit_stool_exam_record', record_id=record.id))
-    return render_template('services/clients/stool_exam_main.html')
+    records = StoolTestRecord.query.all()
+    return render_template('services/clients/stool_exam_main.html', records=records)
 
 
 @services.route('/stool-exam/records/<int:record_id>', methods=['GET', 'POST'])

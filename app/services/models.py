@@ -15,6 +15,8 @@ class Client(db.Model):
     gender = db.Column('gender', db.String(), info={'label': 'เพศ',
                                                     'choices': [(c, c) for c in ['ชาย', 'หญิง']],
                                                     'form_field_class': RadioField})
+    updated_at = db.Column('updated_at', db.DateTime(),
+                           server_default=func.now(), onupdate=func.now())
 
     @property
     def fullname(self):

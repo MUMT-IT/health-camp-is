@@ -20,6 +20,37 @@
         </form>
       </div>
     </div>
+    <div class="columns">
+      <div class="column">
+        <table id="recordTable" class="table is-fullwidth">
+          <thead>
+          <th>Lab Number</th>
+          <th>Recieved At</th>
+          <th>Reported At</th>
+          <th>Reported By</th>
+          </thead>
+          <tbody>
+          {% for record in records %}
+          <tr>
+            <td>{{record.lab_number}}</td>
+            <td>{{record.updated_at|localdatetime}}</td>
+            <td>{{record.reported_at|localdatetime}}</td>
+            <td></td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script>
+  $('document').ready(()=>{
+    $('#recordTable').DataTable()
+  })
+</script>
 {% endblock %}

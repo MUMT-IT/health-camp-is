@@ -1,5 +1,6 @@
 import os
 
+import arrow
 from dotenv import load_dotenv
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -28,5 +29,12 @@ def create_app():
     @app.route('/')
     def index():
         return render_template('index.html')
+
+    @app.template_filter('localdatetime')
+    def get_local_datetime(dt):
+        if dt:
+            d = arrow.get(dt, 'Asia/Bangkok')
+            return f'{d.format("DD/MM/YYYY HH:mm:ss")} ({d.humanize()})'
+        return ''
 
     return app
