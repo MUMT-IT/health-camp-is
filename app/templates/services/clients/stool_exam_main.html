@@ -28,6 +28,7 @@
           <th>Recieved At</th>
           <th>Reported At</th>
           <th>Reported By</th>
+          <th></th>
           </thead>
           <tbody>
           {% for record in records %}
@@ -36,6 +37,15 @@
             <td>{{record.updated_at|localdatetime}}</td>
             <td>{{record.reported_at|localdatetime}}</td>
             <td></td>
+            <td>
+              <a href="{{url_for('services.edit_stool_exam_record', record_id=record.id)}}"
+              class="button is-light is-primary is-outlined is-small">
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>view/edit</span>
+              </a>
+            </td>
           </tr>
           {% endfor %}
           </tbody>
