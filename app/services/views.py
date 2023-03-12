@@ -30,6 +30,22 @@ def register_client():
     return render_template('services/clients/registration.html', form=form)
 
 
+@services.route('/clients/<int:client_id>/edit', methods=['GET', 'POST'])
+def edit_client(client_id):
+    client = Client.query.get(client_id)
+    if client:
+        form = ClientForm(obj=client)
+    else:
+        flash('The client is not found.', 'danger')
+    if form.validate_on_submit():
+        form.populate_obj(client)
+        db.session.add(client)
+        db.session.commit()
+        flash('New client has been added.', 'success')
+        return redirect(url_for('services.client_profile', client_id=client_id))
+    return render_template('services/clients/registration.html', form=form)
+
+
 @services.route('/clients')
 def list_clients():
     clients = Client.query.all()

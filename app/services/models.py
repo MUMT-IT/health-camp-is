@@ -1,4 +1,5 @@
 from sqlalchemy import func
+from wtforms import widgets, RadioField
 
 from app import db
 
@@ -11,6 +12,9 @@ class Client(db.Model):
     pid = db.Column('pid', db.String(13))
     dob = db.Column('dob', db.Date())
     client_number = db.Column('client_number', db.String())
+    gender = db.Column('gender', db.String(), info={'label': 'เพศ',
+                                                    'choices': [(c, c) for c in ['ชาย', 'หญิง']],
+                                                    'form_field_class': RadioField})
 
     @property
     def fullname(self):

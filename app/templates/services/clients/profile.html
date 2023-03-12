@@ -22,7 +22,14 @@
             <td>Date of birth</td>
             <td>{{client.dob}}
           </tr>
+          <tr>
+            <td>Gender</td>
+            <td>{{client.gender}}
+          </tr>
         </table>
+        <div class="buttons is-centered">
+          <a href="{{url_for('services.edit_client', client_id=client.id)}}" class="button is-primary">Edit</a>
+        </div>
         <h1 class="title">Stool Examination Tests</h1>
         <table class="table is-striped">
           <thead>
