@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="hero is-primary">
+<section class="hero is-primary is-large">
   <div class="hero-body">
-    <h1 class="title">MUMT Health Camp 2023 Information System</h1>
+    <h1 class="title has-text-centered">MUMT Health Camp 2023 Information System</h1>
     <div class="buttons is-centered">
-      <a class="button is-link" href="{{ url_for('services.index') }}">Services</a>
+      <a class="button is-link" href="{{ url_for('services.index') }}">Start</a>
+    </div>
+    <div class="container has-text-centered">
+      <p>Developed by Department of Community Medical Technology</p>
+      <p>Faculty of Medical Technology, Mahidol University</p>
+      <p>2023</p>
     </div>
   </div>
 </section>

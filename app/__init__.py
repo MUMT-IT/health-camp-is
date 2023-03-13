@@ -4,12 +4,15 @@ import arrow
 from dotenv import load_dotenv
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 
 load_dotenv()
 
 db = SQLAlchemy()
 migrate = Migrate(db=db)
+admin = Admin()
 
 
 def create_app():
@@ -22,9 +25,20 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app)
+    admin.init_app(app)
 
     from app.services import service_bp
     app.register_blueprint(service_bp)
+    from app.services.models import (Client, Test, TestRecord, StoolTestRecord,
+                                     StoolTestReportItem, Organism, Stage)
+
+    admin.add_view(ModelView(Client, db.session, category='Client'))
+    admin.add_view(ModelView(Test, db.session, category='Test'))
+    admin.add_view(ModelView(TestRecord, db.session, category='Test'))
+    admin.add_view(ModelView(StoolTestRecord, db.session, category='Stool'))
+    admin.add_view(ModelView(StoolTestReportItem, db.session, category='Stool'))
+    admin.add_view(ModelView(Organism, db.session, category='Stool'))
+    admin.add_view(ModelView(Stage, db.session, category='Stool'))
 
     @app.route('/')
     def index():
