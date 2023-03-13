@@ -54,10 +54,13 @@
             </li>
           </ul>
         </div>
+        <!--TODO: added collection datetime -->
         {% if tab == 'stool' %}
         <table class="table is-striped">
           <thead>
           <th>Lab Number</th>
+          <th>Results</th>
+          <th>Note</th>
           <th>Registered At</th>
           <th>Reported At</th>
           <th></th>
@@ -66,6 +69,8 @@
             {% for stool_record in client.stool_exam_records %}
             <tr>
               <td>{{ stool_record.lab_number }}</td>
+              <td>{{ stool_record.results|itemize|safe }}</td>
+              <td>{{ stool_record.note }}</td>
               <td>{{ stool_record.updated_at|localdatetime }}</td>
               <td>{{ stool_record.reported_at|localdatetime or 'Unfinished' }}</td>
               <td>
@@ -94,6 +99,7 @@
           <th>Test</th>
           <th>Record ID</th>
           <th>Result</th>
+          <th>Note</th>
           <th>Reported At</th>
           </thead>
           <tbody>
@@ -102,6 +108,7 @@
             <td>{{test_record.test.name}}</td>
             <td>{{test_record.id}}</td>
             <td>{{test_record.value}} {{test_record.test.unit}}</td>
+            <td>{{test_record.note}}</td>
             <td>{{test_record.updated_at|localdatetime}}</td>
           </tr>
           {% endfor %}

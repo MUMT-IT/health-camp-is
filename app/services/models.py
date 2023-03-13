@@ -70,11 +70,17 @@ class Organism(db.Model):
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     name = db.Column('name', db.String(), nullable=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Stage(db.Model):
     __tablename__ = 'stages'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     stage = db.Column('stage', db.String(), nullable=False)
+
+    def __str__(self):
+        return self.stage
 
 
 class StoolTestRecord(db.Model):
@@ -97,6 +103,10 @@ class StoolTestRecord(db.Model):
     # TODO: add others
     reported_at = db.Column('reported_at', db.DateTime())
 
+    @property
+    def results(self):
+        return ','.join([str(item) for item in self.items])
+
 
 class StoolTestReportItem(db.Model):
     __tablename__ = 'stool_test_report_items'
@@ -108,3 +118,6 @@ class StoolTestReportItem(db.Model):
     record_id = db.Column('record_id', db.ForeignKey('stool_test_records.id'))
     record = db.relationship(StoolTestRecord,
                              backref=db.backref('items', cascade='all, delete-orphan'))
+
+    def __str__(self):
+        return f'{self.organism} {self.stage}'

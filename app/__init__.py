@@ -54,4 +54,8 @@ def create_app():
             return f'{d.format("DD/MM/YYYY HH:mm:ss")} ({d.humanize()})'
         return ''
 
+    @app.template_filter('itemize')
+    def itemize(text, delimiter='<br>'):
+        return text.replace(',', delimiter)
+
     return app
