@@ -97,8 +97,9 @@ def edit_physical_exam_profile(rec_id):
 
 @services.route('/clients/<int:client_id>/profile')
 def client_profile(client_id):
+    tab = request.args.get('tab', 'stool')
     client = Client.query.get(client_id)
-    return render_template('services/clients/profile.html', client=client)
+    return render_template('services/clients/profile.html', client=client, tab=tab)
 
 
 @services.route('/tests')
@@ -139,26 +140,53 @@ def test_record_main(test_id):
     client = Client.query.filter_by(client_number=client_number).first()
     if client:
         return redirect(url_for('services.add_test_record', test_id=test_id, client_id=client.id))
-    flash('Client number not found', 'danger')
+    # flash('Client number not found', 'danger')
     return render_template('services/tests/main.html')
 
 
+@services.route('/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/edit',
+                methods=['GET', 'POST'])
 @services.route('/clients/<int:client_id>/tests/<int:test_id>/records/add',
                 methods=['GET', 'POST'])
-def add_test_record(test_id, client_id):
+def add_test_record(test_id, client_id, record_id=None):
     client = Client.query.get(client_id)
     test = Test.query.get(test_id)
-    form = TestRecordForm()
+    if record_id:
+        rec = TestRecord.query.get(record_id)
+        form = TestRecordForm(obj=rec)
+    else:
+        form = TestRecordForm()
     if form.validate_on_submit():
-        rec = TestRecord()
+        if not record_id:
+            rec = TestRecord()
         form.populate_obj(rec)
         rec.test = test
         rec.client_id = client_id
         db.session.add(rec)
         db.session.commit()
         flash('Test has been updated.', 'success')
-        return redirect(url_for('services.test_record_main', test_id=test_id))
-    return render_template('services/tests/record_form.html', form=form, test=test, client=client)
+        return redirect(url_for('services.add_test_record', client_id=client_id, test_id=test_id))
+    return render_template('services/tests/record_form.html',
+                           form=form,
+                           test=test,
+                           record_id=record_id,
+                           client=client)
+
+
+@services.route('/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/delete',
+                methods=['GET', 'POST'])
+def delete_test_record(test_id, client_id, record_id):
+    client = Client.query.get(client_id)
+    test = Test.query.get(test_id)
+    rec = TestRecord.query.get(record_id)
+    if rec:
+        db.session.delete(rec)
+        db.session.commit()
+        flash('The record has been deleted.', 'success')
+    else:
+        flash('The record was not found.', 'danger')
+    return redirect(url_for('services.add_test_record',
+                            test_id=test_id, client_id=client_id))
 
 
 @services.route('/stool-exam')

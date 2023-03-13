@@ -55,6 +55,7 @@ class TestRecord(db.Model):
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     client_id = db.Column('client_id', db.ForeignKey('clients.id'))
     client = db.relationship(Client, backref=db.backref('test_records',
+                                                        lazy='dynamic',
                                                         cascade='all, delete-orphan'))
     test_id = db.Column('test_id', db.ForeignKey('tests.id'))
     test = db.relationship(Test, backref=db.backref('records', cascade='all, delete-orphan'))

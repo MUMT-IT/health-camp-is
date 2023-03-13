@@ -5,6 +5,7 @@
   <div class="container">
     <div class="columns">
       <div class="column">
+        {% include "messages.html" %}
         <h1 class="title has-text-centered">New Record</h1>
         <h1 class="subtitle has-text-centered">การทดสอบ {{test.name}}</h1>
         <div class="box">
@@ -15,6 +16,34 @@
             Client number: <strong>{{client.client_number}}</strong>
           </p>
         </div>
+        <table class="table is-striped">
+          <thead>
+          <th>Test ID</th>
+          <th>Value</th>
+          <th>Updated At</th>
+          <th></th>
+          </thead>
+          <tbody>
+          {% for rec in client.test_records.filter_by(test=test) %}
+          <tr>
+            <td>{{rec.id}}</td>
+            <td>{{rec.value}}</td>
+            <td>{{rec.updated_at|localdatetime}}</td>
+            <td>
+              <a class="button" href="{{url_for('services.add_test_record', record_id=rec.id, client_id=client.id, test_id=test.id)}}">edit</a>
+              <a class="button is-danger" href="{{url_for('services.delete_test_record', client_id=client.id, test_id=test.id, record_id=rec.id)}}">delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <hr>
+        {% if record_id %}
+        <h1 class="title">Edit Record</h1>
+        <h1 class="subtitle">Record ID = {{record_id}}</h1>
+        {% else %}
+        <h1 class="title">New Record</h1>
+        {% endif %}
         <form method="post">
           {{form.hidden_tag()}}
           <label class="label">{{form.value.label}}</label>
@@ -34,6 +63,7 @@
           </div>
           <div class="field">
             <div class="buttons is-centered">
+              <a href="{{url_for('services.test_record_main', test_id=test.id)}}" class="button">Back</a>
               <input type="submit" value="Submit" class="button is-primary">
             </div>
           </div>

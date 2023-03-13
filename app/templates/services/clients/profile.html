@@ -34,7 +34,27 @@
         <div class="buttons is-centered">
           <a href="{{url_for('services.edit_client', client_id=client.id)}}" class="button is-primary">Edit</a>
         </div>
-        <h1 class="title">Stool Examination Tests</h1>
+        <div class="tabs is-boxed">
+          <ul>
+            <li class="{% if tab == 'stool' %}is-active{% endif %}">
+              <a href="{{url_for('services.client_profile', client_id=client.id)}}">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-toilet"></i>
+                </span>
+                <span>Stool Exam</span>
+              </a>
+            </li>
+            <li class="{% if tab == 'others' %}is-active {% endif %}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='others')}}">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-vial"></i>
+                </span>
+                <span>Others</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        {% if tab == 'stool' %}
         <table class="table is-striped">
           <thead>
           <th>Lab Number</th>
@@ -68,6 +88,26 @@
             </div>
           </form>
         </div>
+        {% else %}
+        <table class="table is-striped">
+          <thead>
+          <th>Test</th>
+          <th>Record ID</th>
+          <th>Result</th>
+          <th>Reported At</th>
+          </thead>
+          <tbody>
+          {% for test_record in client.test_records %}
+          <tr>
+            <td>{{test_record.test.name}}</td>
+            <td>{{test_record.id}}</td>
+            <td>{{test_record.value}} {{test_record.test.unit}}</td>
+            <td>{{test_record.updated_at|localdatetime}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
         <div class="buttons is-centered">
           <a href="{{url_for('services.index')}}" class="button is-light">Home</a>
         </div>
