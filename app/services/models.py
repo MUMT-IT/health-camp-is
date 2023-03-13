@@ -46,6 +46,8 @@ class Test(db.Model):
     name = db.Column('name', db.String(), nullable=False)
     unit = db.Column('unit', db.String())
     reference = db.Column('reference', db.Text())
+    min_value = db.Column('min_value', db.Numeric(), default=0)
+    max_value = db.Column('max_value', db.Numeric(), default=1)
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
 
@@ -63,6 +65,15 @@ class TestRecord(db.Model):
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
     note = db.Column('note', db.Text())
+
+    @property
+    def interpret(self):
+        if float(self.value) > self.test.max_value:
+            return 'High'
+        elif float(self.value) < self.test.min_value:
+            return 'Low'
+        else:
+            return 'Normal'
 
 
 class Organism(db.Model):

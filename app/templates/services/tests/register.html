@@ -22,6 +22,14 @@
             {{form.reference(class='input')}}
           </div>
           <div class="field">
+            <div class="label">{{form.min_value.label}}</div>
+            {{form.min_value(class='input')}}
+          </div>
+          <div class="field">
+            <div class="label">{{form.max_value.label}}</div>
+            {{form.max_value(class='input')}}
+          </div>
+          <div class="field">
             <div class="buttons is-centered">
               <a href="{{url_for('services.list_tests')}}" class="button is-light">Cancel</a>
               <input class="button is-primary" type="submit" value="Submit">
