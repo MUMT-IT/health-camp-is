@@ -92,7 +92,10 @@ def edit_physical_exam_profile(rec_id):
         flash('Data have been updated.', 'success')
         return redirect(url_for('services.add_physical_exam_profile',
                                 client_id=rec.client.id))
-    return render_template('services/clients/physical_exam_form.html', form=form)
+    return render_template('services/clients/physical_exam_form.html',
+                           form=form,
+                           client=rec.client,
+                           editing=True)
 
 
 @services.route('/clients/<int:client_id>/profile')

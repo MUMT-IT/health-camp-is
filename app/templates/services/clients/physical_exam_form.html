@@ -4,9 +4,14 @@
 <section class="section">
   <div class="container">
     {% include "messages.html" %}
+    <!--TODO: add waist form -->
     <div class="columns">
       <div class="column">
-        {% if client %}
+        <div class="box">
+          <label class="label">Name</label>{{client.fullname}}
+          <label class="label">Client Number</label>{{client.client_number}}
+        </div>
+        {% if not editing %}
         <h1 class="title has-text-centered">Previous Records</h1>
         <table class="table is-fullwidth">
           <thead>
