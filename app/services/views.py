@@ -209,17 +209,27 @@ def delete_test_record(test_id, client_id, record_id):
 @services.route('/clients/<int:client_id>/stool-exam')
 def stool_exam_main(client_id=None):
     lab_number = request.args.get('lab_number')
+    next_url = request.args.get('next')
+    if not client_id:
+        client_id = request.args.get('client_id')
+    print(request.args)
     if lab_number:
         record = StoolTestRecord.query.filter_by(lab_number=lab_number).first()
         if not record:
-            record = StoolTestRecord(lab_number=lab_number)
-            record.client_id = client_id
-            db.session.add(record)
-            db.session.commit()
-            flash('New stool specimens has been registered.', 'success')
-            return redirect(request.args.get('next', url_for('services.index')))
+            if client_id:
+                record = StoolTestRecord(lab_number=lab_number)
+                record.client_id = client_id
+                db.session.add(record)
+                db.session.commit()
+                flash('New stool specimens has been registered.', 'success')
+                print('new stool has been registered, redirecting..')
+                return redirect(next_url)
+            else:
+                flash('The lab number was not registered.', 'danger')
+                if next_url:
+                    return redirect(next_url)
         else:
-            return redirect(url_for('services.edit_stool_exam_record', record_id=record.id))
+            return redirect(next_url or url_for('services.edit_stool_exam_record', record_id=record.id))
     records = StoolTestRecord.query.all()
     return render_template('services/clients/stool_exam_main.html', records=records)
 
@@ -354,3 +364,15 @@ def delete_health_record(client_id, record_id):
     else:
         flash('The record was not found.', 'danger')
     return redirect(url_for('services.add_health_record', client_id=client_id))
+
+
+@services.route('/tests/<int:test_id>/delete')
+def delete_test(test_id):
+    test = Test.query.get(test_id)
+    if test:
+        db.session.delete(test)
+        db.session.commit()
+        flash('Test has been removed.', 'success')
+    else:
+        flash('The test was not found.', 'danger')
+    return redirect(url_for('services.list_tests'))

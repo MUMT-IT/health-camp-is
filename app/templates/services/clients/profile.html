@@ -5,6 +5,7 @@
   <div class="container">
     <div class="columns">
       <div class="column">
+        {% include "messages.html" %}
         <h1 class="title has-text-centered">Profile</h1>
         <table class="table is-fullwidth">
           <tr>
@@ -102,6 +103,22 @@
             {% endfor %}
           </tbody>
         </table>
+        {{request.url}}
+        <form method="get" action="{{url_for('services.stool_exam_main')}}" class="box">
+          <input type="hidden" name="client_id" value="{{client.id}}">
+          <input type="hidden" name="next" value="{{request.url}}">
+          <div class="field">
+            <label class="label">Lab Number</label>
+            <div class="control">
+              <input name="lab_number" class="input" />
+            </div>
+          </div>
+          <div class="field">
+            <div class="control">
+              <input type="submit" class="button is-warning" value="Register">
+            </div>
+          </div>
+        </form>
         {% elif tab=='others' %}
         <table class="table is-striped">
           <thead>

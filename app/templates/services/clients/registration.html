@@ -79,7 +79,9 @@
       <div class="column">
           <div class="box">
             <h1 class="title">Register Stool Examination</h1>
-            <form method="get" action="{{url_for('services.stool_exam_main', client_id=client.id, next=request.url)}}">
+            <form method="get" action="{{url_for('services.stool_exam_main')}}">
+              <input type="hidden" name="client_id" value="{{client.id}}">
+              <input type="hidden" name="next" value="{{request.url}}">
               <div class="field">
                 <input class="input" name="lab_number">
               </div>
