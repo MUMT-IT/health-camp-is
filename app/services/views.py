@@ -212,7 +212,6 @@ def stool_exam_main(client_id=None):
     next_url = request.args.get('next')
     if not client_id:
         client_id = request.args.get('client_id')
-    print(request.args)
     if lab_number:
         record = StoolTestRecord.query.filter_by(lab_number=lab_number).first()
         if not record:
@@ -222,7 +221,6 @@ def stool_exam_main(client_id=None):
                 db.session.add(record)
                 db.session.commit()
                 flash('New stool specimens has been registered.', 'success')
-                print('new stool has been registered, redirecting..')
                 return redirect(next_url)
             else:
                 flash('The lab number was not registered.', 'danger')
@@ -339,7 +337,6 @@ def add_health_record(client_id, record_id=None):
     if record_id:
         record = HealthRecord.query.get(record_id)
         form = HealthRecordForm(obj=record)
-        print(record.underlying_diseases)
     else:
         form = HealthRecordForm()
     client = Client.query.get(client_id)
