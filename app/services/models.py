@@ -25,9 +25,9 @@ class Client(db.Model):
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     firstname = db.Column('firstname', db.String(), nullable=False)
     lastname = db.Column('lastname', db.String(), nullable=False)
-    pid = db.Column('pid', db.String(13))
+    pid = db.Column('pid', db.String(13), unique=True)
     dob = db.Column('dob', db.Date())
-    client_number = db.Column('client_number', db.String())
+    client_number = db.Column('client_number', db.String(), unique=True)
     gender = db.Column('gender', db.String(), info={'label': 'เพศ',
                                                     'choices': [(c, c) for c in ['ชาย', 'หญิง']],
                                                     'form_field_class': RadioField})
@@ -51,9 +51,7 @@ class ClientPhysicalProfile(db.Model):
     __tablename__ = 'client_physical_profiles'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     client_id = db.Column('client_id', db.ForeignKey('clients.id'))
-    client = db.relationship(Client, backref=db.backref('physical_profiles',
-                                                        lazy='dynamic',
-                                                        cascade='all, delete-orphan'))
+    client = db.relationship(Client, backref=db.backref('physical_profiles', cascade='all, delete-orphan'))
     weight = db.Column('weight', db.Numeric(), info={'label': 'น้ำหนักหน่วยกก.'})
     height = db.Column('height', db.Numeric(), info={'label': 'ส่วนสูงหน่วยซม.'})
     systolic = db.Column('systolic', db.Integer(), info={'label': 'Systolic'})

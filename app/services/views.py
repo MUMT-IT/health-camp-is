@@ -98,6 +98,19 @@ def edit_physical_exam_profile(rec_id):
                            editing=True)
 
 
+@services.route('/clients/physical-exam/<int:rec_id>/delete', methods=['GET', 'POST'])
+def delete_physical_exam_profile(rec_id):
+    rec = ClientPhysicalProfile.query.get(rec_id)
+    client = rec.client
+    if rec:
+        db.session.delete(rec)
+        db.session.commit()
+        flash('Data have been removed.', 'success')
+    else:
+        flash('The record was not found.', 'danger')
+    return redirect(url_for('services.add_physical_exam_profile', client_id=client.id))
+
+
 @services.route('/clients/<int:client_id>/profile')
 def client_profile(client_id):
     tab = request.args.get('tab', 'stool')
@@ -339,5 +352,5 @@ def delete_health_record(client_id, record_id):
         db.session.commit()
         flash('The record has been deleted.', 'success')
     else:
-        flash('The record not found.', 'danger')
+        flash('The record was not found.', 'danger')
     return redirect(url_for('services.add_health_record', client_id=client_id))

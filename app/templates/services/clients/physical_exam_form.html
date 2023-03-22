@@ -26,7 +26,7 @@
             <td>{{rec.updated_at}}</td>
             <td>
               <a class="button" href="{{url_for('services.edit_physical_exam_profile', rec_id=rec.id)}}">edit</a>
-              <a class="button is-danger">delete</a>
+              <a class="button is-danger" href="{{url_for('services.delete_physical_exam_profile', rec_id=rec.id)}}">delete</a>
             </td>
           </tr>
           {% endfor %}
@@ -36,23 +36,27 @@
         <h1 class="title has-text-centered">New/Edit Record</h1>
         <form method="post">
           <div class="box">
-          {{form.hidden_tag()}}
-          <div class="field">
-            <label class="label">{{form.weight.label}}</label>
-            {{form.weight(class="input")}}
-          </div>
-          <div class="field">
-            <label class="label">{{form.height.label}}</label>
-            {{form.height(class="input")}}
-          </div>
-          <div class="field">
-            <label class="label">{{form.systolic.label}}</label>
-            {{form.systolic(class="input")}}
-          </div>
-          <div class="field">
-            <label class="label">{{form.diastolic.label}}</label>
-            {{form.diastolic(class="input")}}
-          </div>
+            {{form.hidden_tag()}}
+            <div class="field">
+              <label class="label">{{form.weight.label}}</label>
+              {{form.weight(class="input")}}
+            </div>
+            <div class="field">
+              <label class="label">{{form.height.label}}</label>
+              {{form.height(class="input")}}
+            </div>
+            <div class="field">
+              <label class="label">{{form.systolic.label}}</label>
+              {{form.systolic(class="input")}}
+            </div>
+            <div class="field">
+              <label class="label">{{form.diastolic.label}}</label>
+              {{form.diastolic(class="input")}}
+            </div>
+            <div class="field">
+              <label class="label">{{form.waist.label}}</label>
+              {{form.waist(class="input")}}
+            </div>
           </div>
           <div class="field">
             <div class="buttons is-centered">
