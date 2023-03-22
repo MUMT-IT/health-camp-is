@@ -23,6 +23,10 @@
             <td>{{client.dob}}
           </tr>
           <tr>
+            <td>Age</td>
+            <td>{{client.age}}</td>
+          </tr>
+          <tr>
             <td>Gender</td>
             <td>{{client.gender}}
           </tr>
@@ -50,6 +54,22 @@
                   <i class="fa-solid fa-vial"></i>
                 </span>
                 <span>Others</span>
+              </a>
+            </li>
+            <li class="{% if tab == 'physical' %}is-active {% endif %}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='physical')}}">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-child"></i>
+                </span>
+                <span>Physical Exam</span>
+              </a>
+            </li>
+            <li class="{% if tab == 'health' %}is-active {% endif %}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='health')}}">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-heart"></i>
+                </span>
+                <span>Health Profile</span>
               </a>
             </li>
           </ul>
@@ -82,18 +102,7 @@
             {% endfor %}
           </tbody>
         </table>
-        <div class="box">
-          <h1 class="title">Register Stool Examination</h1>
-          <form method="get" action="{{url_for('services.stool_exam_main', client_id=client.id, next=request.url)}}">
-            <div class="field">
-              <input class="input" name="lab_number">
-            </div>
-            <div class="field">
-              <input type="submit" value="Submit" class="button is-primary">
-            </div>
-          </form>
-        </div>
-        {% else %}
+        {% elif tab=='others' %}
         <table class="table is-striped">
           <thead>
           <th>Test</th>
@@ -112,6 +121,36 @@
             <td>{{test_record.interpret}}</td>
             <td>{{test_record.note}}</td>
             <td>{{test_record.updated_at|localdatetime}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% elif tab == 'physical' %}
+        <table class="table is-striped">
+          <thead>
+          <th>Record ID</th>
+          <th>Reported At</th>
+          </thead>
+          <tbody>
+          {% for physical_record in client.physical_profiles %}
+          <tr>
+            <td>{{physical_record.id}}</td>
+            <td>{{physical_record.updated_at|localdatetime}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% elif tab == 'health' %}
+        <table class="table is-striped">
+          <thead>
+          <th>Record ID</th>
+          <th>Reported At</th>
+          </thead>
+          <tbody>
+          {% for health_record in client.health_records %}
+          <tr>
+            <td>{{health_record.id}}</td>
+            <td>{{health_record.updated_at|localdatetime}}</td>
           </tr>
           {% endfor %}
           </tbody>

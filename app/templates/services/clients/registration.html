@@ -3,9 +3,11 @@
 {% block content %}
 <section class="section">
   <div class="container">
+    {% include "messages.html" %}
     <div class="columns">
-      <div class="column">
-        <h1 class="title has-text-centered">Client Registration</h1>
+      <div class="column is-two-thirds is-offset-2">
+        <h1 class="title has-text-centered">Client Registration/Edit</h1>
+        {% if not client %}
         <form method="get">
           <div class="field">
             <div class="control">
@@ -18,10 +20,11 @@
             </div>
           </div>
         </form>
+        {% endif %}
       </div>
     </div>
     <div class="columns">
-      <div class="column">
+      <div class="column {% if not client %}is-two-thirds is-offset-2{% endif %}">
         <form method="post">
           <div class="box">
           {{ form.hidden_tag() }}
@@ -72,6 +75,21 @@
           </div>
         </form>
       </div>
+      {% if client %}
+      <div class="column">
+          <div class="box">
+            <h1 class="title">Register Stool Examination</h1>
+            <form method="get" action="{{url_for('services.stool_exam_main', client_id=client.id, next=request.url)}}">
+              <div class="field">
+                <input class="input" name="lab_number">
+              </div>
+              <div class="field">
+                <input type="submit" value="Add" class="button is-warning">
+              </div>
+            </form>
+          </div>
+      </div>
+      {% endif %}
     </div>
   </div>
 </section>

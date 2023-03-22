@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        {% include "messages.html" %}
+        <div class="columns">
+            <div class="column is-two-thirds is-offset-2">
+                <div class="box">
+                    <label class="label">Name</label>{{client.fullname}}
+                    <label class="label">Client Number</label>{{client.client_number}}
+                </div>
+                {% if not editing %}
+                <h1 class="title has-text-centered">Previous Records</h1>
+                <table class="table is-fullwidth">
+                    <thead>
+                    <th>No.</th>
+                    <th>Updated at</th>
+                    <th></th>
+                    </thead>
+                    <tbody>
+                    {% for rec in client.health_records %}
+                    <tr>
+                        <td>{{loop.index}}</td>
+                        <td>{{rec.updated_at}}</td>
+                        <td>
+                            <a class="button" href="{{url_for('services.add_health_record', client_id=client.id, record_id=rec.id)}}">edit</a>
+                            <a class="button is-danger" href="{{url_for('services.delete_health_record', client_id=client.id, record_id=rec.id)}}">delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+                <h1 class="title has-text-centered">New/Edit Record</h1>
+                <div class="box">
+                    <form method="post">
+                        {{form.hidden_tag()}}
+                        <div class="field">
+                            <label class="label">{{form.underlying_diseases.label}}</label>
+                            <div class="control">
+                                {{form.underlying_diseases()}}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{form.other_underlying_disease.label}}</label>
+                            <div class="control">
+                                {{form.other_underlying_disease(class="input")}}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{form.family_diseases.label}}</label>
+                            <div class="control">
+                                {{form.family_diseases()}}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{form.other_family_disease.label}}</label>
+                            <div class="control">
+                                {{form.other_family_disease(class="input")}}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{form.suggestion.label}}</label>
+                            <div class="control">
+                                {{form.suggestion(class="textarea")}}
+                            </div>
+                        </div>
+                        <div class="field is-grouped is-grouped-centered">
+                            <a href="{{url_for('services.health_record_main')}}" class="button is-light">Back</a>
+                            <input type="submit" value="Submit" class="button is-primary">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

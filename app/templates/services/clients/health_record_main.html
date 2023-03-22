@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <h1 class="title has-text-centered">Health Records</h1>
+                <form method="get">
+                    <div class="field">
+                        <div class="control">
+                            <input class="input is-medium" name="client_number" placeholder="Client Number">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="buttons is-centered">
+                            <a class="button is-light" href="{{url_for('services.index')}}">Back</a>
+                            <input class="button is-primary" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

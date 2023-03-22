@@ -33,7 +33,8 @@ def create_app():
     from app.services import service_bp
     app.register_blueprint(service_bp)
     from app.services.models import (Client, Test, TestRecord, StoolTestRecord,
-                                     StoolTestReportItem, Organism, Stage)
+                                     StoolTestReportItem, Organism, Stage,
+                                     UnderlyingDisease, FamilyDiseases)
 
     admin.add_view(ModelView(Client, db.session, category='Client'))
     admin.add_view(ModelView(Test, db.session, category='Test'))
@@ -42,6 +43,8 @@ def create_app():
     admin.add_view(ModelView(StoolTestReportItem, db.session, category='Stool'))
     admin.add_view(ModelView(Organism, db.session, category='Stool'))
     admin.add_view(ModelView(Stage, db.session, category='Stool'))
+    admin.add_view(ModelView(UnderlyingDisease, db.session, category='Diseases'))
+    admin.add_view(ModelView(FamilyDiseases, db.session, category='Diseases'))
 
     @app.route('/')
     def index():

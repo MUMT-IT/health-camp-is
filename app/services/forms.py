@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import FormField, FieldList
-from wtforms_alchemy import model_form_factory, QuerySelectField
+from wtforms_alchemy import model_form_factory, QuerySelectField, QuerySelectMultipleField
 
 from app import db
 from app.services.models import *
@@ -49,3 +49,24 @@ class StoolTestForm(ModelForm):
 
     items = FieldList(FormField(StoolTestReportItemForm,
                                 default=StoolTestReportItem), min_entries=1)
+
+
+class HealthRecordForm(ModelForm):
+    class Meta:
+        model = HealthRecord
+
+    underlying_diseases = QuerySelectMultipleField('โรคประจำตัว',
+                                                   query_factory=lambda: UnderlyingDisease.query.all(),
+                                                   get_label='name',
+                                                   allow_blank=True,
+                                                   blank_text='กรุณาระบุโรค',
+                                                   widget=widgets.ListWidget(prefix_label=False),
+                                                   option_widget=widgets.CheckboxInput())
+    family_diseases = QuerySelectMultipleField('โรคประจำตัวในครอบครัว',
+                                                   query_factory=lambda: FamilyDiseases.query.all(),
+                                                   get_label='name',
+                                                   allow_blank=True,
+                                                   blank_text='กรุณาระบุโรค',
+                                                   widget=widgets.ListWidget(prefix_label=False),
+                                                   option_widget=widgets.CheckboxInput())
+

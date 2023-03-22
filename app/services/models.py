@@ -1,7 +1,23 @@
+import datetime
+
 from sqlalchemy import func
+from dateutil import relativedelta
 from wtforms import widgets, RadioField
 
 from app import db
+
+
+underlying_diseases_health_records = db.Table(
+    'underlying_diseases_health_records',
+    db.Column('disease_id', db.ForeignKey('underlying_diseases.id'), primary_key=True),
+    db.Column('health_record_id', db.ForeignKey('health_records.id'), primary_key=True)
+)
+
+family_diseases_health_records = db.Table(
+    'family_diseases_health_records',
+    db.Column('family_history_record_id', db.ForeignKey('family_diseases.id'), primary_key=True),
+    db.Column('health_record_id', db.ForeignKey('health_records.id'), primary_key=True)
+)
 
 
 class Client(db.Model):
@@ -19,10 +35,16 @@ class Client(db.Model):
                            server_default=func.now(), onupdate=func.now())
 
     @property
+    def age(self):
+        if self.dob:
+            return '{} ปี {} เดือน'.format(relativedelta.relativedelta(datetime.datetime.today(), self.dob).years,
+                               relativedelta.relativedelta(datetime.datetime.today(), self.dob).months)
+        else:
+            return None
+
+    @property
     def fullname(self):
         return f'{self.firstname} {self.lastname}'
-
-    # TODO: age calculation
 
 
 class ClientPhysicalProfile(db.Model):
@@ -38,6 +60,7 @@ class ClientPhysicalProfile(db.Model):
     diastolic = db.Column('diastolic', db.Integer(), info={'label': 'Diastolic'})
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
+    waist = db.Column('waist', db.Numeric(), info={'label': 'รอบเอว'})
 
 
 class Test(db.Model):
@@ -92,6 +115,38 @@ class Stage(db.Model):
 
     def __str__(self):
         return self.stage
+
+
+class UnderlyingDisease(db.Model):
+    __tablename__ = 'underlying_diseases'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column('name', db.String(), nullable=False)
+
+
+class FamilyDiseases(db.Model):
+    __tablename__ = 'family_diseases'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column('name', db.String(), nullable=False, info={'label': 'รายการ'})
+
+
+class HealthRecord(db.Model):
+    __tablename__ = 'health_records'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    underlying_diseases = db.relationship(UnderlyingDisease,
+                               secondary=underlying_diseases_health_records,
+                               info={'label': 'โรคประจำตัว'})
+    other_underlying_disease = db.Column('other_underlying_disease', db.String(), info={'label': 'โรคอื่น ๆ'})
+    family_diseases = db.relationship(FamilyDiseases,
+                                      secondary=family_diseases_health_records,
+                                      info={'label': 'โรคประจำตัวในครอบครัว'})
+    other_family_disease = db.Column('other_family_disease', db.String(), info={'label': 'โรคในครอบครัวอื่น ๆ'})
+    fasting_datetime = db.Column('fasting_datetime', db.DateTime(), info={'label': 'อดอาหารเมื่อ'})
+    client_id = db.Column('client_id', db.ForeignKey('clients.id'))
+    client = db.relationship(Client, backref=db.backref('health_records',
+                                                        cascade='all, delete-orphan', lazy='dynamic'))
+    updated_at = db.Column('updated_at', db.DateTime(),
+                           server_default=func.now(), onupdate=func.now())
+    suggestion = db.Column('suggestion', db.Text(), info={'label': 'คำแนะนำ'})
 
 
 class StoolTestRecord(db.Model):

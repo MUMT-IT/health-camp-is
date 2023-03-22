@@ -3,8 +3,9 @@ from flask import render_template, redirect, url_for, flash, request, make_respo
 
 from app import db
 from app.services import service_bp as services
-from app.services.forms import ClientForm, ClientPhysicalProfileForm, TestForm, TestRecordForm, StoolTestForm
-from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord, StoolTestRecord
+from app.services.forms import ClientForm, ClientPhysicalProfileForm, TestForm, TestRecordForm, StoolTestForm, \
+    HealthRecordForm
+from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord, StoolTestRecord, HealthRecord
 
 
 @services.route('/')
@@ -17,16 +18,16 @@ def register_client():
     pid = request.args.get('pid')
     client = Client.query.filter_by(pid=pid).first()
     if client:
-        form = ClientForm(obj=client)
-    else:
-        form = ClientForm()
+        flash('Existing client! Welcome back ;)', 'success')
+        return redirect(url_for('services.edit_client', client_id=client.id))
+    form = ClientForm()
     if form.validate_on_submit():
         client = Client()
         form.populate_obj(client)
         db.session.add(client)
         db.session.commit()
         flash('New client has been added.', 'success')
-        return redirect(url_for('services.index'))
+        return redirect(url_for('services.edit_client', client_id=client.id))
     return render_template('services/clients/registration.html', form=form)
 
 
@@ -41,9 +42,8 @@ def edit_client(client_id):
         form.populate_obj(client)
         db.session.add(client)
         db.session.commit()
-        flash('New client has been added.', 'success')
-        return redirect(url_for('services.client_profile', client_id=client_id))
-    return render_template('services/clients/registration.html', form=form)
+        flash('Client data have been update.', 'success')
+    return render_template('services/clients/registration.html', form=form, client=client)
 
 
 @services.route('/clients')
@@ -298,3 +298,46 @@ def remove_stool_report_item_entry():
             '''
     resp = make_response(content)
     return resp
+
+
+@services.route('/health_records')
+def health_record_main():
+    client_number = request.args.get('client_number')
+    if client_number:
+        client = Client.query.filter_by(client_number=client_number).first()
+        if client:
+            return redirect(url_for('services.add_health_record', client_id=client.id))
+    return render_template('services/clients/health_record_main.html')
+
+
+@services.route('/clients/<int:client_id>/health-record', methods=['GET', 'POST'])
+@services.route('/clients/<int:client_id>/health-record/<int:record_id>', methods=['GET', 'POST'])
+def add_health_record(client_id, record_id=None):
+    if record_id:
+        record = HealthRecord.query.get(record_id)
+        form = HealthRecordForm(obj=record)
+        print(record.underlying_diseases)
+    else:
+        form = HealthRecordForm()
+    client = Client.query.get(client_id)
+    if form.validate_on_submit():
+        if not record_id:
+            record = HealthRecord()
+            record.client_id = client_id
+        form.populate_obj(record)
+        db.session.add(record)
+        db.session.commit()
+        flash('Data have been saved.', 'success')
+    return render_template('services/clients/health_record_form.html', form=form, client=client)
+
+
+@services.route('/clients/<int:client_id>/health-record/<int:record_id>/delete', methods=['GET', 'POST'])
+def delete_health_record(client_id, record_id):
+    if record_id:
+        record = HealthRecord.query.get(record_id)
+        db.session.delete(record)
+        db.session.commit()
+        flash('The record has been deleted.', 'success')
+    else:
+        flash('The record not found.', 'danger')
+    return redirect(url_for('services.add_health_record', client_id=client_id))
