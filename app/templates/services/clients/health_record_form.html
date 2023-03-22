@@ -25,7 +25,7 @@
                         <td>{{rec.updated_at}}</td>
                         <td>
                             <a class="button" href="{{url_for('services.add_health_record', client_id=client.id, record_id=rec.id)}}">edit</a>
-                            <a class="button is-danger" href="{{url_for('services.delete_health_record', client_id=client.id, record_id=rec.id)}}">delete</a>
+                            <a class="button is-danger" onclick="confirmDelete({{rec.id}}, {{client.id}})">delete</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -76,4 +76,24 @@
         </div>
     </div>
 </section>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+    let confirmDelete = function (rec_id, client_id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/services/clients/" + client_id + "/health-record/" + rec_id + "/delete"
+            }
+        })
+    }
+</script>
 {% endblock %}
