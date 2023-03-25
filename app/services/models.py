@@ -71,6 +71,8 @@ class Test(db.Model):
     max_value = db.Column('max_value', db.Numeric(), default=1)
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
+    min_interpret = db.Column('min_interpret', db.Text())
+    max_interpret = db.Column('max_interpret', db.Text())
 
 
 class TestRecord(db.Model):
