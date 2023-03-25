@@ -159,6 +159,7 @@ class StoolTestRecord(db.Model):
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
     note = db.Column('note', db.Text())
+    collection_datetime = db.Column('collection_datetime', db.DateTime(), info={'label': 'เก็บตัวอย่างเมื่อ'})
     color = db.Column('color', db.String(), info={"label": 'Color',
                                                   'choices': [(c, c) for c in ['เหลือง', 'น้ำตาล', 'เขียว', 'ดำ', 'แดง', 'เทา']]})
     form = db.Column('form', db.String(), info={'label': 'Form',
