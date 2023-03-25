@@ -4,16 +4,23 @@ import arrow
 from dotenv import load_dotenv
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_admin import Admin
-from flask_login import LoginManager
+from flask_admin import Admin, AdminIndexView
+from flask_login import LoginManager, current_user
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 
 load_dotenv()
 
+
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated \
+            and current_user.has_admin_role and current_user.is_approved
+
+
 db = SQLAlchemy()
 migrate = Migrate(db=db)
-admin = Admin()
+admin = Admin(index_view=MyAdminIndexView())
 login_manager = LoginManager()
 
 

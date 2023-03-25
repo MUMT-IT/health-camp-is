@@ -5,7 +5,7 @@
   <div class="container">
     {% include "messages.html" %}
     <div class="columns">
-      <div class="column is-two-thirds is-offset-2">
+      <div class="column is-two-thirds is-offset-2 has-text-centered">
         <nav class="panel is-primary">
           <p class="panel-heading">
             Menu
@@ -60,6 +60,12 @@
           </a>
         </nav>
         <div class="buttons is-centered">
+          <a class="button is-warning" href="{{url_for('admin.index')}}">
+            <span class="icon">
+             <i class="fa-solid fa-gear"></i>
+            </span>
+            <span>Admin</span>
+          </a>
           <a class="button is-danger" href="{{url_for('auth.logout')}}">
             Log Out
           </a>
