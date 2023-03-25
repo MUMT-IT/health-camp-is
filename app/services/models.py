@@ -1,4 +1,5 @@
 import datetime
+import decimal
 
 from sqlalchemy import func
 from dateutil import relativedelta
@@ -59,6 +60,26 @@ class ClientPhysicalProfile(db.Model):
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
     waist = db.Column('waist', db.Numeric(), info={'label': 'รอบเอว'})
+
+    @property
+    def bmi(self):
+        if self.weight and self.height:
+            bmi = (self.weight) / (self.height * decimal.Decimal(.01)) ** 2
+            return round(bmi, 2)
+        else:
+            return None
+
+    def get_bmi_interpretation(self):
+        if self.bmi:
+            if self.bmi < 18.5:
+                return 'ผอมกว่าเกณฑ์ปกติ'
+            elif self.bmi < 25:
+                return 'ปกติ'
+            elif self.bmi < 30:
+                return 'น้ำหนักเกินเกณฑ์ปกติ'
+            else:
+                return 'มีภาวะอ้วน'
+        return '-'
 
 
 class Test(db.Model):
@@ -122,11 +143,17 @@ class UnderlyingDisease(db.Model):
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     name = db.Column('name', db.String(), nullable=False)
 
+    def __str__(self):
+        return self.name
+
 
 class FamilyDiseases(db.Model):
     __tablename__ = 'family_diseases'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     name = db.Column('name', db.String(), nullable=False, info={'label': 'รายการ'})
+
+    def __str__(self):
+        return self.name
 
 
 class HealthRecord(db.Model):

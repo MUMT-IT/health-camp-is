@@ -29,136 +29,137 @@
           </tr>
           <tr>
             <td>Gender</td>
-            <td>{{client.gender}}
+            <td>{{client.gender}}</td>
           </tr>
           <tr>
             <td>Last update</td>
-            <td>{{client.updated_at|localdatetime}}
+            <td>{{client.updated_at|localdatetime}}</td>
           </tr>
-        </table>
-        <div class="buttons is-centered">
-          <a href="{{url_for('services.edit_client', client_id=client.id)}}" class="button is-primary">Edit</a>
-          <a href="" class="button is-success">Report</a>
-        </div>
-        <div class="tabs is-boxed">
-          <ul>
-            <li class="{% if tab == 'stool' %}is-active{% endif %}">
-              <a href="{{url_for('services.client_profile', client_id=client.id)}}">
-                <span class="icon is-small">
-                  <i class="fa-solid fa-toilet"></i>
-                </span>
-                <span>Stool Exam</span>
-              </a>
-            </li>
-            <li class="{% if tab == 'others' %}is-active {% endif %}">
-              <a href="{{url_for('services.client_profile', client_id=client.id, tab='others')}}">
-                <span class="icon is-small">
-                  <i class="fa-solid fa-vial"></i>
-                </span>
-                <span>Others</span>
-              </a>
-            </li>
-            <li class="{% if tab == 'physical' %}is-active {% endif %}">
-              <a href="{{url_for('services.client_profile', client_id=client.id, tab='physical')}}">
-                <span class="icon is-small">
-                  <i class="fa-solid fa-child"></i>
-                </span>
-                <span>Physical Exam</span>
-              </a>
-            </li>
-            <li class="{% if tab == 'health' %}is-active {% endif %}">
-              <a href="{{url_for('services.client_profile', client_id=client.id, tab='health')}}">
-                <span class="icon is-small">
-                  <i class="fa-solid fa-heart"></i>
-                </span>
-                <span>Health Profile</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <!--TODO: added collection datetime -->
-        {% if tab == 'stool' %}
-        <table class="table is-striped">
-          <thead>
-          <th>Lab Number</th>
-          <th>Results</th>
-          <th>Note</th>
-          <th>Registered At</th>
-          <th>Reported At</th>
-          <th></th>
-          </thead>
-          <tbody>
-          {% for stool_record in client.stool_exam_records %}
           <tr>
-            <td>{{ stool_record.lab_number }}</td>
-            <td>{{ stool_record.results|itemize|safe }}</td>
-            <td>{{ stool_record.note }}</td>
-            <td>{{ stool_record.updated_at|localdatetime }}</td>
-            <td>{{ stool_record.reported_at|localdatetime or 'Unfinished' }}</td>
+            <td>Physical Examination</td>
             <td>
-              <a class="button" href="{{url_for('services.edit_stool_exam_record', record_id=stool_record.id, next=request.url)}}">
-                edit
-              </a>
+              <table class="table is-striped is-bordered">
+                {% for rec in client.physical_profiles %}
+                <tr>
+                  <td>ID</td>
+                  <td>{{rec.id}}</td>
+                </tr>
+                <tr>
+                  <td>Updated At</td>
+                  <td>{{rec.updated_at|localdatetime}}</td>
+                </tr>
+                <tr>
+                  <td>น้ำหนัก</td>
+                  <td>{{rec.weight}} kg</td>
+                </tr>
+                <tr>
+                  <td>ส่วนสูง</td>
+                  <td>{{rec.height}} cm</td>
+                </tr>
+                <tr>
+                  <td>BMI</td>
+                  <td>{{rec.bmi}} ({{rec.get_bmi_interpretation()}})</td>
+                </tr>
+                <tr>
+                  <td>ความดันโลหิต</td>
+                  <td>{{rec.systolic}}/{{rec.diastolic}} mmHg</td>
+                </tr>
+                {% endfor %}
+              </table>
             </td>
           </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-        {{request.url}}
-        <form method="get" action="{{url_for('services.stool_exam_main')}}" class="box">
-          <input type="hidden" name="client_id" value="{{client.id}}">
-          <input type="hidden" name="next" value="{{request.url}}">
-          <div class="field">
-            <label class="label">Lab Number</label>
-            <div class="control">
-              <input name="lab_number" class="input" />
-            </div>
-          </div>
-          <div class="field">
-            <div class="control">
-              <input type="submit" class="button is-warning" value="Register">
-            </div>
-          </div>
-        </form>
-        {% elif tab=='others' %}
-        <table class="table is-striped">
-          <thead>
-          <th>Test</th>
-          <th>Record ID</th>
-          <th>Result</th>
-          <th></th>
-          <th>Note</th>
-          <th>Reported At</th>
-          </thead>
-          <tbody>
-          {% for test_record in client.test_records %}
           <tr>
-            <td>{{test_record.test.name}}</td>
-            <td>{{test_record.id}}</td>
-            <td>{{test_record.value}} {{test_record.test.unit}}</td>
-            <td>{{test_record.interpret}}</td>
-            <td>{{test_record.note}}</td>
-            <td>{{test_record.updated_at|localdatetime}}</td>
+            <td>ประวัติสุขภาพ</td>
+            <td>
+              <table class="table is-striped is-bordered">
+                {% for rec in client.health_records %}
+                <tr>
+                  <td>ID</td>
+                  <td>{{rec.id}}</td>
+                </tr>
+                <tr>
+                  <td>Updated At</td>
+                  <td>{{rec.updated_at|localdatetime}}</td>
+                </tr>
+                <tr>
+                  <td>การอดอาหาร</td>
+                  <td>{{rec.fasting_datetime|localdatetime}}</td>
+                </tr>
+                <tr>
+                  <td>โรคประจำตัว</td>
+                  <td>{{rec.underlying_diseases|join(', ')}}</td>
+                </tr>
+                <tr>
+                  <td>โรคประจำตัวอื่น ๆ</td>
+                  <td>{{rec.other_underlying_disease}}</td>
+                </tr>
+                <tr>
+                  <td>ประวัติครอบครัว</td>
+                  <td>{{rec.family_diseases|join(', ')}}</td>
+                </tr>
+                <tr>
+                  <td>ประวัติครอบครัวอื่น ๆ</td>
+                  <td>{{rec.other_family_disease}}</td>
+                </tr>
+                {% endfor %}
+              </table>
+            </td>
           </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-        {% elif tab == 'physical' %}
-        <table class="table is-striped">
-          <thead>
-          <th>Record ID</th>
-          <th>Reported At</th>
-          </thead>
-          <tbody>
-          {% for physical_record in client.physical_profiles %}
           <tr>
-            <td>{{physical_record.id}}</td>
-            <td>{{physical_record.updated_at|localdatetime}}</td>
+            <td>Stool Examination</td>
+            <td>
+              <table class="table is-striped is-bordered">
+                <thead>
+                <th>ID</th>
+                <th>Lab Number</th>
+                <th>Results</th>
+                <th>Note</th>
+                <th>Registered At</th>
+                <th>Reported At</th>
+                </thead>
+                <tbody>
+                {% for stool_record in client.stool_exam_records %}
+                <tr>
+                  <td>{{ stool_record.id }}</td>
+                  <td>{{ stool_record.lab_number }}</td>
+                  <td>{{ stool_record.results|itemize|safe }}</td>
+                  <td>{{ stool_record.note or '' }}</td>
+                  <td>{{ stool_record.updated_at|localdatetime }}</td>
+                  <td>{{ stool_record.reported_at|localdatetime or 'Unfinished' }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </td>
           </tr>
-          {% endfor %}
-          </tbody>
+          <tr>
+            <td>Test Results</td>
+            <td>
+              <table class="table is-striped is-bordered">
+                <thead>
+                <th>Test</th>
+                <th>Record ID</th>
+                <th>Result</th>
+                <th></th>
+                <th>Note</th>
+                <th>Reported At</th>
+                </thead>
+                <tbody>
+                {% for test_record in client.test_records %}
+                <tr>
+                  <td>{{test_record.test.name}}</td>
+                  <td>{{test_record.id}}</td>
+                  <td>{{test_record.value}} {{test_record.test.unit}}</td>
+                  <td>{{test_record.interpret}}</td>
+                  <td>{{test_record.note}}</td>
+                  <td>{{test_record.updated_at|localdatetime}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </td>
+          </tr>
         </table>
-        {% elif tab == 'health' %}
         <table class="table is-striped">
           <thead>
           <th>Record ID</th>
@@ -173,7 +174,6 @@
           {% endfor %}
           </tbody>
         </table>
-        {% endif %}
         <div class="buttons is-centered">
           <a href="{{url_for('services.index')}}" class="button is-light">Home</a>
         </div>

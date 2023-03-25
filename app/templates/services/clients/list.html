@@ -28,7 +28,12 @@
               <td>{{c.dob}}</td>
               <td>{{c.pid}}</td>
               <td>
-                <a class="button" href="{{url_for('services.client_profile', client_id=c.id)}}">profile</a>
+                <a class="button is-light is-small" href="{{url_for('services.client_profile', client_id=c.id)}}">
+                  <span class="icon">
+                    <i class="fa-solid fa-user"></i>
+                  </span>
+                  <span>profile</span>
+                </a>
               </td>
             </tr>
             {% endfor %}
