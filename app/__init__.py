@@ -40,9 +40,10 @@ def create_app():
     app.register_blueprint(service_bp)
     from app.services.models import (Client, Test, TestRecord, StoolTestRecord,
                                      StoolTestReportItem, Organism, Stage, User,
-                                     UnderlyingDisease, FamilyDiseases)
+                                     UnderlyingDisease, FamilyDiseases, ClientAddress)
 
     admin.add_view(ModelView(Client, db.session, category='Client'))
+    admin.add_view(ModelView(ClientAddress, db.session, category='Client'))
     admin.add_view(ModelView(Test, db.session, category='Test'))
     admin.add_view(ModelView(TestRecord, db.session, category='Test'))
     admin.add_view(ModelView(StoolTestRecord, db.session, category='Stool'))

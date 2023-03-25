@@ -11,6 +11,15 @@ from flask_login import UserMixin
 from app import db
 
 
+class ClientAddress(db.Model):
+    __tablename__ = 'client_addresses'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column('name', db.String(), info={'label': 'ที่อยู่'})
+
+    def __str__(self):
+        return self.name
+
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
@@ -69,6 +78,8 @@ class Client(db.Model):
                                                     'form_field_class': RadioField})
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
+    address_id = db.Column('address_id', db.ForeignKey('client_addresses.id'))
+    address = db.relationship(ClientAddress, backref=db.backref('clients'))
 
     @property
     def age(self):

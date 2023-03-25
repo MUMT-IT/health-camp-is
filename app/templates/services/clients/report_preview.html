@@ -3,6 +3,14 @@
 {% block content %}
 <section class="section">
   <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li><a href="{{url_for('services.index')}}">Home</a></li>
+        <li><a href="{{url_for('services.list_clients')}}">Clients</a></li>
+        <li><a href="{{url_for('services.client_profile', client_id=client.id)}}">Profile</a></li>
+        <li class="is-active"><a href="#" aria-current="page">Report</a></li>
+      </ul>
+    </nav>
     <div class="columns">
       <div class="column">
         {% include "messages.html" %}

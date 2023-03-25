@@ -17,6 +17,8 @@ class ModelForm(BaseModelForm):
 class ClientForm(ModelForm):
     class Meta:
         model = Client
+    address = QuerySelectField('ที่อยู่', query_factory=lambda: ClientAddress.query.all(),
+                               get_label='name')
 
 
 class ClientPhysicalProfileForm(ModelForm):

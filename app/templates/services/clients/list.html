@@ -18,6 +18,7 @@
           <th>Name</th>
           <th>Date of Birth</th>
           <th>PID</th>
+          <th>Address</th>
           <th></th>
           </thead>
           <tbody>
@@ -27,6 +28,7 @@
               <td>{{c.fullname}}</td>
               <td>{{c.dob}}</td>
               <td>{{c.pid}}</td>
+              <td>{{c.address}}</td>
               <td>
                 <a class="button is-light is-small" href="{{url_for('services.client_profile', client_id=c.id)}}">
                   <span class="icon">
