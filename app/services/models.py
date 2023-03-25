@@ -2,6 +2,8 @@ import datetime
 import decimal
 
 from sqlalchemy import func
+from werkzeug.security import generate_password_hash, check_password_hash
+from wtforms.validators import Email
 from dateutil import relativedelta
 from wtforms import widgets, RadioField
 from flask_login import UserMixin
@@ -10,14 +12,35 @@ from app import db
 
 
 class User(db.Model, UserMixin):
+    __tablename__ = 'users'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column('title', db.String())
-    firstname = db.Column('firstname', db.String(), nullable=False)
-    lastname = db.Column('lastname', db.String(), nullable=False)
+    email = db.Column('email', db.String(), info={'validators': Email(), 'label': 'Email'}, unique=True)
+    title = db.Column('title', db.String(), info={'label': 'Title'})
+    firstname = db.Column('firstname', db.String(), nullable=False, info={'label': 'First Name'})
+    lastname = db.Column('lastname', db.String(), nullable=False, info={'label': 'Last Name'})
     has_admin_role = db.Column('has_admin_role', db.Boolean(), default=False)
     registered_at = db.Column('registered_at', db.DateTime(), server_default=func.now())
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
+    is_approved = db.Column('is_approved', db.Boolean(), default=False)
+    _password_hash = db.Column('password_hash', db.Text())
+
+    @property
+    def is_active(self):
+        return self.is_approved
+
+    @property
+    def password(self):
+        return ValueError
+
+    def set_password(self, pwd):
+        self._password_hash = generate_password_hash(pwd)
+
+    def check_password(self, pwd):
+        if check_password_hash(self._password_hash, pwd):
+            return True
+        else:
+            False
 
 
 underlying_diseases_health_records = db.Table(

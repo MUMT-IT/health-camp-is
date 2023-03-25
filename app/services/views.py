@@ -2,6 +2,7 @@ from datetime import datetime
 
 import arrow
 from flask import render_template, redirect, url_for, flash, request, make_response
+from flask_login import login_required
 
 from app import db
 from app.services import service_bp as services
@@ -11,11 +12,13 @@ from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord,
 
 
 @services.route('/')
+@login_required
 def index():
     return render_template('services/index.html')
 
 
 @services.route('/clients/registration', methods=['GET', 'POST'])
+@login_required
 def register_client():
     pid = request.args.get('pid')
     client = Client.query.filter_by(pid=pid).first()
@@ -34,6 +37,7 @@ def register_client():
 
 
 @services.route('/clients/<int:client_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_client(client_id):
     client = Client.query.get(client_id)
     if client:
@@ -49,12 +53,14 @@ def edit_client(client_id):
 
 
 @services.route('/clients')
+@login_required
 def list_clients():
     clients = Client.query.all()
     return render_template('services/clients/list.html', clients=clients)
 
 
 @services.route('/clients/physical-exam')
+@login_required
 def physical_exam_profile_main():
     client_number = request.args.get('client_number')
     if client_number:
@@ -65,6 +71,7 @@ def physical_exam_profile_main():
 
 
 @services.route('/clients/<int:client_id>/physical-exam', methods=['GET', 'POST'])
+@login_required
 def add_physical_exam_profile(client_id):
     client = Client.query.get(client_id)
     if not client:
@@ -84,6 +91,7 @@ def add_physical_exam_profile(client_id):
 
 
 @services.route('/clients/physical-exam/<int:rec_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_physical_exam_profile(rec_id):
     rec = ClientPhysicalProfile.query.get(rec_id)
     form = ClientPhysicalProfileForm(obj=rec)
@@ -101,6 +109,7 @@ def edit_physical_exam_profile(rec_id):
 
 
 @services.route('/clients/physical-exam/<int:rec_id>/delete', methods=['GET', 'POST'])
+@login_required
 def delete_physical_exam_profile(rec_id):
     rec = ClientPhysicalProfile.query.get(rec_id)
     client = rec.client
@@ -114,6 +123,7 @@ def delete_physical_exam_profile(rec_id):
 
 
 @services.route('/clients/<int:client_id>/profile')
+@login_required
 def client_profile(client_id):
     tab = request.args.get('tab', 'stool')
     client = Client.query.get(client_id)
@@ -121,12 +131,14 @@ def client_profile(client_id):
 
 
 @services.route('/tests')
+@login_required
 def list_tests():
     tests = Test.query.all()
     return render_template('services/tests/list.html', tests=tests)
 
 
 @services.route('/tests/register', methods=['POST', 'GET'])
+@login_required
 def register_test():
     form = TestForm()
     if form.validate_on_submit():
@@ -140,6 +152,7 @@ def register_test():
 
 
 @services.route('/tests/<int:test_id>/edit', methods=['POST', 'GET'])
+@login_required
 def edit_test(test_id):
     test = Test.query.get(test_id)
     form = TestForm(obj=test)
@@ -153,6 +166,7 @@ def edit_test(test_id):
 
 
 @services.route('/tests/<int:test_id>/records')
+@login_required
 def test_record_main(test_id):
     client_number = request.args.get('client_number')
     client = Client.query.filter_by(client_number=client_number).first()
@@ -166,6 +180,7 @@ def test_record_main(test_id):
                 methods=['GET', 'POST'])
 @services.route('/clients/<int:client_id>/tests/<int:test_id>/records/add',
                 methods=['GET', 'POST'])
+@login_required
 def add_test_record(test_id, client_id, record_id=None):
     client = Client.query.get(client_id)
     test = Test.query.get(test_id)
@@ -196,6 +211,7 @@ def add_test_record(test_id, client_id, record_id=None):
 
 @services.route('/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/delete',
                 methods=['GET', 'POST'])
+@login_required
 def delete_test_record(test_id, client_id, record_id):
     client = Client.query.get(client_id)
     test = Test.query.get(test_id)
@@ -212,6 +228,7 @@ def delete_test_record(test_id, client_id, record_id):
 
 @services.route('/stool-exam')
 @services.route('/clients/<int:client_id>/stool-exam')
+@login_required
 def stool_exam_main(client_id=None):
     lab_number = request.args.get('lab_number')
     collection_datetime = request.args.get('collection_datetime')
@@ -242,6 +259,7 @@ def stool_exam_main(client_id=None):
 
 
 @services.route('/stool-exam/records/<int:record_id>', methods=['GET', 'POST'])
+@login_required
 def edit_stool_exam_record(record_id):
     record = StoolTestRecord.query.get(record_id)
     form = StoolTestForm(obj=record)
@@ -260,6 +278,7 @@ def edit_stool_exam_record(record_id):
 
 
 @services.route('/stool-exam/records/<int:record_id>/report', methods=['GET', 'POST'])
+@login_required
 def report_stool_exam_record(record_id):
     record = StoolTestRecord.query.get(record_id)
     if record:
@@ -274,6 +293,7 @@ def report_stool_exam_record(record_id):
 
 
 @services.route('/stool-exam/records/<int:record_id>/remove', methods=['GET', 'POST'])
+@login_required
 def remove_stool_exam_record(record_id):
     record = StoolTestRecord.query.get(record_id)
     if record:
@@ -288,6 +308,7 @@ def remove_stool_exam_record(record_id):
 
 
 @services.route('/add-report-item-entry', methods=['POST'])
+@login_required
 def add_stool_report_item_entry():
     form = StoolTestForm()
     form.items.append_entry()
@@ -312,6 +333,7 @@ def add_stool_report_item_entry():
 
 
 @services.route('/remove-report-item-entry', methods=['POST'])
+@login_required
 def remove_stool_report_item_entry():
     form = StoolTestForm()
     if len(form.items.entries) > 1:
@@ -345,6 +367,7 @@ def remove_stool_report_item_entry():
 
 
 @services.route('/health_records')
+@login_required
 def health_record_main():
     client_number = request.args.get('client_number')
     if client_number:
@@ -356,6 +379,7 @@ def health_record_main():
 
 @services.route('/clients/<int:client_id>/health-record', methods=['GET', 'POST'])
 @services.route('/clients/<int:client_id>/health-record/<int:record_id>', methods=['GET', 'POST'])
+@login_required
 def add_health_record(client_id, record_id=None):
     if record_id:
         record = HealthRecord.query.get(record_id)
@@ -375,6 +399,7 @@ def add_health_record(client_id, record_id=None):
 
 
 @services.route('/clients/<int:client_id>/health-record/<int:record_id>/delete', methods=['GET', 'POST'])
+@login_required
 def delete_health_record(client_id, record_id):
     if record_id:
         record = HealthRecord.query.get(record_id)
@@ -387,6 +412,7 @@ def delete_health_record(client_id, record_id):
 
 
 @services.route('/tests/<int:test_id>/delete')
+@login_required
 def delete_test(test_id):
     test = Test.query.get(test_id)
     if test:
@@ -399,6 +425,7 @@ def delete_test(test_id):
 
 
 @services.route('/clients/<int:client_id>/report-preview')
+@login_required
 def preview_report(client_id):
     client = Client.query.get(client_id)
     return render_template('services/clients/report_preview.html', client=client)

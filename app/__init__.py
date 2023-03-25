@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
+from flask_login import LoginManager
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 
@@ -13,6 +14,7 @@ load_dotenv()
 db = SQLAlchemy()
 migrate = Migrate(db=db)
 admin = Admin()
+login_manager = LoginManager()
 
 
 def create_app():
@@ -29,11 +31,15 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app)
     admin.init_app(app)
+    login_manager.init_app(app)
+
+    from app.auth import auth_bp
+    app.register_blueprint(auth_bp)
 
     from app.services import service_bp
     app.register_blueprint(service_bp)
     from app.services.models import (Client, Test, TestRecord, StoolTestRecord,
-                                     StoolTestReportItem, Organism, Stage,
+                                     StoolTestReportItem, Organism, Stage, User,
                                      UnderlyingDisease, FamilyDiseases)
 
     admin.add_view(ModelView(Client, db.session, category='Client'))
@@ -45,6 +51,7 @@ def create_app():
     admin.add_view(ModelView(Stage, db.session, category='Stool'))
     admin.add_view(ModelView(UnderlyingDisease, db.session, category='Diseases'))
     admin.add_view(ModelView(FamilyDiseases, db.session, category='Diseases'))
+    admin.add_view(ModelView(User, db.session, category='Users'))
 
     @app.route('/')
     def index():

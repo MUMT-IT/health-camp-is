@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    {% include "messages.html" %}
+    <div class="columns">
+      <div class="column is-one-third is-offset-2">
+        <h1 class="title has-text-centered">Login</h1>
+        <form method="post">
+            <div class="box">
+            {{ form.hidden_tag() }}
+            <div class="field">
+              <label class="label">{{form.email.label}}</label>
+              <div class="control">
+                {{ form.email(class="input") }}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{{form.password.label}}</label>
+              <div class="control">
+                {{ form.password(class="input") }}
+              </div>
+            </div>
+            <div class="field">
+              <label class="checkbox">
+                  {{form.remember_me()}}
+                {{form.remember_me.label}}
+              </label>
+            </div>
+            <div class="field is-grouped is-grouped-centered">
+              <div class="control">
+                <a class="button is-light" href="{{ url_for('index') }}">Cancel</a>
+              </div>
+              <div class="control">
+                <input class="button is-primary" type="submit" value="Submit">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="column is-one-third">
+        <h1 class="title has-text-centered">Register</h1>
+          <div class="box">
+            <form method="post" action="{{url_for('auth.register_user')}}">
+              <div class="box">
+                {{ register_form.hidden_tag() }}
+                <div class="field">
+                  <label class="label">{{register_form.title.label}}</label>
+                  <div class="control">
+                    {{ register_form.title(class="input") }}
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">{{register_form.firstname.label}}</label>
+                  <div class="control">
+                    {{ register_form.firstname(class="input") }}
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">{{register_form.lastname.label}}</label>
+                  <div class="control">
+                    {{ register_form.lastname(class="input") }}
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">{{register_form.email.label}}</label>
+                  <div class="control">
+                    {{ register_form.email(class="input") }}
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">{{register_form.new_password.label}}</label>
+                  <div class="control">
+                    {{ register_form.new_password(class="input") }}
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">{{register_form.confirm_password.label}}</label>
+                  <div class="control">
+                    {{ register_form.confirm_password(class="input") }}
+                  </div>
+                </div>
+                <div class="field is-grouped is-grouped-centered">
+                  <div class="control">
+                    <a class="button is-light" href="{{ url_for('services.index') }}">Cancel</a>
+                  </div>
+                  <div class="control">
+                    <input class="button is-primary" type="submit" value="Submit">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+  $('#dob').daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    locale: {
+      format: 'YYYY-MM-DD'
+    }
+  });
+</script>
+<script>
+  $('#collectionDatetime').daterangepicker({
+    singleDatePicker: true,
+    timePicker: true,
+    showDropdowns: true,
+    timePickerIncrement: 15,
+    timePicker24Hour: true,
+    locale: {
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }
+  });
+</script>
+{% endblock %}
