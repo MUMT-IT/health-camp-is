@@ -5,6 +5,13 @@
   <div class="container">
     <div class="columns">
       <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="{{url_for('services.index')}}">Home</a></li>
+            <li><a href="{{url_for('services.list_tests')}}" aria-current="page">Tests</a></li>
+            <li class="is-active"><a href="#" aria-current="page">Test Record</a></li>
+          </ul>
+        </nav>
         {% include "messages.html" %}
         <h1 class="title has-text-centered">New Record</h1>
         <h1 class="subtitle has-text-centered">การทดสอบ {{test.name}}</h1>

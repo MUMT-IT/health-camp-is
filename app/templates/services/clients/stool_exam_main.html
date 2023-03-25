@@ -6,6 +6,12 @@
     {% include "messages.html" %}
     <div class="columns">
       <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="{{url_for('services.index')}}">Home</a></li>
+            <li class="is-active"><a href="#" aria-current="page">Stool Examination Main</a></li>
+          </ul>
+        </nav>
         <h1 class="title has-text-centered">Stool Examination</h1>
         <form method="get">
           <div class="field">

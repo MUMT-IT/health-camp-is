@@ -3,6 +3,16 @@
 {% block content %}
 <section class="section">
     <div class="container">
+        <div class="columns">
+            <div class="column">
+                <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a href="{{url_for('services.index')}}">Home</a></li>
+                        <li class="is-active"><a href="#" aria-current="page">Clients</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
         {% include "messages.html" %}
         <div class="columns">
             <div class="column is-two-thirds is-offset-2">

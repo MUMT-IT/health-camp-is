@@ -6,6 +6,13 @@
     {% include "messages.html" %}
     <div class="columns">
       <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="{{url_for('services.index')}}">Home</a></li>
+            <li><a href="{{url_for('services.stool_exam_main')}}" aria-current="page">Stool Exam Main</a></li>
+            <li class="is-active"><a href="#" aria-current="page">Stool Examination Form</a></li>
+          </ul>
+        </nav>
         <h1 class="title has-text-centered">New/Edit Record</h1>
         <div class="box">
           <label class="label">Name</label>{{record.client.fullname}}
@@ -92,6 +99,14 @@
             <div class="buttons is-centered">
               <a class="button is-light" href="{{ next_url or url_for('services.stool_exam_main')}}">Cancel</a>
               {% if not record.reported_at %}
+              <a class="button is-danger" href="{{url_for('services.remove_stool_exam_record', record_id=record.id)}}">
+                <span class="icon">
+                  <i class="fa-solid fa-trash-can"></i>
+                </span>
+                <span>
+                  Delete
+                </span>
+              </a>
               <input class="button is-primary" type="submit" value="Save"/>
               <a class="button is-success" href="{{url_for('services.report_stool_exam_record', record_id=record.id)}}">
                 <span class="icon">

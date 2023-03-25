@@ -5,6 +5,13 @@
   <div class="container">
     <div class="columns">
       <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="{{url_for('services.index')}}">Home</a></li>
+            <li><a href="{{url_for('services.list_clients')}}">Clients</a></li>
+            <li class="is-active"><a href="#" aria-current="page">Profile</a></li>
+          </ul>
+        </nav>
         {% include "messages.html" %}
         <h1 class="title has-text-centered">Profile</h1>
         <table class="table is-fullwidth">
@@ -136,6 +143,7 @@
           <th></th>
           <th>Note</th>
           <th>Reported At</th>
+          <th></th>
           </thead>
           <tbody>
           {% for test_record in client.test_records %}
@@ -146,6 +154,15 @@
             <td>{{test_record.interpret}}</td>
             <td>{{test_record.note}}</td>
             <td>{{test_record.updated_at|localdatetime}}</td>
+            <td>
+              <a class="button is-light"
+                href="{{url_for('services.add_test_record', test_id=test_record.test_id, record_id=test_record.id, client_id=client.id, next=request.url)}}">
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>edit</span>
+              </a>
+            </td>
           </tr>
           {% endfor %}
           </tbody>
@@ -182,7 +199,12 @@
         </table>
         {% endif %}
         <div class="buttons is-centered">
-          <a href="{{url_for('services.index')}}" class="button is-light">Home</a>
+          <a href="{{url_for('services.index')}}" class="button is-light">
+            <span class="icon">
+              <i class="fa-solid fa-house"></i>
+            </span>
+            <span>Home</span>
+          </a>
         </div>
       </div>
     </div>

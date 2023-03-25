@@ -183,7 +183,10 @@ def add_test_record(test_id, client_id, record_id=None):
         db.session.add(rec)
         db.session.commit()
         flash('Test has been updated.', 'success')
-        return redirect(url_for('services.add_test_record', client_id=client_id, test_id=test_id))
+        if request.args.get('next'):
+            return redirect(request.args.get('next'))
+        else:
+            return redirect(url_for('services.add_test_record', client_id=client_id, test_id=test_id))
     return render_template('services/tests/record_form.html',
                            form=form,
                            test=test,
@@ -268,6 +271,20 @@ def report_stool_exam_record(record_id):
         flash('The record was not found.', 'danger')
     return redirect(request.args.get('next') or url_for('services.stool_exam_main',
                                                         client_id=record.client_id))
+
+
+@services.route('/stool-exam/records/<int:record_id>/remove', methods=['GET', 'POST'])
+def remove_stool_exam_record(record_id):
+    record = StoolTestRecord.query.get(record_id)
+    if record:
+        client = record.client
+        db.session.delete(record)
+        db.session.commit()
+        flash('The record have been removed.', 'success')
+    else:
+        flash('The record was not found.', 'danger')
+        return redirect(url_for('services.stool_exam_main'))
+    return redirect(url_for('services.stool_exam_main', client_id=client.id))
 
 
 @services.route('/add-report-item-entry', methods=['POST'])
