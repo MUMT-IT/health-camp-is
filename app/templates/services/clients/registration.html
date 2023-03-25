@@ -49,7 +49,7 @@
           <div class="field">
             <label class="label">{{form.dob.label}}</label>
             <div class="control">
-              {{ form.dob(class="input") }}
+              {{ form.dob(class="input", type="text") }}
             </div>
           </div>
           <div class="field">
@@ -95,4 +95,16 @@
     </div>
   </div>
 </section>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+  $('#dob').daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    locale: {
+      format: 'YYYY-MM-DD'
+    }
+  });
+</script>
 {% endblock %}

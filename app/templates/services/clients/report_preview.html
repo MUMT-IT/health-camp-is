@@ -1,10 +1,184 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        {% include "messages.html" %}
+        <h1 class="title has-text-centered">Client Report</h1>
+        <table class="table is-fullwidth">
+          <tr>
+            <td>Client Number</td><td>{{client.client_number}}</td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td>{{client.firstname}} {{client.lastname}}</td>
+          </tr>
+          <tr>
+            <td>PID</td>
+            <td>{{client.pid}}</td>
+          </tr>
+          <tr>
+            <td>Date of birth</td>
+            <td>{{client.dob}}
+          </tr>
+          <tr>
+            <td>Age</td>
+            <td>{{client.age}}</td>
+          </tr>
+          <tr>
+            <td>Gender</td>
+            <td>{{client.gender}}
+          </tr>
+          <tr>
+            <td>Last update</td>
+            <td>{{client.updated_at|localdatetime}}
+          </tr>
+        </table>
+        <div class="buttons is-centered">
+          <a href="{{url_for('services.edit_client', client_id=client.id)}}" class="button is-primary">Edit</a>
+          <a href="" class="button is-success">Report</a>
+        </div>
+        <div class="tabs is-boxed">
+          <ul>
+            <li class="{% if tab == 'stool' %}is-active{% endif %}">
+              <a href="{{url_for('services.client_profile', client_id=client.id)}}">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-toilet"></i>
+                </span>
+                <span>Stool Exam</span>
+              </a>
+            </li>
+            <li class="{% if tab == 'others' %}is-active {% endif %}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='others')}}">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-vial"></i>
+                </span>
+                <span>Others</span>
+              </a>
+            </li>
+            <li class="{% if tab == 'physical' %}is-active {% endif %}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='physical')}}">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-child"></i>
+                </span>
+                <span>Physical Exam</span>
+              </a>
+            </li>
+            <li class="{% if tab == 'health' %}is-active {% endif %}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='health')}}">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-heart"></i>
+                </span>
+                <span>Health Profile</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!--TODO: added collection datetime -->
+        {% if tab == 'stool' %}
+        <table class="table is-striped">
+          <thead>
+          <th>Lab Number</th>
+          <th>Results</th>
+          <th>Note</th>
+          <th>Registered At</th>
+          <th>Reported At</th>
+          <th></th>
+          </thead>
+          <tbody>
+          {% for stool_record in client.stool_exam_records %}
+          <tr>
+            <td>{{ stool_record.lab_number }}</td>
+            <td>{{ stool_record.results|itemize|safe }}</td>
+            <td>{{ stool_record.note }}</td>
+            <td>{{ stool_record.updated_at|localdatetime }}</td>
+            <td>{{ stool_record.reported_at|localdatetime or 'Unfinished' }}</td>
+            <td>
+              <a class="button" href="{{url_for('services.edit_stool_exam_record', record_id=stool_record.id, next=request.url)}}">
+                edit
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {{request.url}}
+        <form method="get" action="{{url_for('services.stool_exam_main')}}" class="box">
+          <input type="hidden" name="client_id" value="{{client.id}}">
+          <input type="hidden" name="next" value="{{request.url}}">
+          <div class="field">
+            <label class="label">Lab Number</label>
+            <div class="control">
+              <input name="lab_number" class="input" />
+            </div>
+          </div>
+          <div class="field">
+            <div class="control">
+              <input type="submit" class="button is-warning" value="Register">
+            </div>
+          </div>
+        </form>
+        {% elif tab=='others' %}
+        <table class="table is-striped">
+          <thead>
+          <th>Test</th>
+          <th>Record ID</th>
+          <th>Result</th>
+          <th></th>
+          <th>Note</th>
+          <th>Reported At</th>
+          </thead>
+          <tbody>
+          {% for test_record in client.test_records %}
+          <tr>
+            <td>{{test_record.test.name}}</td>
+            <td>{{test_record.id}}</td>
+            <td>{{test_record.value}} {{test_record.test.unit}}</td>
+            <td>{{test_record.interpret}}</td>
+            <td>{{test_record.note}}</td>
+            <td>{{test_record.updated_at|localdatetime}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% elif tab == 'physical' %}
+        <table class="table is-striped">
+          <thead>
+          <th>Record ID</th>
+          <th>Reported At</th>
+          </thead>
+          <tbody>
+          {% for physical_record in client.physical_profiles %}
+          <tr>
+            <td>{{physical_record.id}}</td>
+            <td>{{physical_record.updated_at|localdatetime}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% elif tab == 'health' %}
+        <table class="table is-striped">
+          <thead>
+          <th>Record ID</th>
+          <th>Reported At</th>
+          </thead>
+          <tbody>
+          {% for health_record in client.health_records %}
+          <tr>
+            <td>{{health_record.id}}</td>
+            <td>{{health_record.updated_at|localdatetime}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        <div class="buttons is-centered">
+          <a href="{{url_for('services.index')}}" class="button is-light">Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

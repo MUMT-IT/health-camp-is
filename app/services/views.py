@@ -373,3 +373,9 @@ def delete_test(test_id):
     else:
         flash('The test was not found.', 'danger')
     return redirect(url_for('services.list_tests'))
+
+
+@services.route('/clients/<int:client_id>/report-preview')
+def preview_report(client_id):
+    client = Client.query.get(client_id)
+    return render_template('services/clients/report_preview.html', client=client)
