@@ -30,6 +30,9 @@ def register_user():
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        flash('You have already log in.', 'warning')
+        return redirect(url_for('services.index'))
     form = LoginForm()
     register_form = UserForm()
     if form.validate_on_submit():
@@ -37,7 +40,7 @@ def login():
         password = form.password.data
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
-            login_user(user)
+            login_user(user, remember=form.remember_me.data)
             if user.is_authenticated:
                 flash('Logged in successfully', 'success')
                 return redirect(url_for('services.index'))

@@ -33,6 +33,9 @@ def register_client():
         db.session.commit()
         flash('New client has been added.', 'success')
         return redirect(url_for('services.edit_client', client_id=client.id))
+    else:
+        for field in form.errors:
+            flash(f'{field}: {form.errors[field]}', 'danger')
     return render_template('services/clients/registration.html', form=form)
 
 

@@ -68,11 +68,11 @@ family_diseases_health_records = db.Table(
 class Client(db.Model):
     __tablename__ = 'clients'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
-    firstname = db.Column('firstname', db.String(), nullable=False)
-    lastname = db.Column('lastname', db.String(), nullable=False)
-    pid = db.Column('pid', db.String(13), unique=True)
-    dob = db.Column('dob', db.Date())
-    client_number = db.Column('client_number', db.String(), unique=True)
+    firstname = db.Column('firstname', db.String(), nullable=False, info={'label': 'ชื่อ'})
+    lastname = db.Column('lastname', db.String(), nullable=False, info={'label': 'นามสกุล'})
+    pid = db.Column('pid', db.String(13), unique=True, info={'label': 'หมายเลขบัตรประชาชน'})
+    dob = db.Column('dob', db.Date(), info={'label': 'ชื่อ'})
+    client_number = db.Column('client_number', db.String(), unique=True, info={'label': 'รหัสผู้รับบริการ'})
     gender = db.Column('gender', db.String(), info={'label': 'เพศ',
                                                     'choices': [(c, c) for c in ['ชาย', 'หญิง']],
                                                     'form_field_class': RadioField})

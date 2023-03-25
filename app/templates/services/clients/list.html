@@ -12,6 +12,14 @@
           </ul>
         </nav>
         <h1 class="title has-text-centered">All Clients</h1>
+        <div class="buttons is-centered">
+          <a href="{{url_for('services.register_client')}}" class="button is-link">
+            <span class="icon">
+              <i class="fa-solid fa-user-plus"></i>
+            </span>
+            <span>Add Client</span>
+          </a>
+        </div>
         <table id="clientTable" class="table is-striped is-fullwidth">
           <thead>
           <th>Client Number</th>
