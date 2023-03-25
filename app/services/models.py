@@ -4,8 +4,20 @@ import decimal
 from sqlalchemy import func
 from dateutil import relativedelta
 from wtforms import widgets, RadioField
+from flask_login import UserMixin
 
 from app import db
+
+
+class User(db.Model, UserMixin):
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column('title', db.String())
+    firstname = db.Column('firstname', db.String(), nullable=False)
+    lastname = db.Column('lastname', db.String(), nullable=False)
+    has_admin_role = db.Column('has_admin_role', db.Boolean(), default=False)
+    registered_at = db.Column('registered_at', db.DateTime(), server_default=func.now())
+    updated_at = db.Column('updated_at', db.DateTime(),
+                           server_default=func.now(), onupdate=func.now())
 
 
 underlying_diseases_health_records = db.Table(
