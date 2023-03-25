@@ -84,6 +84,7 @@
           <th>Results</th>
           <th>Note</th>
           <th>Registered At</th>
+          <th>Collected At</th>
           <th>Reported At</th>
           <th></th>
           </thead>
@@ -92,8 +93,9 @@
             <tr>
               <td>{{ stool_record.lab_number }}</td>
               <td>{{ stool_record.results|itemize|safe }}</td>
-              <td>{{ stool_record.note }}</td>
+              <td>{{ stool_record.note or '' }}</td>
               <td>{{ stool_record.updated_at|localdatetime }}</td>
+              <td>{{ stool_record.collection_datetime|localdatetime }}</td>
               <td>{{ stool_record.reported_at|localdatetime or 'Unfinished' }}</td>
               <td>
                 <a class="button" href="{{url_for('services.edit_stool_exam_record', record_id=stool_record.id, next=request.url)}}">
@@ -104,7 +106,6 @@
             {% endfor %}
           </tbody>
         </table>
-        {{request.url}}
         <form method="get" action="{{url_for('services.stool_exam_main')}}" class="box">
           <input type="hidden" name="client_id" value="{{client.id}}">
           <input type="hidden" name="next" value="{{request.url}}">
@@ -112,6 +113,12 @@
             <label class="label">Lab Number</label>
             <div class="control">
               <input name="lab_number" class="input" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Collected At</label>
+            <div class="control">
+              <input type="text" class="input" id="collectionDatetime" name="collection_datetime">
             </div>
           </div>
           <div class="field">
@@ -181,4 +188,19 @@
     </div>
   </div>
 </section>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+  $('#collectionDatetime').daterangepicker({
+    singleDatePicker: true,
+    timePicker: true,
+    showDropdowns: true,
+    timePickerIncrement: 15,
+    timePicker24Hour: true,
+    locale: {
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }
+  });
+</script>
 {% endblock %}

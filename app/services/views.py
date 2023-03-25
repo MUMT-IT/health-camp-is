@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import arrow
 from flask import render_template, redirect, url_for, flash, request, make_response
 
@@ -209,6 +211,10 @@ def delete_test_record(test_id, client_id, record_id):
 @services.route('/clients/<int:client_id>/stool-exam')
 def stool_exam_main(client_id=None):
     lab_number = request.args.get('lab_number')
+    collection_datetime = request.args.get('collection_datetime')
+    if collection_datetime:
+        collection_datetime = datetime.strptime(collection_datetime, '%Y-%m-%d %H:%M:%S')
+
     next_url = request.args.get('next')
     if not client_id:
         client_id = request.args.get('client_id')
@@ -216,7 +222,7 @@ def stool_exam_main(client_id=None):
         record = StoolTestRecord.query.filter_by(lab_number=lab_number).first()
         if not record:
             if client_id:
-                record = StoolTestRecord(lab_number=lab_number)
+                record = StoolTestRecord(lab_number=lab_number, collection_datetime=collection_datetime)
                 record.client_id = client_id
                 db.session.add(record)
                 db.session.commit()

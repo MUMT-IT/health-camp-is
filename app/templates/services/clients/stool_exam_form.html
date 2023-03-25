@@ -21,6 +21,12 @@
               </div>
             </div>
             <div class="field">
+              <label class="label">{{form.collection_datetime.label}}</label>
+              <div class="control">
+                {{form.collection_datetime(class="input")}}
+              </div>
+            </div>
+            <div class="field">
               <label class="label">{{form.color.label}}</label>
               <div class="select">
                 {{form.color()}}
@@ -103,4 +109,23 @@
     </div>
   </div>
 </section>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+  $('#collection_datetime').daterangepicker({
+    singleDatePicker: true,
+    timePicker: true,
+    showDropdowns: true,
+    timePickerIncrement: 15,
+    timePicker24Hour: true,
+    autoUpdateInput: false,
+    {% if record.collection_datetime %}
+    startDate: "{{record.collection_datetime.isoformat()}}",
+    {% endif %}
+    locale: {
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }
+  });
+</script>
 {% endblock %}
