@@ -1,6 +1,8 @@
+from collections import defaultdict
 from datetime import datetime
 
 import arrow
+import gviz_api
 from flask import render_template, redirect, url_for, flash, request, make_response
 from flask_login import login_required, current_user
 
@@ -468,3 +470,38 @@ def delete_test(test_id):
 def preview_report(client_id):
     client = Client.query.get(client_id)
     return render_template('services/clients/report_preview.html', client=client)
+
+
+@services.route('/api/stool/statistics')
+def get_stool_exam_statistics():
+    desc = [('name', 'string'), ('cases', 'number')]
+    data_dict = defaultdict(int)
+    for rec in StoolTestReportItem.query.all():
+        data_dict[rec.organism.name] += 1
+
+    data = [[name, data_dict[name]] for name in data_dict]
+    print(data)
+    data_table = gviz_api.DataTable(desc)
+    data_table.LoadData(data)
+    json = data_table.ToJSon()
+    return json
+
+
+@services.route('/api/stool/statistics/address')
+def get_stool_exam_statistics_address():
+    desc = [('name', 'string'), ('cases', 'number')]
+    data_dict = defaultdict(int)
+    for rec in StoolTestRecord.query.all():
+        if not rec.client:
+            continue
+        if rec.client.address:
+            data_dict[rec.client.address.name] += 1
+        else:
+            data_dict['N/A'] += 1
+
+    data = [[name, data_dict[name]] for name in data_dict]
+    print(data)
+    data_table = gviz_api.DataTable(desc)
+    data_table.LoadData(data)
+    json = data_table.ToJSon()
+    return json
