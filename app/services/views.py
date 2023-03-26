@@ -505,3 +505,21 @@ def get_stool_exam_statistics_address():
     data_table.LoadData(data)
     json = data_table.ToJSon()
     return json
+
+
+@services.route('/api/stool/statistics/processed')
+def get_stool_exam_statistics_processed():
+    desc = [('name', 'string'), ('numbers', 'number')]
+    data_dict = defaultdict(int)
+    for rec in StoolTestRecord.query.all():
+        if rec.reported_at:
+            data_dict['reported'] += 1
+        else:
+            data_dict['waiting'] += 1
+
+    data = [[name, data_dict[name]] for name in data_dict]
+    print(data)
+    data_table = gviz_api.DataTable(desc)
+    data_table.LoadData(data)
+    json = data_table.ToJSon()
+    return json
