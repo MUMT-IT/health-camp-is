@@ -29,7 +29,7 @@ def register_client():
     if form.validate_on_submit():
         client = Client()
         form.populate_obj(client)
-        client.updated_by = current_user.id
+        client.updated_by = current_user
         client.updated_at = arrow.now('Asia/Bangkok').datetime
         db.session.add(client)
         db.session.commit()
@@ -52,7 +52,7 @@ def edit_client(client_id):
     if form.validate_on_submit():
         form.populate_obj(client)
         client.updated_at = arrow.now('Asia/Bangkok').datetime
-        client.updated_by = current_user.id
+        client.updated_by = current_user
         db.session.add(client)
         db.session.commit()
         flash('Client data have been update.', 'success')
