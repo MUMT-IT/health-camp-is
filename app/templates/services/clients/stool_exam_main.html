@@ -31,18 +31,20 @@
         <table id="recordTable" class="table is-fullwidth">
           <thead>
           <th>Lab Number</th>
-          <th>Recieved At</th>
+          <th>Recieved/Updated At</th>
           <th>Reported At</th>
-          <th>Reported By</th>
           <th></th>
           </thead>
           <tbody>
           {% for record in records %}
           <tr>
             <td>{{record.lab_number}}</td>
-            <td>{{record.updated_at|localdatetime}}</td>
-            <td>{{record.reported_at|localdatetime}}</td>
-            <td></td>
+            <td>{{record.updated_at|localdatetime}} by {{record.updated_by.firstname}}</td>
+            <td>
+              {% if record.reported_at %}
+              {{record.reported_at|localdatetime}} by {{record.reported_by.firstname}}
+              {% endif %}
+            </td>
             <td>
               <a href="{{url_for('services.edit_stool_exam_record', record_id=record.id)}}"
               class="button is-light is-primary is-outlined is-small">
