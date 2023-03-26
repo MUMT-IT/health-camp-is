@@ -12,8 +12,14 @@
     <div class="columns">
       <div class="column {% if not client %}is-two-thirds is-offset-2{% endif %}">
         <form method="post">
-            <div class="box">
+          <div class="box">
             {{ form.hidden_tag() }}
+            <div class="field">
+              <label class="label">{{form.title.label}}</label>
+              <div class="control">
+                {{ form.title(class="input") }}
+              </div>
+            </div>
             <div class="field">
               <label class="label">{{form.firstname.label}}</label>
               <div class="control">
@@ -24,6 +30,24 @@
               <label class="label">{{form.lastname.label}}</label>
               <div class="control">
                 {{ form.lastname(class="input") }}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{{form.email.label}}</label>
+              <div class="control">
+                {{ form.email(class="input") }}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{{form.new_password.label}}</label>
+              <div class="control">
+                {{ form.new_password(class="input") }}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{{form.confirm_password.label}}</label>
+              <div class="control">
+                {{ form.confirm_password(class="input") }}
               </div>
             </div>
             <div class="field is-grouped is-grouped-centered">

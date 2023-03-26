@@ -25,6 +25,9 @@ def register_user():
         db.session.commit()
         flash('The user has been registered.', 'success')
         return redirect(url_for('services.index'))
+    else:
+        for field in form.errors:
+            flash(f'{field}: {form.errors[field]}', 'danger')
     return render_template('auth/registration.html', form=form)
 
 
