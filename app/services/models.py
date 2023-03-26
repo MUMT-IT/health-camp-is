@@ -81,7 +81,8 @@ class Client(db.Model):
                            server_default=func.now(), onupdate=func.now())
     address_id = db.Column('address_id', db.ForeignKey('client_addresses.id'))
     address = db.relationship(ClientAddress, backref=db.backref('clients'))
-    updated_by = db.Column('updater_id', db.ForeignKey('users.id'))
+    updated_id = db.Column('updater_id', db.ForeignKey('users.id'))
+    updated_by = db.relationship(User)
 
     @property
     def age(self):
@@ -107,6 +108,8 @@ class ClientPhysicalProfile(db.Model):
     diastolic = db.Column('diastolic', db.Integer(), info={'label': 'Diastolic'})
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
+    updater_id = db.Column('updater_id', db.ForeignKey('users.id'))
+    updated_by = db.relationship(User)
     waist = db.Column('waist', db.Numeric(), info={'label': 'รอบเอว'})
 
     @property
@@ -156,6 +159,8 @@ class TestRecord(db.Model):
     value = db.Column('value', db.String())
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
+    updater_id = db.Column('updater_id', db.ForeignKey('users.id'))
+    updated_by = db.relationship(User)
     note = db.Column('note', db.Text())
 
     @property
@@ -222,6 +227,8 @@ class HealthRecord(db.Model):
     updated_at = db.Column('updated_at', db.DateTime(),
                            server_default=func.now(), onupdate=func.now())
     suggestion = db.Column('suggestion', db.Text(), info={'label': 'คำแนะนำ'})
+    updater_id = db.Column('updater_id', db.ForeignKey('users.id'))
+    updated_by = db.relationship(User)
 
 
 class StoolTestRecord(db.Model):
@@ -242,10 +249,11 @@ class StoolTestRecord(db.Model):
     occult_blood = db.Column('occult_blood',
                              db.String(), info={'label': 'Occult blood',
                                                 'choices': [(c,c) for c in ['ไม่ได้ทดสอบ', 'บวก', 'ลบ']]})
-    # TODO: add others
     reported_at = db.Column('reported_at', db.DateTime())
-    reported_by = db.Column('reporter_id', db.ForeignKey('users.id'))
-    updated_by = db.Column('updater_id', db.ForeignKey('users.id'))
+    reporter_id = db.Column('reporter_id', db.ForeignKey('users.id'))
+    updater_id = db.Column('updater_id', db.ForeignKey('users.id'))
+    reported_by = db.relationship(User, foreign_keys=[reporter_id])
+    updated_by = db.relationship(User, foreign_keys=[updater_id])
 
     @property
     def results(self):

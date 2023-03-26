@@ -30,6 +30,7 @@ def register_client():
         client = Client()
         form.populate_obj(client)
         client.updated_by = current_user.id
+        client.updated_at = arrow.now('Asia/Bangkok').datetime
         db.session.add(client)
         db.session.commit()
         flash('New client has been added.', 'success')
@@ -50,6 +51,8 @@ def edit_client(client_id):
         flash('The client is not found.', 'danger')
     if form.validate_on_submit():
         form.populate_obj(client)
+        client.updated_at = arrow.now('Asia/Bangkok').datetime
+        client.updated_by = current_user.id
         db.session.add(client)
         db.session.commit()
         flash('Client data have been update.', 'success')
@@ -87,10 +90,12 @@ def add_physical_exam_profile(client_id):
         pp = ClientPhysicalProfile()
         form.populate_obj(pp)
         pp.client = client
+        pp.updated_at = arrow.now('Asia/Bangkok').datetime
+        pp.updated_by = current_user
         db.session.add(pp)
         db.session.commit()
         flash('New data have been saved.', 'success')
-        return redirect(url_for('services.physical_exam_profile_main'))
+        return redirect(request.args.get('next') or url_for('services.physical_exam_profile_main'))
     return render_template('services/clients/physical_exam_form.html', form=form, client=client)
 
 
@@ -101,10 +106,13 @@ def edit_physical_exam_profile(rec_id):
     form = ClientPhysicalProfileForm(obj=rec)
     if form.validate_on_submit():
         form.populate_obj(rec)
+        rec.updated_at = arrow.now('Asia/Bangkok').datetime
+        rec.updated_by = current_user
         db.session.add(rec)
         db.session.commit()
         flash('Data have been updated.', 'success')
-        return redirect(url_for('services.add_physical_exam_profile',
+        return redirect(request.args.get('next') or
+                        url_for('services.add_physical_exam_profile',
                                 client_id=rec.client.id))
     return render_template('services/clients/physical_exam_form.html',
                            form=form,
@@ -201,6 +209,8 @@ def add_test_record(test_id, client_id, record_id=None):
             rec = TestRecord()
         form.populate_obj(rec)
         rec.test = test
+        rec.updated_at = arrow.now('Asia/Bangkok').datetime
+        rec.updated_by = current_user
         rec.client_id = client_id
         db.session.add(rec)
         db.session.commit()
@@ -251,6 +261,8 @@ def stool_exam_main(client_id=None):
             if client_id:
                 record = StoolTestRecord(lab_number=lab_number, collection_datetime=collection_datetime)
                 record.client_id = client_id
+                record.updated_by = current_user
+                record.updated_at = arrow.now('Asia/Bangkok').datetime
                 db.session.add(record)
                 db.session.commit()
                 flash('New stool specimens has been registered.', 'success')
@@ -273,7 +285,8 @@ def edit_stool_exam_record(record_id):
     form = StoolTestForm(obj=record)
     if form.validate_on_submit():
         form.populate_obj(record)
-        record.updated_by = current_user.id
+        record.updated_at = arrow.now('Asia/Bangkok').datetime
+        record.updated_by = current_user
         db.session.add(record)
         db.session.commit()
         flash('Data have been saved.', 'success')
@@ -292,7 +305,7 @@ def report_stool_exam_record(record_id):
     record = StoolTestRecord.query.get(record_id)
     if record:
         record.reported_at = arrow.now('Asia/Bangkok').datetime
-        record.reported_by = current_user.id
+        record.reported_by = current_user
         db.session.add(record)
         db.session.commit()
         flash('The record have been reported.', 'success')
@@ -402,9 +415,13 @@ def add_health_record(client_id, record_id=None):
             record = HealthRecord()
             record.client_id = client_id
         form.populate_obj(record)
+        record.updated_at = arrow.now('Asia/Bangkok').datetime
+        record.updated_by = current_user
         db.session.add(record)
         db.session.commit()
         flash('Data have been saved.', 'success')
+        if request.args.get('next'):
+            return redirect(request.args.get('next'))
     return render_template('services/clients/health_record_form.html', form=form, client=client)
 
 

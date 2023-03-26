@@ -90,7 +90,7 @@
           <th>Lab Number</th>
           <th>Results</th>
           <th>Note</th>
-          <th>Registered At</th>
+          <th>Registered/Updated At</th>
           <th>Collected At</th>
           <th>Reported At</th>
           <th></th>
@@ -101,9 +101,15 @@
               <td>{{ stool_record.lab_number }}</td>
               <td>{{ stool_record.results|itemize|safe }}</td>
               <td>{{ stool_record.note or '' }}</td>
-              <td>{{ stool_record.updated_at|localdatetime }}</td>
+              <td>{{ stool_record.updated_at|localdatetime }} by {{stool_record.updated_by.firstname}}</td>
               <td>{{ stool_record.collection_datetime|localdatetime }}</td>
-              <td>{{ stool_record.reported_at|localdatetime or 'Unfinished' }}</td>
+              <td>
+                {% if stool_record.reported_at %}
+                {{ stool_record.reported_at|localdatetime }} by {{stool_record.reported_by.firstname}}
+                {% else %}
+                Unfinished
+                {% endif %}
+              </td>
               <td>
                 <a class="button" href="{{url_for('services.edit_stool_exam_record', record_id=stool_record.id, next=request.url)}}">
                   edit
@@ -153,7 +159,7 @@
             <td>{{test_record.value}} {{test_record.test.unit}}</td>
             <td>{{test_record.interpret}}</td>
             <td>{{test_record.note}}</td>
-            <td>{{test_record.updated_at|localdatetime}}</td>
+            <td>{{test_record.updated_at|localdatetime}} by {{test_record.updated_by.firstname}}</td>
             <td>
               <a class="button is-light"
                 href="{{url_for('services.add_test_record', test_id=test_record.test_id, record_id=test_record.id, client_id=client.id, next=request.url)}}">
@@ -172,31 +178,61 @@
           <thead>
           <th>Record ID</th>
           <th>Reported At</th>
+          <th></th>
           </thead>
           <tbody>
           {% for physical_record in client.physical_profiles %}
           <tr>
             <td>{{physical_record.id}}</td>
-            <td>{{physical_record.updated_at|localdatetime}}</td>
+            <td>{{physical_record.updated_at|localdatetime}} by {{physical_record.updated_by.firstname}}</td>
+            <td>
+              <a class="button is-light" href="{{url_for('services.edit_physical_exam_profile', rec_id=physical_record.id, next=request.url)}}">
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>edit</span>
+              </a>
+            </td>
           </tr>
           {% endfor %}
           </tbody>
         </table>
+        <a href="{{url_for('services.add_physical_exam_profile', client_id=client.id, next=request.url)}}" class="button is-success">
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>add</span>
+        </a>
         {% elif tab == 'health' %}
         <table class="table is-striped">
           <thead>
           <th>Record ID</th>
           <th>Reported At</th>
+          <th></th>
           </thead>
           <tbody>
           {% for health_record in client.health_records %}
           <tr>
             <td>{{health_record.id}}</td>
-            <td>{{health_record.updated_at|localdatetime}}</td>
+            <td>{{health_record.updated_at|localdatetime}} by {{health_record.updated_by.firstname}}</td>
+            <td>
+              <a class="button is-light" href="{{url_for('services.add_health_record', record_id=health_record.id, client_id=client.id, next=request.url)}}">
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>edit</span>
+              </a>
+            </td>
           </tr>
           {% endfor %}
           </tbody>
         </table>
+        <a href="{{url_for('services.add_health_record', client_id=client.id, next=request.url)}}" class="button is-success">
+          <span class="icon">
+            <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>add</span>
+        </a>
         {% endif %}
         <div class="buttons is-centered">
           <a href="{{url_for('services.index')}}" class="button is-light">
