@@ -72,6 +72,7 @@ class Client(db.Model):
     lastname = db.Column('lastname', db.String(), nullable=False, info={'label': 'นามสกุล'})
     pid = db.Column('pid', db.String(13), unique=True, info={'label': 'หมายเลขบัตรประชาชน'})
     dob = db.Column('dob', db.Date(), info={'label': 'ชื่อ'})
+    age_ = db.Column('age', db.Integer, info={'label': 'อายุ'})
     client_number = db.Column('client_number', db.String(), unique=True, info={'label': 'รหัสผู้รับบริการ'})
     gender = db.Column('gender', db.String(), info={'label': 'เพศ',
                                                     'choices': [(c, c) for c in ['ชาย', 'หญิง']],
@@ -80,14 +81,15 @@ class Client(db.Model):
                            server_default=func.now(), onupdate=func.now())
     address_id = db.Column('address_id', db.ForeignKey('client_addresses.id'))
     address = db.relationship(ClientAddress, backref=db.backref('clients'))
+    updated_by = db.Column('updater_id', db.ForeignKey('users.id'))
 
     @property
     def age(self):
-        if self.dob:
-            return '{} ปี {} เดือน'.format(relativedelta.relativedelta(datetime.datetime.today(), self.dob).years,
-                               relativedelta.relativedelta(datetime.datetime.today(), self.dob).months)
+        if self.age_:
+            return f'{self.age_} ปี'
         else:
-            return None
+            return '{} ปี {} เดือน'.format(relativedelta.relativedelta(datetime.datetime.today(), self.dob).years,
+                                           relativedelta.relativedelta(datetime.datetime.today(), self.dob).months)
 
     @property
     def fullname(self):
@@ -242,6 +244,8 @@ class StoolTestRecord(db.Model):
                                                 'choices': [(c,c) for c in ['ไม่ได้ทดสอบ', 'บวก', 'ลบ']]})
     # TODO: add others
     reported_at = db.Column('reported_at', db.DateTime())
+    reported_by = db.Column('reporter_id', db.ForeignKey('users.id'))
+    updated_by = db.Column('updater_id', db.ForeignKey('users.id'))
 
     @property
     def results(self):

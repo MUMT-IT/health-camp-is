@@ -59,6 +59,12 @@
               {{ form.dob(class="input", type="text") }}
             </div>
           </div>
+            <div class="field">
+              <label class="label">{{form.age_.label}}</label>
+              <div class="control">
+                {{ form.age_(class="input") }}
+              </div>
+            </div>
           <div class="field">
             <label class="label">{{form.pid.label}}</label>
             <div class="control">
@@ -89,25 +95,42 @@
       </div>
       {% if client %}
       <div class="column">
-          <div class="box">
-            <h1 class="title">Register Stool Examination</h1>
-            <form method="get" action="{{url_for('services.stool_exam_main')}}">
-              <input type="hidden" name="client_id" value="{{client.id}}">
-              <input type="hidden" name="next" value="{{url_for('services.register_client')}}">
-              <div class="field">
-                <input class="input" name="lab_number">
-              </div>
-              <div class="field">
-                <label class="label">Collected At</label>
-                <div class="control">
-                  <input type="text" class="input" id="collectionDatetime" name="collection_datetime">
-                </div>
-              </div>
-              <div class="field">
-                <input type="submit" value="Register" class="button is-warning">
-              </div>
-            </form>
-          </div>
+        <div class="box">
+          <h1 class="title">Register Stool Examination</h1>
+          <form method="get" action="{{url_for('services.stool_exam_main')}}">
+            <input type="hidden" name="client_id" value="{{client.id}}">
+            <input type="hidden" name="next" value="{{url_for('services.register_client')}}">
+            <div class="field">
+              <input class="input" name="lab_number">
+            </div>
+            <div class="field">
+              <label class="label">Collected At</label>
+              <div class="control">
+                                <input type="text" class="input" id="collectionDatetime" name="collection_datetime">
+                                </div>
+            </div>
+            <div class="field">
+              <input type="submit" value="Register" class="button is-warning">
+            </div>
+          </form>
+        </div>
+        <div class="box">
+          <label class="label">
+            Stool Exam History
+          </label>
+          <table class="table is-striped is-bordered">
+            <th>Lab Number</th>
+            <th>Received At</th>
+            <th>Collected At</th>
+            {% for rec in client.stool_exam_records %}
+            <tr>
+              <td>{{rec.lab_number}}</td>
+              <td>{{rec.updated_at|localdatetime}}</td>
+              <td>{{rec.collection_datetime|localdatetime}}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
       </div>
       {% endif %}
     </div>
@@ -120,6 +143,7 @@
   $('#dob').daterangepicker({
     singleDatePicker: true,
     showDropdowns: true,
+    autoUpdateInput: true,
     locale: {
       format: 'YYYY-MM-DD'
     }
@@ -132,6 +156,7 @@
     showDropdowns: true,
     timePickerIncrement: 15,
     timePicker24Hour: true,
+    autoUpdateInput: true,
     locale: {
       format: 'YYYY-MM-DD HH:mm:ss'
     }

@@ -2,7 +2,7 @@ from datetime import datetime
 
 import arrow
 from flask import render_template, redirect, url_for, flash, request, make_response
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from app import db
 from app.services import service_bp as services
@@ -29,6 +29,7 @@ def register_client():
     if form.validate_on_submit():
         client = Client()
         form.populate_obj(client)
+        client.updated_by = current_user.id
         db.session.add(client)
         db.session.commit()
         flash('New client has been added.', 'success')
@@ -272,6 +273,7 @@ def edit_stool_exam_record(record_id):
     form = StoolTestForm(obj=record)
     if form.validate_on_submit():
         form.populate_obj(record)
+        record.updated_by = current_user.id
         db.session.add(record)
         db.session.commit()
         flash('Data have been saved.', 'success')
@@ -290,6 +292,7 @@ def report_stool_exam_record(record_id):
     record = StoolTestRecord.query.get(record_id)
     if record:
         record.reported_at = arrow.now('Asia/Bangkok').datetime
+        record.reported_by = current_user.id
         db.session.add(record)
         db.session.commit()
         flash('The record have been reported.', 'success')
