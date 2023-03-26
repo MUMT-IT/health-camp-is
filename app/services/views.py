@@ -151,6 +151,9 @@ def register_test():
         db.session.commit()
         flash('New test has been added.', 'success')
         return redirect(url_for('services.list_tests'))
+    else:
+        for field in form.errors:
+            flash(f'{field}: {form.errors[field]}', 'danger')
     return render_template('services/tests/register.html', form=form)
 
 
@@ -256,6 +259,7 @@ def stool_exam_main(client_id=None):
                 if next_url:
                     return redirect(next_url)
         else:
+            flash('The lab number is already registered.', 'warning')
             return redirect(next_url or url_for('services.edit_stool_exam_record', record_id=record.id))
     records = StoolTestRecord.query.all()
     return render_template('services/clients/stool_exam_main.html', records=records)
