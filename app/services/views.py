@@ -8,7 +8,8 @@ from app import db
 from app.services import service_bp as services
 from app.services.forms import ClientForm, ClientPhysicalProfileForm, TestForm, TestRecordForm, StoolTestForm, \
     HealthRecordForm
-from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord, StoolTestRecord, HealthRecord
+from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord, StoolTestRecord, HealthRecord, \
+    Organism, Stage, StoolTestReportItem
 
 
 @services.route('/')
@@ -281,10 +282,15 @@ def stool_exam_main(client_id=None):
 @services.route('/stool-exam/records/<int:record_id>', methods=['GET', 'POST'])
 @login_required
 def edit_stool_exam_record(record_id):
+    not_found_org = Organism.query.filter_by(name='Not found').first()
+    not_found_stage = Stage.query.filter_by(stage='Not found').first()
     record = StoolTestRecord.query.get(record_id)
     form = StoolTestForm(obj=record)
     if form.validate_on_submit():
         form.populate_obj(record)
+        if form.not_found.data == 'Not found':
+            record.items = [StoolTestReportItem(organism=not_found_org,
+                                                stage=not_found_stage)]
         record.updated_at = arrow.now('Asia/Bangkok').datetime
         record.updated_by = current_user
         db.session.add(record)
@@ -293,6 +299,12 @@ def edit_stool_exam_record(record_id):
     else:
         for field in form.errors:
             flash(f'{field} {form.errors[field]}', 'danger')
+    if len(record.items) == 1 and record.items[0].organism == not_found_org:
+        form.not_found.data = 'Not found'
+    elif len(record.items) == 0:
+        form.not_found.data = 'Not found'
+    else:
+        form.not_found.data = 'Found'
     return render_template('services/clients/stool_exam_form.html',
                            form=form,
                            record=record,

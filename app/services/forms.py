@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import FormField, FieldList
+from wtforms import FormField, FieldList, BooleanField
 from wtforms_alchemy import model_form_factory, QuerySelectField, QuerySelectMultipleField
 
 from app import db
@@ -48,6 +48,8 @@ class StoolTestReportItemForm(ModelForm):
 class StoolTestForm(ModelForm):
     class Meta:
         model = StoolTestRecord
+
+    not_found = RadioField('Not found', choices=[(c, c) for c in ['Found', 'Not found']], default='Not found')
 
     items = FieldList(FormField(StoolTestReportItemForm,
                                 default=StoolTestReportItem), min_entries=1)

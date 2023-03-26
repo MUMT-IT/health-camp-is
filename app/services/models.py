@@ -272,4 +272,7 @@ class StoolTestReportItem(db.Model):
                              backref=db.backref('items', cascade='all, delete-orphan'))
 
     def __str__(self):
-        return f'{self.organism} {self.stage}'
+        if self.organism.name == 'Not found':
+            return f'Not found'
+        else:
+            return f'{self.organism} {self.stage}'

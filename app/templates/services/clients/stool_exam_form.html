@@ -55,6 +55,14 @@
               <label class="label">{{form.note.label}}</label>
               {{form.note(class="textarea")}}
             </div>
+            <div class="field">
+              {% for subfield in form.not_found %}
+              <label class="label">
+                {{subfield()}}
+                {{subfield.label}}
+              </label>
+              {% endfor %}
+            </div>
           </div>
           <div id="items">
             {% for item_form in form.items.entries %}
@@ -75,7 +83,7 @@
             </div>
             {% endfor %}
           </div>
-          <div class="field">
+          <div class="field" id="item_btn">
             <div class="buttons">
               <button class="button is-success"
                       hx-post="{{ url_for('services.add_stool_report_item_entry') }}"
@@ -92,7 +100,7 @@
                   <i class="fa-solid fa-minus"></i>
                 </span>
                 <span>remove</span>
-            </button>
+              </button>
             </div>
           </div>
           <div class="field">
@@ -128,6 +136,10 @@
 {% block scripts %}
 {{super()}}
 <script>
+  {% if form.not_found.data == 'Not found' %}
+  $('#items').hide()
+  $('#item_btn').hide()
+  {% endif %}
   $('#collection_datetime').daterangepicker({
     singleDatePicker: true,
     timePicker: true,
@@ -142,5 +154,15 @@
       format: 'YYYY-MM-DD HH:mm:ss'
     }
   });
+  $('input[name="not_found"]').change(function() {
+    let value = $('input[name="not_found"]:checked').val()
+    if (value == 'Not found') {
+      $('#items').hide()
+      $('#item_btn').hide()
+    } else {
+      $('#item_btn').show()
+      $('#items').show()
+    }
+  })
 </script>
 {% endblock %}
