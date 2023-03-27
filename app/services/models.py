@@ -113,6 +113,10 @@ class ClientPhysicalProfile(db.Model):
     waist = db.Column('waist', db.Numeric(), info={'label': 'รอบเอว'})
 
     @property
+    def bp(self):
+        return f'{self.systolic}/{self.diastolic} mmHg'
+
+    @property
     def bmi(self):
         if self.weight and self.height:
             bmi = (self.weight) / (self.height * decimal.Decimal(.01)) ** 2
@@ -166,11 +170,11 @@ class TestRecord(db.Model):
     @property
     def interpret(self):
         if float(self.value) > self.test.max_value:
-            return 'High'
+            return 'สูง'
         elif float(self.value) < self.test.min_value:
-            return 'Low'
+            return 'ต่ำ'
         else:
-            return 'Normal'
+            return 'ปกติ'
 
 
 class Organism(db.Model):

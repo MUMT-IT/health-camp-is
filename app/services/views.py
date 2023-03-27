@@ -469,7 +469,91 @@ def delete_test(test_id):
 @login_required
 def preview_report(client_id):
     client = Client.query.get(client_id)
-    return render_template('services/clients/report_preview.html', client=client)
+    client_body = [
+        ["ชื่อ", client.fullname or '-', "เพศ", client.gender or '-', ''],
+        ['อายุ', client.age, 'หมายเลขบัตรประชาชน', client.pid or '-', ''],
+    ]
+    physical_exam = []
+    for rec in client.physical_profiles:
+        physical_exam.append(['น้ำหนัก (กก.)', rec.weight, 'ส่วนสูง (ซม.)', rec.height, 'รอบเอว (ซม.)', rec.waist, ''])
+        physical_exam.append(['ดัชนีมวลกาย', rec.bmi, f'({rec.get_bmi_interpretation()})', 'ความดันโลหิต', rec.bp, "", ''])
+    if not physical_exam:
+        physical_exam.append(['น้ำหนัก (กก.)', '-', 'ส่วนสูง (ซม.)', '-', 'รอบเอว (ซม.)', '-', ''])
+        physical_exam.append(['ดัชนีมวลกาย', '-', '', 'ความดันโลหิต', '-', '', ''])
+
+    underlying_diseases = []
+    for rec in client.health_records:
+        for n, d in enumerate(rec.underlying_diseases, start=1):
+            underlying_diseases.append([f'{n}.{d.name}', ''])
+    if not underlying_diseases:
+        underlying_diseases.append(['ไม่มี', ''])
+
+    family_diseases = []
+    for rec in client.health_records:
+        for n, d in enumerate(rec.family_diseases, start=1):
+            family_diseases.append([f'{n}.{d.name}', ''])
+    if not family_diseases:
+        family_diseases.append(['ไม่มี', ''])
+    test_records = [
+        ['รายการทดสอบ', 'ค่าการทดสอบ', 'หน่วย', 'แปลผล', 'ค่าอ้างอิง', '']
+    ]
+    if client.test_records:
+        for rec in client.test_records:
+            test_records.append([rec.test.name, rec.value, rec.test.unit, f'({rec.interpret})', f'{rec.test.reference} ({rec.test.unit})', ''])
+    if len(test_records) == 1:
+        test_records.append(["", "", "", "", "", ""])
+
+    stool_records = [
+        ['ลำดับ', 'ชื่อปรสิต', 'ระยะ', 'หมายเหตุ', '']
+    ]
+    macro_stool_records = []
+    occult_blood = []
+    for rec in client.stool_exam_records:
+        if rec.reported_at:
+            macro_stool_records.append([
+                'สี', rec.color or '-', 'ลักษณะ', rec.form or '-', ''
+            ])
+            if rec.occult_blood is True:
+                occult_blood_interpret = 'พบเลือดแฝงในอุจจาระ'
+                occult_blood_result = 'ผลบวก'
+            elif rec.occult_blood is False:
+                occult_blood_interpret = 'ไม่พบเลือดแฝงในอุจจาระ'
+                occult_blood_result = 'ผลลบ'
+            else:
+                occult_blood_interpret = ''
+                occult_blood_result = 'ไม่ได้ทดสอบ'
+            occult_blood.append([
+                occult_blood_result, occult_blood_interpret, ''
+            ])
+            for n, item in enumerate(rec.items, start=1):
+                if item.organism.name == 'Not found':
+                    stool_records.append([
+                        n, 'ไม่พบปรสิต', '', '', ''
+                    ])
+                else:
+                    stool_records.append([
+                        n, item.organism.name, item.stage.stage, '...........................................................', ''
+                    ])
+    if not macro_stool_records:
+        macro_stool_records.append(['สี', '-', 'ลักษณะ', '-', ''])
+    if not occult_blood:
+        occult_blood.append(['ไม่ได้ทดสอบ', '', ''])
+    if len(stool_records) == 1:
+        stool_records.pop()
+        stool_records.append(['', 'ไม่ได้ทดสอบ', '', '', ''])
+
+    return render_template('services/clients/report_preview.html',
+                           client=client,
+                           client_body=client_body,
+                           physical_body=physical_exam,
+                           underlying_diseases=underlying_diseases,
+                           family_diseases=family_diseases,
+                           test_records=test_records,
+                           stool_records=stool_records,
+                           macro_stool_records=macro_stool_records,
+                           occult_blood=occult_blood,
+                           reported_date=arrow.now('Asia/Bangkok').datetime.strftime('%d/%m/%Y')
+                           )
 
 
 @services.route('/api/stool/statistics')
