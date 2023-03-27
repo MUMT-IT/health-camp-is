@@ -43,6 +43,9 @@ def create_app():
     from app.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from app.student_admin import admin_bp
+    app.register_blueprint(admin_bp)
+
     from app.services import service_bp
     app.register_blueprint(service_bp)
     from app.services.models import (Client, Test, TestRecord, StoolTestRecord,

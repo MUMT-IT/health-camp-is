@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    {% include "messages.html" %}
+    <div class="columns">
+      <div class="column">
+        <table class="table is-striped">
+          <thead>
+          <th>Firstname</th>
+          <th>Lastname</th>
+          <th>Email</th>
+          <th></th>
+          </thead>
+          <tbody>
+          {% for u in users %}
+          <tr>
+            <td>{{u.firstname}}</td>
+            <td>{{u.lastname}}</td>
+            <td>{{u.email}}</td>
+            <td>
+              <a href="{{url_for('student_admin.approve_user', user_id=u.id)}}" class="button is-light">
+                <span>approve</span>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <div class="buttons is-centered">
+          <a class="button is-danger" href="{{url_for('student_admin.index')}}">
+            Back
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
