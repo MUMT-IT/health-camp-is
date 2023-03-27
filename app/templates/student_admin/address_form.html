@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    {% include "messages.html" %}
+    <div class="columns">
+      <div class="column">
+        <table class="table is-striped">
+          <thead>
+          <th>Address</th>
+          <th></th>
+          </thead>
+          <tbody>
+          {% for addr in addresses %}
+          <tr>
+            <td>{{addr.name}}</td>
+            <td>
+              <a href="{{url_for('student_admin.edit_address', addr_id=addr.id)}}" class="button is-light">
+                <span>edit</span>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="columns">
+      <div class="column">
+        <form method="post">
+          {{form.hidden_tag()}}
+          <div class="field">
+            <label class="label">{{form.name.label}}</label>
+            <div class="control">
+              {{form.name(class="input")}}
+            </div>
+          </div>
+          <div class="field">
+            <input type="submit" {% if addr_id %} value="Save" {% else %} value="Add" {% endif %}
+                   class="button is-primary">
+          </div>
+        </form>
+        <div class="buttons is-centered">
+          <a class="button is-danger" href="{{url_for('student_admin.index')}}">
+            Back
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
