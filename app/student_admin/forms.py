@@ -16,3 +16,8 @@ class ModelForm(BaseModelForm):
 class AddressForm(ModelForm):
     class Meta:
         model = ClientAddress
+
+
+class OrganismForm(ModelForm):
+    class Meta:
+        model = Organism

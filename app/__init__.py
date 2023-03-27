@@ -1,8 +1,9 @@
 import os
+from functools import wraps
 
 import arrow
 from dotenv import load_dotenv
-from flask import Flask, render_template
+from flask import Flask, render_template, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin, AdminIndexView
 from flask_login import LoginManager, current_user
@@ -22,6 +23,17 @@ db = SQLAlchemy()
 migrate = Migrate(db=db)
 admin = Admin(index_view=MyAdminIndexView())
 login_manager = LoginManager()
+
+
+def superuser(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.has_admin_role:
+            flash('You do not have permission to view access this page.', 'warning')
+            return redirect(url_for('services.index'))
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 
 def create_app():
