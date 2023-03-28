@@ -247,9 +247,9 @@ class StoolTestRecord(db.Model):
     note = db.Column('note', db.Text())
     collection_datetime = db.Column('collection_datetime', db.DateTime(), info={'label': 'เก็บตัวอย่างเมื่อ'})
     color = db.Column('color', db.String(), info={"label": 'Color',
-                                                  'choices': [(c, c) for c in ['เหลือง', 'น้ำตาล', 'เขียว', 'ดำ', 'แดง', 'เทา']]})
+                                                  'choices': [(c, c) for c in ['เหลือง', 'น้ำตาล', 'เขียว', 'ดำ', 'แดง', 'เทา', 'ไม่ได้ส่งอุจจาระ']]})
     form = db.Column('form', db.String(), info={'label': 'Form',
-                                                'choices': [(c, c) for c in ['แข็ง', 'นุ่ม', 'เหลวเป็นน้ำ', 'มีมูกเลือดปน']]})
+                                                'choices': [(c, c) for c in ['แข็ง', 'นุ่ม', 'เหลวเป็นน้ำ', 'มีมูกเลือดปน', 'ไม่ได้ส่งอุจจาระ']]})
     occult_blood = db.Column('occult_blood',
                              db.String(), info={'label': 'Occult blood',
                                                 'choices': [(c,c) for c in ['ไม่ได้ทดสอบ', 'บวก', 'ลบ']]})
