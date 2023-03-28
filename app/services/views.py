@@ -6,7 +6,7 @@ import gviz_api
 from flask import render_template, redirect, url_for, flash, request, make_response
 from flask_login import login_required, current_user
 
-from app import db
+from app import db, superuser
 from app.services import service_bp as services
 from app.services.forms import ClientForm, ClientPhysicalProfileForm, TestForm, TestRecordForm, StoolTestForm, \
     HealthRecordForm
@@ -323,6 +323,23 @@ def report_stool_exam_record(record_id):
         db.session.add(record)
         db.session.commit()
         flash('The record have been reported.', 'success')
+    else:
+        flash('The record was not found.', 'danger')
+    return redirect(request.args.get('next') or url_for('services.stool_exam_main',
+                                                        client_id=record.client_id))
+
+
+@services.route('/stool-exam/records/<int:record_id>/cancel-report', methods=['GET', 'POST'])
+@superuser
+@login_required
+def cancel_report_stool_exam_record(record_id):
+    record = StoolTestRecord.query.get(record_id)
+    if record:
+        record.reported_at = None
+        record.reported_by = None
+        db.session.add(record)
+        db.session.commit()
+        flash('The report has been cancelled.', 'success')
     else:
         flash('The record was not found.', 'danger')
     return redirect(request.args.get('next') or url_for('services.stool_exam_main',

@@ -108,7 +108,7 @@
             <div class="buttons is-centered">
               <a class="button is-light" href="{{ next_url or url_for('services.stool_exam_main')}}">Cancel</a>
               {% if not record.reported_at %}
-              <a class="button is-danger" href="{{url_for('services.remove_stool_exam_record', record_id=record.id)}}">
+              <a class="button is-danger" onclick="confirmDelete({{record.id}})">
                 <span class="icon">
                   <i class="fa-solid fa-trash-can"></i>
                 </span>
@@ -125,6 +125,17 @@
                   Report
                 </span>
               </a>
+              {% else %}
+              {% if current_user.has_admin_role %}
+              <a class="button is-success" onclick="confirmCancel({{record.id}})">
+                <span class="icon">
+                  <i class="fa-solid fa-paper-plane"></i>
+                </span>
+                <span>
+                  Cancel Report
+                </span>
+              </a>
+              {% endif %}
               {% endif %}
             </div>
           </div>
@@ -165,5 +176,37 @@
       $('#items').show()
     }
   })
+</script>
+<script>
+  let confirmDelete = function (rec_id) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/services/stool-exam/records/" + rec_id + "/remove"
+      }
+    })
+  }
+  let confirmCancel = function (rec_id) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/services/stool-exam/records/" + rec_id + "/cancel-report"
+      }
+    })
+  }
 </script>
 {% endblock %}
