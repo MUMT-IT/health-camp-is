@@ -85,7 +85,7 @@
           </div>
           <div class="field is-grouped is-grouped-centered">
             <div class="control">
-              <a class="button is-light" href="{{ url_for('services.index') }}">Cancel</a>
+              <a class="button is-light" href="{{ url_for('services.index') }}">Back</a>
             </div>
             <div class="control">
               <input class="button is-primary" type="submit" value="Submit">
@@ -134,6 +134,79 @@
       </div>
       {% endif %}
     </div>
+    {% if client and client.health_records.count() == 0 %}
+    <div class="columns">
+      <div class="column">
+          <h1 class="title has-text-centered">Health Record Form</h1>
+          <div class="box">
+            <form method="post" action="{{url_for('services.add_health_record', client_id=client.id, next=request.url)}}">
+              {{health_form.hidden_tag()}}
+              <div class="field">
+                <label class="label">{{health_form.underlying_diseases.label}}</label>
+                <div class="control">
+                  {{health_form.underlying_diseases()}}
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">{{health_form.other_underlying_disease.label}}</label>
+                <div class="control">
+                  {{health_form.other_underlying_disease(class="input")}}
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">{{health_form.family_diseases.label}}</label>
+                <div class="control">
+                  {{health_form.family_diseases()}}
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">{{health_form.other_family_disease.label}}</label>
+                <div class="control">
+                  {{health_form.other_family_disease(class="input")}}
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">{{health_form.suggestion.label}}</label>
+                <div class="control">
+                  {{health_form.suggestion(class="textarea")}}
+                </div>
+              </div>
+              <div class="field is-grouped is-grouped-centered">
+                <a href="{{url_for('services.health_record_main')}}" class="button is-light">Back</a>
+                <input type="submit" value="Submit" class="button is-primary">
+              </div>
+            </form>
+          </div>
+      </div>
+    </div>
+    {% elif client and client.health_records.count() > 0 %}
+    <div class="box">
+      <label class="label">ประวัติสุขภาพ</label>
+      <table class="table is-striped">
+        <thead>
+        <th>ID</th>
+        <th>Updated At</th>
+        <th>By</th>
+        <th></th>
+        </thead>
+        {% for rec in client.health_records %}
+        <tr>
+          <td>{{rec.id}}</td>
+          <td>{{rec.updated_at|localdatetime}}</td>
+          <td>{{rec.updated_by.firstname}}</td>
+          <td>
+            <a class="button is-light" href="{{url_for('services.add_health_record', record_id=rec.id, client_id=client.id, next=request.url)}}">
+                <span class="icon">
+                  <i class="fa-solid fa-pencil"></i>
+                </span>
+              <span>edit</span>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

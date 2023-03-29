@@ -48,8 +48,10 @@ def register_client():
 @login_required
 def edit_client(client_id):
     client = Client.query.get(client_id)
+    health_form = None
     if client:
         form = ClientForm(obj=client)
+        health_form = HealthRecordForm()
     else:
         flash('The client is not found.', 'danger')
     if form.validate_on_submit():
@@ -59,7 +61,8 @@ def edit_client(client_id):
         db.session.add(client)
         db.session.commit()
         flash('Client data have been update.', 'success')
-    return render_template('services/clients/registration.html', form=form, client=client)
+    return render_template('services/clients/registration.html',
+                           form=form, client=client, health_form=health_form)
 
 
 @services.route('/clients')
