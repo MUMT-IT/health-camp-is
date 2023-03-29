@@ -47,6 +47,12 @@
                     <form method="post">
                         {{form.hidden_tag()}}
                         <div class="field">
+                            <label class="label">{{form.fasting_time.label}}</label>
+                            <div class="control">
+                                {{form.fasting_time(class="input")}}
+                            </div>
+                        </div>
+                        <div class="field">
                             <label class="label">{{form.underlying_diseases.label}}</label>
                             <div class="control">
                                 {{form.underlying_diseases()}}

@@ -142,6 +142,12 @@
             <form method="post" action="{{url_for('services.add_health_record', client_id=client.id, next=request.url)}}">
               {{health_form.hidden_tag()}}
               <div class="field">
+                <label class="label">{{health_form.fasting_time.label}}</label>
+                <div class="control">
+                  {{health_form.fasting_time(class="input")}}
+                </div>
+              </div>
+              <div class="field">
                 <label class="label">{{health_form.underlying_diseases.label}}</label>
                 <div class="control">
                   {{health_form.underlying_diseases()}}

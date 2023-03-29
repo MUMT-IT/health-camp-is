@@ -224,7 +224,7 @@ class HealthRecord(db.Model):
                                       secondary=family_diseases_health_records,
                                       info={'label': 'โรคประจำตัวในครอบครัว'})
     other_family_disease = db.Column('other_family_disease', db.String(), info={'label': 'โรคในครอบครัวอื่น ๆ'})
-    fasting_datetime = db.Column('fasting_datetime', db.DateTime(), info={'label': 'อดอาหารเมื่อ'})
+    fasting_time = db.Column('fasting_time', db.Numeric(), info={'label': 'อดอาหารมาแล้ว (ชม.)'})
     client_id = db.Column('client_id', db.ForeignKey('clients.id'))
     client = db.relationship(Client, backref=db.backref('health_records',
                                                         cascade='all, delete-orphan', lazy='dynamic'))

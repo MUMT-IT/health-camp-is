@@ -503,6 +503,7 @@ def preview_report(client_id):
 
     underlying_diseases = []
     for rec in client.health_records:
+        underlying_diseases.append([f"อดอาหารมา {rec.fasting_time} ชม.", ""])
         for n, d in enumerate(rec.underlying_diseases, start=1):
             underlying_diseases.append([f'{n}.{d.name}', ''])
     if not underlying_diseases:
