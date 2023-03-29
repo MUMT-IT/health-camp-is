@@ -54,6 +54,15 @@
               </div>
             </div>
           <div class="field">
+            <label class="label">คำนวณปีค.ศ.จากพ.ศ.</label>
+            <div class="control" x-data="{year: new Date().getFullYear() + 543}">
+              <input name="buddhistYear"
+                     x-model="year"
+                     placeholder="คำนวณปีค.ศ.จากพ.ศ." class="input">
+              ปีค.ศ. <span x-text="year - 543"></span>
+            </div>
+          </div>
+          <div class="field">
             <label class="label">{{form.dob.label}}</label>
             <div class="control">
               {{ form.dob(class="input", type="text") }}
@@ -218,6 +227,7 @@
 {% endblock %}
 {% block scripts %}
 {{super()}}
+<script src="//unpkg.com/alpinejs" defer></script>
 <script>
   $('#dob').daterangepicker({
     singleDatePicker: true,

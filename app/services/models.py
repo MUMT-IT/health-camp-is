@@ -71,7 +71,7 @@ class Client(db.Model):
     firstname = db.Column('firstname', db.String(), nullable=False, info={'label': 'ชื่อ'})
     lastname = db.Column('lastname', db.String(), nullable=False, info={'label': 'นามสกุล'})
     pid = db.Column('pid', db.String(13), unique=True, info={'label': 'หมายเลขบัตรประชาชน'})
-    dob = db.Column('dob', db.Date(), info={'label': 'ชื่อ'})
+    dob = db.Column('dob', db.Date(), info={'label': 'วันเดือนปีเกิด'})
     age_ = db.Column('age', db.Integer, info={'label': 'อายุ'})
     client_number = db.Column('client_number', db.String(), unique=True, info={'label': 'รหัสผู้รับบริการ'})
     gender = db.Column('gender', db.String(), info={'label': 'เพศ',
