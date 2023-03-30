@@ -127,11 +127,11 @@ class ClientPhysicalProfile(db.Model):
     def get_bmi_interpretation(self):
         if self.bmi:
             if self.bmi < 18.5:
-                return 'ผอมกว่าเกณฑ์ปกติ'
+                return 'ผอมเกินไป'
             elif self.bmi < 25:
                 return 'ปกติ'
             elif self.bmi < 30:
-                return 'น้ำหนักเกินเกณฑ์ปกติ'
+                return 'นน.เกิน'
             else:
                 return 'มีภาวะอ้วน'
         return '-'
