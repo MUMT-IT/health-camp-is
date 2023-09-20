@@ -116,34 +116,49 @@
             <div class="buttons is-centered">
               <a class="button is-light" href="{{ next_url or url_for('services.stool_exam_main', project_id=record.client.project_id)}}">Cancel</a>
               {% if not record.reported_at %}
-              <a class="button is-danger" onclick="confirmDelete({{record.id}})">
-                <span class="icon">
-                  <i class="fa-solid fa-trash-can"></i>
-                </span>
-                <span>
-                  Delete
-                </span>
-              </a>
-              <input class="button is-primary" type="submit" value="Save"/>
-              <a class="button is-success" href="{{url_for('services.report_stool_exam_record', record_id=record.id)}}">
-                <span class="icon">
-                  <i class="fa-solid fa-paper-plane"></i>
-                </span>
-                <span>
-                  Report
-                </span>
-              </a>
+                <a class="button is-danger" onclick="confirmDelete({{record.id}})">
+                  <span class="icon">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </span>
+                  <span>
+                    Delete
+                  </span>
+                </a>
+                <button class="button is-primary" type="submit">
+                  <span class="icon">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                  </span>
+                  <span>Save</span>
+                </button>
+                <a class="button is-success" href="{{url_for('services.report_stool_exam_record', record_id=record.id)}}">
+                  <span class="icon">
+                    <i class="fa-solid fa-paper-plane"></i>
+                  </span>
+                  <span>
+                    Report
+                  </span>
+                </a>
               {% else %}
-              {% if current_user.has_admin_role %}
-              <a class="button is-success" onclick="confirmCancel({{record.id}})">
-                <span class="icon">
-                  <i class="fa-solid fa-paper-plane"></i>
-                </span>
-                <span>
-                  Cancel Report
-                </span>
-              </a>
-              {% endif %}
+                {% if current_user.has_admin_role %}
+                <a class="button is-danger" onclick="confirmCancel({{record.id}})">
+                  <span class="icon">
+                    <i class="fa-solid fa-paper-plane"></i>
+                  </span>
+                  <span>
+                    Cancel Report
+                  </span>
+                </a>
+                {% endif %}
+                {% if current_user.license_id and record.reported_at and record.approved_at == None %}
+                  <a class="button is-primary" onclick="confirmApprove({{record.id}})">
+                      <span class="icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                      <span>
+                        Approve Report
+                      </span>
+                  </a>
+                {% endif %}
               {% endif %}
             </div>
           </div>
@@ -213,6 +228,21 @@
     }).then((result) => {
       if (result.isConfirmed) {
         window.location.href = "/services/stool-exam/records/" + rec_id + "/cancel-report"
+      }
+    })
+  }
+  let confirmApprove = function (rec_id) {
+    Swal.fire({
+      title: 'Are you sure you want to approve this report?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, do it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/services/stool-exam/records/" + rec_id + "/approve-report"
       }
     })
   }

@@ -24,7 +24,7 @@ def register_user():
         db.session.add(user)
         db.session.commit()
         flash('The user has been registered.', 'success')
-        return redirect(url_for('services.index'))
+        return redirect(url_for('services.projects'))
     else:
         for field in form.errors:
             flash(f'{field}: {form.errors[field]}', 'danger')
@@ -35,7 +35,7 @@ def register_user():
 def login():
     if current_user.is_authenticated:
         flash('You have already log in.', 'warning')
-        return redirect(url_for('services.index'))
+        return redirect(url_for('services.projects'))
     form = LoginForm()
     register_form = UserForm()
     if form.validate_on_submit():
@@ -46,7 +46,7 @@ def login():
             login_user(user, remember=form.remember_me.data)
             if user.is_authenticated:
                 flash('Logged in successfully', 'success')
-                return redirect(url_for('services.index'))
+                return redirect(url_for('services.projects'))
             else:
                 flash('This account has not been approved yet. Please contact the admin.', 'warning')
                 return redirect(url_for('auth.login'))

@@ -33,7 +33,8 @@
           <th>Lab Number</th>
           <th>Recieved/Updated At</th>
           <th>Results</th>
-          <th>Reported At</th>
+          <th>Reported Datetime</th>
+          <th>Approved Datetime</th>
           <th></th>
           </thead>
           <tbody>
@@ -55,6 +56,11 @@
             <td>
               {% if record.reported_at %}
               {{record.reported_at|localdatetime}} by {{record.reported_by.firstname}}
+              {% endif %}
+            </td>
+            <td>
+              {% if record.approved_at %}
+              {{record.approved_at|localdatetime}} by {{record.approved_by.firstname}}
               {% endif %}
             </td>
             <td>

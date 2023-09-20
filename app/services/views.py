@@ -361,6 +361,27 @@ def report_stool_exam_record(record_id):
                                project_id=record.client.project_id))
 
 
+@services.route('/stool-exam/records/<int:record_id>/approve-report')
+@superuser
+@login_required
+def approve_report_stool_exam_record(record_id):
+    record = StoolTestRecord.query.get(record_id)
+    project_id = record.client.project_id
+    if record and current_user.license_id:
+        record.approved_at = arrow.now('Asia/Bangkok').datetime
+        record.approved_by = current_user
+        db.session.add(record)
+        db.session.commit()
+        flash('The report has been approved.', 'success')
+    else:
+        flash('The record has not been approved.', 'danger')
+    return redirect(request.args.get('next')
+                    or url_for('services.stool_exam_main',
+                               project_id=project_id
+                               )
+                    )
+
+
 @services.route('/stool-exam/records/<int:record_id>/cancel-report', methods=['GET', 'POST'])
 @superuser
 @login_required

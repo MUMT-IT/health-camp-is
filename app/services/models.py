@@ -35,6 +35,8 @@ class User(db.Model, UserMixin):
     title = db.Column('title', db.String(), info={'label': 'Title'})
     firstname = db.Column('firstname', db.String(), nullable=False, info={'label': 'First Name'})
     lastname = db.Column('lastname', db.String(), nullable=False, info={'label': 'Last Name'})
+    license_id = db.Column('license_id', db.String(), nullable=True,
+                           info={'label': 'ท.น.'})
     has_admin_role = db.Column('has_admin_role', db.Boolean(), default=False)
     registered_at = db.Column('registered_at', db.DateTime(), server_default=func.now())
     updated_at = db.Column('updated_at', db.DateTime(),
@@ -277,11 +279,14 @@ class StoolTestRecord(db.Model):
                               'choices': [(c, c) for c in ['ไม่เหมาะสม', 'พอใช้', 'เหมาะสม']],
                               'form_field_class': RadioField,
                               })
-    reported_at = db.Column('reported_at', db.DateTime())
+    reported_at = db.Column('reported_at', db.DateTime(timezone=True))
     reporter_id = db.Column('reporter_id', db.ForeignKey('users.id'))
     updater_id = db.Column('updater_id', db.ForeignKey('users.id'))
+    approved_at = db.Column('approved_at', db.DateTime(timezone=True))
+    approver_id = db.Column('approver_id', db.ForeignKey('users.id'))
     reported_by = db.relationship(User, foreign_keys=[reporter_id])
     updated_by = db.relationship(User, foreign_keys=[updater_id])
+    approved_by = db.relationship(User, foreign_keys=[approver_id])
 
     @property
     def results(self):
