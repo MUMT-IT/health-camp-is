@@ -11,6 +11,12 @@ from flask_login import UserMixin
 from app import db
 
 
+class Project(db.Model):
+    __tablename__ = 'projects'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column('name', db.String(), info={'label': 'ชื่อโครงการ'})
+
+
 class ClientAddress(db.Model):
     __tablename__ = 'client_addresses'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
@@ -83,6 +89,8 @@ class Client(db.Model):
     address = db.relationship(ClientAddress, backref=db.backref('clients'))
     updated_id = db.Column('updater_id', db.ForeignKey('users.id'))
     updated_by = db.relationship(User)
+    project_id = db.Column(db.ForeignKey('projects.id'))
+    project = db.relationship(Project, backref=db.backref('clients'))
 
     @property
     def age(self):
@@ -217,8 +225,8 @@ class HealthRecord(db.Model):
     __tablename__ = 'health_records'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     underlying_diseases = db.relationship(UnderlyingDisease,
-                               secondary=underlying_diseases_health_records,
-                               info={'label': 'โรคประจำตัว'})
+                                          secondary=underlying_diseases_health_records,
+                                          info={'label': 'โรคประจำตัว'})
     other_underlying_disease = db.Column('other_underlying_disease', db.String(), info={'label': 'โรคอื่น ๆ'})
     family_diseases = db.relationship(FamilyDiseases,
                                       secondary=family_diseases_health_records,
@@ -247,12 +255,16 @@ class StoolTestRecord(db.Model):
     note = db.Column('note', db.Text())
     collection_datetime = db.Column('collection_datetime', db.DateTime(), info={'label': 'เก็บตัวอย่างเมื่อ'})
     color = db.Column('color', db.String(), info={"label": 'Color',
-                                                  'choices': [(c, c) for c in ['เหลือง', 'น้ำตาล', 'เขียว', 'ดำ', 'แดง', 'เทา', 'ไม่ได้ส่งอุจจาระ']]})
+                                                  'choices': [(c, c) for c in
+                                                              ['เหลือง', 'น้ำตาล', 'เขียว', 'ดำ', 'แดง', 'เทา',
+                                                               'ไม่ได้ส่งอุจจาระ']]})
     form = db.Column('form', db.String(), info={'label': 'Form',
-                                                'choices': [(c, c) for c in ['แข็ง', 'นุ่ม', 'เหลวเป็นน้ำ', 'มีมูกเลือดปน', 'ไม่ได้ส่งอุจจาระ']]})
+                                                'choices': [(c, c) for c in
+                                                            ['แข็ง', 'นุ่ม', 'เหลวเป็นน้ำ', 'มีมูกเลือดปน',
+                                                             'ไม่ได้ส่งอุจจาระ']]})
     occult_blood = db.Column('occult_blood',
                              db.String(), info={'label': 'Occult blood',
-                                                'choices': [(c,c) for c in ['ไม่ได้ทดสอบ', 'บวก', 'ลบ']]})
+                                                'choices': [(c, c) for c in ['ไม่ได้ทดสอบ', 'บวก', 'ลบ']]})
     reported_at = db.Column('reported_at', db.DateTime())
     reporter_id = db.Column('reporter_id', db.ForeignKey('users.id'))
     updater_id = db.Column('updater_id', db.ForeignKey('users.id'))
