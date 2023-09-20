@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        {% include "messages.html" %}
+        <div class="columns">
+            <div class="column is-two-thirds is-offset-2 has-text-centered">
+                <nav class="panel is-primary">
+                    <p class="panel-heading">
+                        Project
+                    </p>
+                    {% for project in projects %}
+                    <a class="panel-block is-active" href="{{url_for('services.index', project_id=project.id)}}">
+                        <span class="panel-icon">
+                          <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                        <span class="is-size-4">
+                            {{ project.name }}
+                        </span>
+                    </a>
+                    {% endfor %}
+                </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

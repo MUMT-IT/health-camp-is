@@ -7,8 +7,8 @@
       <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
           <ul>
-            <li><a href="{{url_for('services.index')}}">Home</a></li>
-            <li><a href="{{url_for('services.list_clients')}}">Clients</a></li>
+            <li><a href="{{url_for('services.index', project_id=client.project_id)}}">Home</a></li>
+            <li><a href="{{url_for('services.list_clients', project_id=client.project_id)}}">Clients</a></li>
             <li class="is-active"><a href="#" aria-current="page">Profile</a></li>
           </ul>
         </nav>
@@ -111,7 +111,7 @@
                 {% endif %}
               </td>
               <td>
-                <a class="button" href="{{url_for('services.edit_stool_exam_record', record_id=stool_record.id, next=request.url)}}">
+                <a class="button" href="{{url_for('services.edit_stool_exam_record', record_id=stool_record.id, next=request.url, project_id=client.project_id)}}">
                   edit
                 </a>
               </td>
@@ -119,7 +119,7 @@
             {% endfor %}
           </tbody>
         </table>
-        <form method="get" action="{{url_for('services.stool_exam_main')}}" class="box">
+        <form method="get" action="{{url_for('services.stool_exam_main', project_id=client.project_id)}}" class="box">
           <input type="hidden" name="client_id" value="{{client.id}}">
           <input type="hidden" name="next" value="{{request.url}}">
           <div class="field">
@@ -235,7 +235,7 @@
         </a>
         {% endif %}
         <div class="buttons is-centered">
-          <a href="{{url_for('services.index')}}" class="button is-light">
+          <a href="{{url_for('services.index', project_id=client.project_id)}}" class="button is-light">
             <span class="icon">
               <i class="fa-solid fa-house"></i>
             </span>

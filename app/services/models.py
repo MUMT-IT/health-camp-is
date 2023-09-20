@@ -21,6 +21,8 @@ class ClientAddress(db.Model):
     __tablename__ = 'client_addresses'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
     name = db.Column('name', db.String(), info={'label': 'ที่อยู่'})
+    project_id = db.Column(db.ForeignKey('projects.id'))
+    project = db.relationship(Project, backref=db.backref('client_addresses'))
 
     def __str__(self):
         return self.name
@@ -265,6 +267,16 @@ class StoolTestRecord(db.Model):
     occult_blood = db.Column('occult_blood',
                              db.String(), info={'label': 'Occult blood',
                                                 'choices': [(c, c) for c in ['ไม่ได้ทดสอบ', 'บวก', 'ลบ']]})
+    method = db.Column('method', db.String(),
+                       info={'label': 'วิธีการตรวจ',
+                             'choices': [(c, c) for c in ['Direct smear', 'Scotch tape technique']],
+                             'form_field_class': RadioField
+                             })
+    quality = db.Column('quality', db.String(),
+                        info={'label': 'คุณภาพสิ่งตัวอย่าง',
+                              'choices': [(c, c) for c in ['ไม่เหมาะสม', 'พอใช้', 'เหมาะสม']],
+                              'form_field_class': RadioField,
+                              })
     reported_at = db.Column('reported_at', db.DateTime())
     reporter_id = db.Column('reporter_id', db.ForeignKey('users.id'))
     updater_id = db.Column('updater_id', db.ForeignKey('users.id'))

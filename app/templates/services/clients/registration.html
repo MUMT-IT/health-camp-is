@@ -5,8 +5,8 @@
   <div class="container">
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
-        <li><a href="{{url_for('services.index')}}">Home</a></li>
-        <li><a href="{{url_for('services.list_clients')}}">Clients</a></li>
+        <li><a href="{{url_for('services.index', project_id=project_id)}}">Home</a></li>
+        <li><a href="{{url_for('services.list_clients', project_id=project_id)}}">Clients</a></li>
         <li class="is-active"><a href="#" aria-current="page">Client Edit</a></li>
       </ul>
     </nav>
@@ -78,7 +78,19 @@
             <label class="label">{{form.pid.label}}</label>
             <div class="control">
               {{ form.pid(class="input") }}
+              <p class="help is-info">หากไม่ทราบหมายเลขบัตรประชาชนให้กดปุ่ม generate random PID</p>
             </div>
+            <button class="button is-link is-rounded"
+                    hx-swap="outerHTML"
+                    hx-target="#pid"
+                    hx-get="{{ url_for('services.random_pid') }}">
+              <span class="icon">
+                <i class="fa-solid fa-shuffle"></i>
+              </span>
+              <span>
+                Generate Random PID
+              </span>
+            </button>
           </div>
           <div class="field">
             <div class="select">
@@ -94,7 +106,7 @@
           </div>
           <div class="field is-grouped is-grouped-centered">
             <div class="control">
-              <a class="button is-light" href="{{ url_for('services.index') }}">Back</a>
+              <a class="button is-light" href="{{ url_for('services.index', project_id=project_id) }}">Back</a>
             </div>
             <div class="control">
               <input class="button is-primary" type="submit" value="Submit">

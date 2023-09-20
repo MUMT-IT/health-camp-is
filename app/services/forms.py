@@ -14,11 +14,16 @@ class ModelForm(BaseModelForm):
         return db.session
 
 
-class ClientForm(ModelForm):
-    class Meta:
-        model = Client
-    address = QuerySelectField('ที่อยู่', query_factory=lambda: ClientAddress.query.all(),
-                               get_label='name')
+def create_client_form(project_id):
+    class ClientForm(ModelForm):
+        class Meta:
+            model = Client
+
+        address = QuerySelectField('ที่อยู่',
+                                   query_factory=lambda: ClientAddress.query.filter_by(project_id=project_id),
+                                   get_label='name')
+
+    return ClientForm
 
 
 class ClientPhysicalProfileForm(ModelForm):
@@ -39,6 +44,7 @@ class TestRecordForm(ModelForm):
 class StoolTestReportItemForm(ModelForm):
     class Meta:
         model = StoolTestReportItem
+
     organism = QuerySelectField('Organism', query_factory=lambda: Organism.query.all(),
                                 get_label='name')
     stage = QuerySelectField('Stage', query_factory=lambda: Stage.query.all(),
@@ -67,10 +73,9 @@ class HealthRecordForm(ModelForm):
                                                    widget=widgets.ListWidget(prefix_label=False),
                                                    option_widget=widgets.CheckboxInput())
     family_diseases = QuerySelectMultipleField('โรคประจำตัวในครอบครัว',
-                                                   query_factory=lambda: FamilyDiseases.query.all(),
-                                                   get_label='name',
-                                                   allow_blank=True,
-                                                   blank_text='กรุณาระบุโรค',
-                                                   widget=widgets.ListWidget(prefix_label=False),
-                                                   option_widget=widgets.CheckboxInput())
-
+                                               query_factory=lambda: FamilyDiseases.query.all(),
+                                               get_label='name',
+                                               allow_blank=True,
+                                               blank_text='กรุณาระบุโรค',
+                                               widget=widgets.ListWidget(prefix_label=False),
+                                               option_widget=widgets.CheckboxInput())

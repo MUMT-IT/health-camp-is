@@ -1,3 +1,5 @@
+import random
+import uuid
 from collections import defaultdict
 from datetime import datetime
 
@@ -8,40 +10,49 @@ from flask_login import login_required, current_user
 
 from app import db, superuser
 from app.services import service_bp as services
-from app.services.forms import ClientForm, ClientPhysicalProfileForm, TestForm, TestRecordForm, StoolTestForm, \
+from app.services.forms import create_client_form, ClientPhysicalProfileForm, TestForm, TestRecordForm, StoolTestForm, \
     HealthRecordForm
 from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord, StoolTestRecord, HealthRecord, \
-    Organism, Stage, StoolTestReportItem
+    Organism, Stage, StoolTestReportItem, Project
 
 
-@services.route('/')
+@services.route('/projects')
 @login_required
-def index():
-    return render_template('services/index.html')
+def projects():
+    projects = Project.query
+    return render_template('services/projects.html', projects=projects)
 
 
-@services.route('/clients/registration', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>')
 @login_required
-def register_client():
+def index(project_id):
+    return render_template('services/index.html', project_id=project_id)
+
+
+@services.route('/projects/<int:project_id>/clients/registration', methods=['GET', 'POST'])
+@login_required
+def register_client(project_id):
     pid = request.args.get('pid')
     client = Client.query.filter_by(pid=pid).first()
     if client:
         flash('Existing client! Welcome back ;)', 'success')
         return redirect(url_for('services.edit_client', client_id=client.id))
+    ClientForm = create_client_form(project_id)
     form = ClientForm()
     if form.validate_on_submit():
         client = Client()
         form.populate_obj(client)
+        client.project_id = project_id
         client.updated_by = current_user
         client.updated_at = arrow.now('Asia/Bangkok').datetime
         db.session.add(client)
         db.session.commit()
         flash('New client has been added.', 'success')
-        return redirect(url_for('services.edit_client', client_id=client.id))
+        return redirect(url_for('services.edit_client', client_id=client.id, project_id=project_id))
     else:
         for field in form.errors:
             flash(f'{field}: {form.errors[field]}', 'danger')
-    return render_template('services/clients/registration.html', form=form)
+    return render_template('services/clients/registration.html', form=form, project_id=project_id)
 
 
 @services.route('/clients/<int:client_id>/edit', methods=['GET', 'POST'])
@@ -50,6 +61,7 @@ def edit_client(client_id):
     client = Client.query.get(client_id)
     health_form = None
     if client:
+        ClientForm = create_client_form(project_id=client.project_id)
         form = ClientForm(obj=client)
         health_form = HealthRecordForm()
     else:
@@ -65,11 +77,23 @@ def edit_client(client_id):
                            form=form, client=client, health_form=health_form)
 
 
-@services.route('/clients')
+@services.route('/random-pid')
 @login_required
-def list_clients():
-    clients = Client.query.all()
-    return render_template('services/clients/list.html', clients=clients)
+def random_pid():
+    while True:
+        pid = ''.join([str(random.randint(0, 9)) for i in range(13)])
+        client = Client.query.filter_by(pid=pid).first()
+        if client is None:
+            break
+    return f'''
+      <input class="input" id="pid" name="pid" type="text" value="{pid}">
+    '''
+
+@services.route('/projects/<int:project_id>/clients')
+@login_required
+def list_clients(project_id):
+    clients = Client.query.filter_by(project_id=project_id)
+    return render_template('services/clients/list.html', clients=clients, project_id=project_id)
 
 
 @services.route('/clients/physical-exam')
@@ -249,10 +273,10 @@ def delete_test_record(test_id, client_id, record_id):
                             test_id=test_id, client_id=client_id))
 
 
-@services.route('/stool-exam')
+@services.route('/projects/<int:project_id>/stool-exam')
 @services.route('/clients/<int:client_id>/stool-exam')
 @login_required
-def stool_exam_main(client_id=None):
+def stool_exam_main(client_id=None, project_id=None):
     lab_number = request.args.get('lab_number')
     collection_datetime = request.args.get('collection_datetime')
     if collection_datetime:
@@ -280,8 +304,12 @@ def stool_exam_main(client_id=None):
         else:
             flash('The lab number is already registered.', 'warning')
             return redirect(next_url or url_for('services.edit_stool_exam_record', record_id=record.id))
-    records = StoolTestRecord.query.all()
-    return render_template('services/clients/stool_exam_main.html', records=records)
+    records = StoolTestRecord.query.filter(StoolTestRecord.client.has(project_id=project_id))
+    print(records, project_id)
+    client = Client.query.get(client_id)
+    return render_template('services/clients/stool_exam_main.html',
+                           records=records,
+                           project_id=project_id or client.project_id)
 
 
 @services.route('/stool-exam/records/<int:record_id>', methods=['GET', 'POST'])
@@ -328,8 +356,9 @@ def report_stool_exam_record(record_id):
         flash('The record have been reported.', 'success')
     else:
         flash('The record was not found.', 'danger')
-    return redirect(request.args.get('next') or url_for('services.stool_exam_main',
-                                                        client_id=record.client_id))
+    return redirect(request.args.get('next')
+                    or url_for('services.stool_exam_main',
+                               project_id=record.client.project_id))
 
 
 @services.route('/stool-exam/records/<int:record_id>/cancel-report', methods=['GET', 'POST'])
@@ -337,6 +366,7 @@ def report_stool_exam_record(record_id):
 @login_required
 def cancel_report_stool_exam_record(record_id):
     record = StoolTestRecord.query.get(record_id)
+    project_id = record.client.project_id
     if record:
         record.reported_at = None
         record.reported_by = None
@@ -345,8 +375,11 @@ def cancel_report_stool_exam_record(record_id):
         flash('The report has been cancelled.', 'success')
     else:
         flash('The record was not found.', 'danger')
-    return redirect(request.args.get('next') or url_for('services.stool_exam_main',
-                                                        client_id=record.client_id))
+    return redirect(request.args.get('next')
+                    or url_for('services.stool_exam_main',
+                               project_id=project_id
+                               )
+                    )
 
 
 @services.route('/stool-exam/records/<int:record_id>/remove', methods=['GET', 'POST'])

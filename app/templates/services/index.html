@@ -10,7 +10,7 @@
           <p class="panel-heading">
             Menu
           </p>
-          <a class="panel-block is-active" href="{{url_for('services.register_client')}}">
+          <a class="panel-block is-active" href="{{url_for('services.register_client', project_id=project_id)}}">
             <span class="panel-icon">
               <i class="fa-solid fa-chevron-right"></i>
             </span>
@@ -18,7 +18,7 @@
               Client Registration
             </span>
           </a>
-          <a class="panel-block is-active" href="{{url_for('services.list_clients')}}">
+          <a class="panel-block is-active" href="{{url_for('services.list_clients', project_id=project_id)}}">
             <span class="panel-icon">
               <i class="fa-solid fa-chevron-right"></i>
             </span>
@@ -42,7 +42,7 @@
               Health Records
             </span>
           </a>
-          <a class="panel-block is-active" href="{{url_for('services.stool_exam_main')}}">
+          <a class="panel-block is-active" href="{{url_for('services.stool_exam_main', project_id=project_id)}}">
             <span class="panel-icon">
               <i class="fa-solid fa-chevron-right"></i>
             </span>
