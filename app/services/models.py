@@ -45,6 +45,10 @@ class User(db.Model, UserMixin):
     _password_hash = db.Column('password_hash', db.Text())
 
     @property
+    def fullname(self):
+        return f'{self.title}{self.firstname} {self.lastname}'
+
+    @property
     def is_active(self):
         return self.is_approved
 
