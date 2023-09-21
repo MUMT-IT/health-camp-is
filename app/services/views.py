@@ -338,9 +338,57 @@ def edit_stool_exam_record(record_id):
         form.not_found.data = 'Not found'
     else:
         form.not_found.data = 'Found'
+
+    client_body = [
+        ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number, "เพศ", record.client.gender or '-', ''],
+        ['อายุ', record.client.age, 'หมายเลขบัตรประชาชน', record.client.pid or '-', '', '', ''],
+    ]
+    macro_stool_records = []
+    occult_blood = []
+    stool_records = [
+        ['ลำดับ', 'ชื่อปรสิต', 'ระยะ', 'หมายเหตุ', '']
+    ]
+    if record.reported_at:
+        macro_stool_records.append([
+            'สี', record.color or '-', 'ลักษณะ', record.form or '-', ''
+        ])
+        if record.occult_blood is True:
+            occult_blood_interpret = 'พบเลือดแฝงในอุจจาระ'
+            occult_blood_result = 'ผลบวก'
+        elif record.occult_blood is False:
+            occult_blood_interpret = 'ไม่พบเลือดแฝงในอุจจาระ'
+            occult_blood_result = 'ผลลบ'
+        else:
+            occult_blood_interpret = ''
+            occult_blood_result = 'ไม่ได้ทดสอบ'
+        occult_blood.append([
+            occult_blood_result, occult_blood_interpret, ''
+        ])
+        for n, item in enumerate(record.items, start=1):
+            if item.organism.name == 'Not found':
+                stool_records.append([
+                    n, 'ไม่พบปรสิต', '', '', ''
+                ])
+            else:
+                stool_records.append([
+                    n, item.organism.name, item.stage.stage, '...........................................................', ''
+                ])
+    if not macro_stool_records:
+        macro_stool_records.append(['สี', '-', 'ลักษณะ', '-', ''])
+    if not occult_blood:
+        occult_blood.append(['ไม่ได้ทดสอบ', '', ''])
+    if len(stool_records) == 1:
+        stool_records.pop()
+        stool_records.append(['', 'ไม่ได้ทดสอบ', '', '', ''])
     return render_template('services/clients/stool_exam_form.html',
                            form=form,
                            record=record,
+                           client=record.client,
+                           client_body=client_body,
+                           stool_records=stool_records,
+                           macro_stool_records=macro_stool_records,
+                           occult_blood=occult_blood,
+                           reported_date=arrow.now('Asia/Bangkok').datetime.strftime('%d/%m/%Y'),
                            next_url=request.args.get('next'))
 
 
