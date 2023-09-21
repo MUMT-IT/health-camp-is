@@ -16,6 +16,25 @@
 <body>
 {% block content %}
 {% endblock %}
+{% block footer %}
+    <div class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                MUMT Laboratory Information System Version 1.2
+                {% if config['DEBUG'] %}
+                    <article class="message is-warning">
+                        <div class="message-header">
+                            DEBUG MODE Only
+                        </div>
+                        <div class="message-body">
+                            <strong>Template file:</strong> {{ self._TemplateReference__context.name }}
+                        </div>
+                    </article>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
 {% block scripts %}
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.8.6/htmx.min.js" integrity="sha512-SqV24lSRcthd1Bg0Obg/W/qWhKdSsQPIV342MQd8qDeeY/gJt+2qmsLhutblQNDuUx0Xs2Jh7D8m+7S1b0wQyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
