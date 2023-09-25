@@ -1,5 +1,4 @@
 import random
-import uuid
 from collections import defaultdict
 from datetime import datetime
 
@@ -88,6 +87,7 @@ def random_pid():
     return f'''
       <input class="input" id="pid" name="pid" type="text" value="{pid}">
     '''
+
 
 @services.route('/projects/<int:project_id>/clients')
 @login_required
@@ -305,7 +305,6 @@ def stool_exam_main(client_id=None, project_id=None):
             flash('The lab number is already registered.', 'warning')
             return redirect(next_url or url_for('services.edit_stool_exam_record', record_id=record.id))
     records = StoolTestRecord.query.filter(StoolTestRecord.client.has(project_id=project_id))
-    print(records, project_id)
     client = Client.query.get(client_id)
     return render_template('services/clients/stool_exam_main.html',
                            records=records,
@@ -340,7 +339,8 @@ def edit_stool_exam_record(record_id):
         form.not_found.data = 'Found'
 
     client_body = [
-        ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number, "เพศ", record.client.gender or '-', ''],
+        ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number, "เพศ", record.client.gender or '-',
+         ''],
         ['อายุ', record.client.age, 'หมายเลขบัตรประชาชน', record.client.pid or '-', '', '', ''],
     ]
     macro_stool_records = []
@@ -371,7 +371,8 @@ def edit_stool_exam_record(record_id):
                 ])
             else:
                 stool_records.append([
-                    n, item.organism.name, item.stage.stage, '...........................................................', ''
+                    n, item.organism.name, item.stage.stage,
+                    '...........................................................', ''
                 ])
     if not macro_stool_records:
         macro_stool_records.append(['สี', '-', 'ลักษณะ', '-', ''])
@@ -598,7 +599,8 @@ def preview_report(client_id):
     physical_exam = []
     for rec in client.physical_profiles:
         physical_exam.append(['น้ำหนัก (กก.)', rec.weight, 'ส่วนสูง (ซม.)', rec.height, 'รอบเอว (ซม.)', rec.waist, ''])
-        physical_exam.append(['ดัชนีมวลกาย', rec.bmi, f'({rec.get_bmi_interpretation()})', 'ความดันโลหิต', rec.bp, "", ''])
+        physical_exam.append(
+            ['ดัชนีมวลกาย', rec.bmi, f'({rec.get_bmi_interpretation()})', 'ความดันโลหิต', rec.bp, "", ''])
     if not physical_exam:
         physical_exam.append(['น้ำหนัก (กก.)', '-', 'ส่วนสูง (ซม.)', '-', 'รอบเอว (ซม.)', '-', ''])
         physical_exam.append(['ดัชนีมวลกาย', '-', '', 'ความดันโลหิต', '-', '', ''])
@@ -622,7 +624,8 @@ def preview_report(client_id):
     ]
     if client.test_records:
         for rec in client.test_records:
-            test_records.append([rec.test.name, rec.value, rec.test.unit, f'({rec.interpret})', f'{rec.test.reference} ({rec.test.unit})', ''])
+            test_records.append([rec.test.name, rec.value, rec.test.unit, f'({rec.interpret})',
+                                 f'{rec.test.reference} ({rec.test.unit})', ''])
     if len(test_records) == 1:
         test_records.append(["", "", "", "", "", ""])
 
@@ -655,7 +658,8 @@ def preview_report(client_id):
                     ])
                 else:
                     stool_records.append([
-                        n, item.organism.name, item.stage.stage, '...........................................................', ''
+                        n, item.organism.name, item.stage.stage,
+                        '...........................................................', ''
                     ])
     if not macro_stool_records:
         macro_stool_records.append(['สี', '-', 'ลักษณะ', '-', ''])
@@ -688,7 +692,6 @@ def get_stool_exam_statistics(project_id):
             data_dict[rec.organism.name] += 1
 
     data = [[name, data_dict[name]] for name in data_dict]
-    print(data)
     data_table = gviz_api.DataTable(desc)
     data_table.LoadData(data)
     json = data_table.ToJSon()
@@ -709,7 +712,6 @@ def get_stool_exam_statistics_address(project_id):
                 data_dict['N/A'] += 1
 
     data = [[name, data_dict[name]] for name in data_dict]
-    print(data)
     data_table = gviz_api.DataTable(desc)
     data_table.LoadData(data)
     json = data_table.ToJSon()
@@ -728,7 +730,6 @@ def get_stool_exam_statistics_processed(project_id):
                 data_dict['waiting'] += 1
 
     data = [[name, data_dict[name]] for name in data_dict]
-    print(data)
     data_table = gviz_api.DataTable(desc)
     data_table.LoadData(data)
     json = data_table.ToJSon()

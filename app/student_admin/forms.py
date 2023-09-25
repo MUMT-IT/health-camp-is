@@ -1,4 +1,6 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired
+from wtforms import BooleanField
 from wtforms_alchemy import model_form_factory
 
 from app import db
@@ -21,3 +23,9 @@ class AddressForm(ModelForm):
 class OrganismForm(ModelForm):
     class Meta:
         model = Organism
+
+
+class ClientUploadForm(FlaskForm):
+    upload = FileField('File Upload', validators=[FileRequired()])
+    random_pid = BooleanField('Generate random PID', default=False)
+    use_lab_number_as_client_number = BooleanField('Use lab number as client number', default=False)

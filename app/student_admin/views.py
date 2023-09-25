@@ -1,17 +1,20 @@
+import random
+
 from flask import render_template, flash, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from app import db, superuser
-from app.services.models import User, ClientAddress, Organism
+from app.services.models import User, ClientAddress, Organism, Client, StoolTestRecord
 from app.student_admin import admin_bp as admin
-from app.student_admin.forms import AddressForm, OrganismForm
+from app.student_admin.forms import AddressForm, OrganismForm, ClientUploadForm
+import pandas as pd
 
 
-@admin.route('/')
+@admin.route('/projects/<int:project_id>')
 @superuser
 @login_required
-def index():
-    return render_template('student_admin/index.html')
+def index(project_id):
+    return render_template('student_admin/index.html', project_id=project_id)
 
 
 @admin.route('/users')
@@ -87,3 +90,41 @@ def edit_organism(org_id=None):
         db.session.commit()
     return render_template('student_admin/organism_form.html',
                            form=form, organisms=organisms, org_id=org_id)
+
+
+@admin.route('/projects<int:project_id>/clients/upload', methods=['GET', 'POST'])
+@superuser
+@login_required
+def upload_clients(project_id):
+    form = ClientUploadForm()
+    if form.validate_on_submit():
+        f = form.upload.data
+        df = pd.read_excel(f)
+        for idx, row in df.iterrows():
+            client = Client(
+                firstname=row['firstname'],
+                lastname=row['lastname'],
+                project_id=project_id,
+                updated_by=current_user,
+            )
+            if form.use_lab_number_as_client_number.data:
+                client.client_number = row['labno']
+            if form.random_pid.data:
+                client.pid = ''.join([str(random.randint(0, 9)) for i in range(13)])
+            if row.get('address'):
+                address = ClientAddress.query.filter_by(name=row.get('address')).first()
+                client.address = address
+            db.session.add(client)
+            if row.get('stool'):
+                if row.get('stool') is True:
+                    record = StoolTestRecord(
+                        client=client,
+                        method=row.get('stool_method'),
+                        lab_number=row.get('labno')
+                    )
+                    db.session.add(record)
+        db.session.commit()
+    else:
+        for field, errors in form.errors.items():
+            flash(f'{field} : {errors}', 'danger')
+    return render_template('student_admin/upload_clients.html', form=form)

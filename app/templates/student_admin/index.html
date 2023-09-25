@@ -10,7 +10,7 @@
                     <p class="panel-heading">
                         Menu
                     </p>
-                    <a class="panel-block is-active" href="{{url_for('student_admin.list_users')}}">
+                    <a class="panel-block is-active" href="{{url_for('student_admin.list_users', project_id=project_id)}}">
                         <span class="panel-icon">
                           <i class="fa-solid fa-chevron-right"></i>
                         </span>
@@ -18,7 +18,7 @@
                             อนุมัติผู้ใช้ระบบ
                         </span>
                     </a>
-                    <a class="panel-block is-active" href="{{url_for('student_admin.edit_address')}}">
+                    <a class="panel-block is-active" href="{{url_for('student_admin.edit_address', project_id=project_id)}}">
                         <span class="panel-icon">
                           <i class="fa-solid fa-chevron-right"></i>
                         </span>
@@ -26,7 +26,7 @@
                             เพิ่ม/แก้ไขที่อยู่
                         </span>
                     </a>
-                    <a class="panel-block is-active" href="{{url_for('student_admin.edit_organism')}}">
+                    <a class="panel-block is-active" href="{{url_for('student_admin.edit_organism', project_id=project_id)}}">
                         <span class="panel-icon">
                           <i class="fa-solid fa-chevron-right"></i>
                         </span>
@@ -34,9 +34,17 @@
                             เพิ่ม/แก้ไขเชื้อปรสิต
                         </span>
                     </a>
+                    <a class="panel-block is-active" href="{{url_for('student_admin.upload_clients', project_id=project_id)}}">
+                        <span class="panel-icon">
+                          <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                        <span class="is-size-4">
+                            อัพโหลดรายชื่อผู้รับบริการ
+                        </span>
+                    </a>
                 </nav>
                 <div class="buttons is-centered">
-                    <a class="button is-danger" href="{{url_for('services.index')}}">
+                    <a class="button is-danger" href="{{url_for('services.index', project_id=project_id)}}">
                         Back
                     </a>
                 </div>
