@@ -679,12 +679,13 @@ def preview_report(client_id):
                            )
 
 
-@services.route('/api/stool/statistics')
-def get_stool_exam_statistics():
+@services.route('/api/projects/<int:project_id>/stool/statistics')
+def get_stool_exam_statistics(project_id):
     desc = [('name', 'string'), ('cases', 'number')]
     data_dict = defaultdict(int)
     for rec in StoolTestReportItem.query.all():
-        data_dict[rec.organism.name] += 1
+        if StoolTestReportItem.record.client.project_id == project_id:
+            data_dict[rec.organism.name] += 1
 
     data = [[name, data_dict[name]] for name in data_dict]
     print(data)
@@ -694,17 +695,18 @@ def get_stool_exam_statistics():
     return json
 
 
-@services.route('/api/stool/statistics/address')
-def get_stool_exam_statistics_address():
+@services.route('/api/<int:project_id>/stool/statistics/address')
+def get_stool_exam_statistics_address(project_id):
     desc = [('name', 'string'), ('cases', 'number')]
     data_dict = defaultdict(int)
     for rec in StoolTestRecord.query.all():
-        if not rec.client:
-            continue
-        if rec.client.address:
-            data_dict[rec.client.address.name] += 1
-        else:
-            data_dict['N/A'] += 1
+        if rec.client.project_id == project_id:
+            if not rec.client:
+                continue
+            if rec.client.address:
+                data_dict[rec.client.address.name] += 1
+            else:
+                data_dict['N/A'] += 1
 
     data = [[name, data_dict[name]] for name in data_dict]
     print(data)
@@ -714,15 +716,16 @@ def get_stool_exam_statistics_address():
     return json
 
 
-@services.route('/api/stool/statistics/processed')
-def get_stool_exam_statistics_processed():
+@services.route('/api/<int:project_id>/stool/statistics/processed')
+def get_stool_exam_statistics_processed(project_id):
     desc = [('name', 'string'), ('numbers', 'number')]
     data_dict = defaultdict(int)
     for rec in StoolTestRecord.query.all():
-        if rec.reported_at:
-            data_dict['reported'] += 1
-        else:
-            data_dict['waiting'] += 1
+        if rec.client.project_id == project_id:
+            if rec.reported_at:
+                data_dict['reported'] += 1
+            else:
+                data_dict['waiting'] += 1
 
     data = [[name, data_dict[name]] for name in data_dict]
     print(data)
