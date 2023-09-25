@@ -80,7 +80,7 @@ def edit_client(client_id):
 @login_required
 def random_pid():
     while True:
-        pid = ''.join([str(random.randint(0, 9)) for i in range(13)])
+        pid = 'fake' + ''.join([str(random.randint(0, 9)) for i in range(9)])
         client = Client.query.filter_by(pid=pid).first()
         if client is None:
             break

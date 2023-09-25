@@ -110,7 +110,7 @@ def upload_clients(project_id):
             if form.use_lab_number_as_client_number.data:
                 client.client_number = row['labno']
             if form.random_pid.data:
-                client.pid = ''.join([str(random.randint(0, 9)) for i in range(13)])
+                client.pid = 'fake' + ''.join([str(random.randint(0, 9)) for i in range(9)])
             if row.get('address'):
                 address = ClientAddress.query.filter_by(name=row.get('address')).first()
                 client.address = address
