@@ -30,23 +30,6 @@
           <th></th>
           </thead>
           <tbody>
-            {% for c in clients %}
-            <tr>
-              <td>{{c.client_number}}</td>
-              <td>{{c.fullname}}</td>
-              <td>{{c.age_}}</td>
-              <td>{{c.pid}}</td>
-              <td>{{c.address}}</td>
-              <td>
-                <a class="button is-light is-small" href="{{url_for('services.client_profile', client_id=c.id)}}">
-                  <span class="icon">
-                    <i class="fa-solid fa-user"></i>
-                  </span>
-                  <span>profile</span>
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -58,7 +41,20 @@
 {{ super() }}
 <script>
   $('document').ready(()=>{
-    $('#clientTable').DataTable();
+    $('#clientTable').DataTable({
+      ajax: {
+        url: {{ url_for('services.get_client_list', project_id=project_id)|tojson|safe }},
+      },
+      columns: [
+        { data: 'client_number' },
+        { data: 'fullname' },
+        { data: 'age' },
+        { data: 'pid' },
+        { data: 'address' },
+      ],
+      processing: true,
+      serverSide: true,
+    });
   })
 </script>
 {% endblock %}

@@ -112,6 +112,16 @@ class Client(db.Model):
     def fullname(self):
         return f'{self.firstname} {self.lastname}'
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'fullname': self.fullname,
+            'client_number': self.client_number,
+            'age': self.age,
+            'pid': self.pid,
+            'address': self.address.name
+        }
+
 
 class ClientPhysicalProfile(db.Model):
     __tablename__ = 'client_physical_profiles'

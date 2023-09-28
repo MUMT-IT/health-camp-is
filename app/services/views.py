@@ -4,8 +4,9 @@ from datetime import datetime
 
 import arrow
 import gviz_api
-from flask import render_template, redirect, url_for, flash, request, make_response
+from flask import render_template, redirect, url_for, flash, request, make_response, jsonify
 from flask_login import login_required, current_user
+from sqlalchemy import or_
 
 from app import db, superuser
 from app.services import service_bp as services
@@ -92,8 +93,32 @@ def random_pid():
 @services.route('/projects/<int:project_id>/clients')
 @login_required
 def list_clients(project_id):
-    clients = Client.query.filter_by(project_id=project_id)
-    return render_template('services/clients/list.html', clients=clients, project_id=project_id)
+    return render_template('services/clients/list.html', project_id=project_id)
+
+
+@services.route('/api/projects/<int:project_id>/clients')
+@login_required
+def get_client_list(project_id):
+    query = Client.query.filter_by(project_id=project_id)
+    records_total = query.count()
+    search = request.args.get('search[value]')
+    query = query.filter(or_(Client.client_number.ilike('%{}%'.format(search)),
+                             Client.firstname.ilike('%{}%'.format(search)),
+                             Client.lastname.ilike('%{}%'.format(search)),
+                             Client.pid.ilike('%{}%'.format(search)),
+                             Client.address.has(name=search),
+                             ),
+                         )
+    start = request.args.get('start', type=int)
+    length = request.args.get('length', type=int)
+    total_filtered = query.count()
+    query = query.offset(start).limit(length)
+    data = [r.to_dict() for r in query]
+    return jsonify({'data': data,
+                    'recordsFiltered': total_filtered,
+                    'recordsTotal': records_total,
+                    'draw': request.args.get('draw', type=int),
+                    })
 
 
 @services.route('/clients/physical-exam')
