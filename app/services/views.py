@@ -1,6 +1,7 @@
 import random
 from collections import defaultdict
 from datetime import datetime
+from pytz import timezone
 
 import arrow
 import gviz_api
@@ -306,6 +307,7 @@ def stool_exam_main(client_id=None, project_id=None):
     collection_datetime = request.args.get('collection_datetime')
     if collection_datetime:
         collection_datetime = datetime.strptime(collection_datetime, '%Y-%m-%d %H:%M:%S')
+        collection_datetime = collection_datetime.astimezone(timezone('Etc/UTC'))
 
     next_url = request.args.get('next')
     if not client_id:
