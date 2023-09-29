@@ -17,25 +17,25 @@ def index(project_id):
     return render_template('student_admin/index.html', project_id=project_id)
 
 
-@admin.route('/users')
+@admin.route('/projects/<int:project_id>/users')
 @superuser
 @login_required
-def list_users():
+def list_users(project_id):
     users = User.query.filter_by(is_approved=False)
-    return render_template('student_admin/users.html', users=users)
+    return render_template('student_admin/users.html', users=users, project_id=project_id)
 
 
-@admin.route('/users/<int:user_id>/approve')
+@admin.route('/projects/<int:project_id>/users/<int:user_id>/approve')
 @superuser
 @login_required
-def approve_user(user_id):
+def approve_user(user_id, project_id):
     u = User.query.get(user_id)
     if u:
         u.is_approved = True
         db.session.add(u)
         db.session.commit()
         flash('The user has been approved', 'success')
-        return redirect(url_for('student_admin.list_users'))
+        return redirect(url_for('student_admin.list_users', project_id=project_id))
 
 
 @admin.route('/addresses/add', methods=['GET', 'POST'])

@@ -20,7 +20,7 @@
             <td>{{u.lastname}}</td>
             <td>{{u.email}}</td>
             <td>
-              <a href="{{url_for('student_admin.approve_user', user_id=u.id)}}" class="button is-light">
+              <a href="{{url_for('student_admin.approve_user', user_id=u.id, project_id=project_id)}}" class="button is-light">
                 <span>approve</span>
               </a>
             </td>
@@ -29,7 +29,7 @@
           </tbody>
         </table>
         <div class="buttons is-centered">
-          <a class="button is-danger" href="{{url_for('student_admin.index')}}">
+          <a class="button is-danger" href="{{url_for('student_admin.index', project_id=project_id)}}">
             Back
           </a>
         </div>
