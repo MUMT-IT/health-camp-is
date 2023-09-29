@@ -9,6 +9,7 @@ from flask_admin import Admin, AdminIndexView
 from flask_login import LoginManager, current_user
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
+from pytz import timezone
 
 load_dotenv()
 
@@ -84,8 +85,9 @@ def create_app():
 
     @app.template_filter('localdatetime')
     def get_local_datetime(dt):
+        bangkok = timezone('Asia/Bangkok')
         if dt:
-            d = arrow.get(dt, 'Asia/Bangkok')
+            d = bangkok.localize(dt)
             return f'{d.format("DD/MM/YYYY HH:mm:ss")} ({d.humanize()})'
         return ''
 
