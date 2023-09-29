@@ -102,7 +102,7 @@
               <td>{{ stool_record.results|itemize|safe }}</td>
               <td>{{ stool_record.note or '' }}</td>
               <td>{{ stool_record.updated_at|localdatetime }} by {{stool_record.updated_by.firstname}}</td>
-              <td>{{ stool_record.collection_datetime|localdatetime }}</td>
+              <td>{{ stool_record.collection_datetime.strftime('%d/%m/%Y %H:%M:%S') }}</td>
               <td>
                 {% if stool_record.reported_at %}
                 {{ stool_record.reported_at|localdatetime }} by {{stool_record.reported_by.firstname}}

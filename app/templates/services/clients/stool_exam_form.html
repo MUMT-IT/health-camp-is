@@ -16,7 +16,7 @@
         <h1 class="title has-text-centered">New/Edit Record</h1>
         <div class="box">
           <label class="label">Name</label>{{record.client.fullname}}
-          <a href="{{url_for('services.client_profile', client_id=record.client.id)}}">See profile</a>
+          <a href="{{url_for('services.client_profile', client_id=record.client.id, project_id=record.client.project_id)}}">See profile</a>
           <label class="label">Client Number</label>{{record.client.client_number}}
         </div>
         <form method="post">

@@ -146,7 +146,7 @@
             <tr>
               <td>{{rec.lab_number}}</td>
               <td>{{rec.updated_at|localdatetime}}</td>
-              <td>{{rec.collection_datetime|localdatetime}}</td>
+              <td>{{rec.collection_datetime.strftime('%d/%m/%Y %H:%M:%S') }}</td>
             </tr>
             {% endfor %}
           </table>
