@@ -87,8 +87,7 @@ def create_app():
     def get_local_datetime(dt):
         bangkok = timezone('Asia/Bangkok')
         if dt:
-            d = bangkok.localize(dt)
-            d = arrow.get(d)
+            d = arrow.get(dt.astimezone(bangkok))
             return f'{d.format("DD/MM/YYYY HH:mm:ss")} ({d.humanize()})'
         return ''
 
