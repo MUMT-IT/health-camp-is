@@ -44,7 +44,6 @@ def register_client(project_id):
         form.populate_obj(client)
         client.project_id = project_id
         client.updated_by = current_user
-        client.updated_at = arrow.now('Asia/Bangkok').datetime
         db.session.add(client)
         db.session.commit()
         flash('New client has been added.', 'success')
@@ -68,7 +67,6 @@ def edit_client(client_id, project_id):
         flash('The client is not found.', 'danger')
     if form.validate_on_submit():
         form.populate_obj(client)
-        client.updated_at = arrow.now('Asia/Bangkok').datetime
         client.updated_by = current_user
         db.session.add(client)
         db.session.commit()
@@ -150,7 +148,6 @@ def add_physical_exam_profile(client_id):
         pp = ClientPhysicalProfile()
         form.populate_obj(pp)
         pp.client = client
-        pp.updated_at = arrow.now('Asia/Bangkok').datetime
         pp.updated_by = current_user
         db.session.add(pp)
         db.session.commit()
@@ -166,7 +163,6 @@ def edit_physical_exam_profile(rec_id):
     form = ClientPhysicalProfileForm(obj=rec)
     if form.validate_on_submit():
         form.populate_obj(rec)
-        rec.updated_at = arrow.now('Asia/Bangkok').datetime
         rec.updated_by = current_user
         db.session.add(rec)
         db.session.commit()
@@ -269,7 +265,6 @@ def add_test_record(test_id, client_id, record_id=None):
             rec = TestRecord()
         form.populate_obj(rec)
         rec.test = test
-        rec.updated_at = arrow.now('Asia/Bangkok').datetime
         rec.updated_by = current_user
         rec.client_id = client_id
         db.session.add(rec)
@@ -322,7 +317,6 @@ def stool_exam_main(client_id=None, project_id=None):
                 record = StoolTestRecord(lab_number=lab_number, collection_datetime=collection_datetime)
                 record.client_id = client_id
                 record.updated_by = current_user
-                record.updated_at = arrow.now('Asia/Bangkok').datetime
                 db.session.add(record)
                 db.session.commit()
                 flash('New stool specimens has been registered.', 'success')
@@ -353,7 +347,6 @@ def edit_stool_exam_record(record_id):
         if form.not_found.data == 'Not found':
             record.items = [StoolTestReportItem(organism=not_found_org,
                                                 stage=not_found_stage)]
-        record.updated_at = arrow.now('Asia/Bangkok').datetime
         record.updated_by = current_user
         db.session.add(record)
         db.session.commit()
@@ -582,7 +575,6 @@ def add_health_record(client_id, record_id=None):
             record = HealthRecord()
             record.client_id = client_id
         form.populate_obj(record)
-        record.updated_at = arrow.now('Asia/Bangkok').datetime
         record.updated_by = current_user
         db.session.add(record)
         db.session.commit()
