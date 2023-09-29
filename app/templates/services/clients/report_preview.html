@@ -5,9 +5,9 @@
   <div class="container">
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
-        <li><a href="{{url_for('services.index')}}">Home</a></li>
-        <li><a href="{{url_for('services.list_clients')}}">Clients</a></li>
-        <li><a href="{{url_for('services.client_profile', client_id=client.id)}}">Profile</a></li>
+        <li><a href="{{url_for('services.index', project_id=client.project_id)}}">Home</a></li>
+        <li><a href="{{url_for('services.list_clients', project_id=client.project_id)}}">Clients</a></li>
+        <li><a href="{{url_for('services.client_profile', client_id=client.id, project_id=client.project_id)}}">Profile</a></li>
         <li class="is-active"><a href="#" aria-current="page">Report</a></li>
       </ul>
     </nav>
@@ -171,7 +171,8 @@
           </tr>
         </table>
         <div class="buttons is-centered">
-          <a href="{{url_for('services.index')}}" class="button is-light">Home</a>
+          <a href="{{url_for('services.index', project_id=client.project_id)}}"
+             class="button is-light">Home</a>
           <button onclick="printPdf()" class="button is-primary">
             <span class="icon">
              <i class="fa-solid fa-print"></i>

@@ -44,13 +44,13 @@
           </tr>
         </table>
         <div class="buttons is-centered">
-          <a href="{{url_for('services.edit_client', client_id=client.id)}}" class="button is-primary">Edit</a>
+          <a href="{{url_for('services.edit_client', client_id=client.id, project_id=project_id)}}" class="button is-primary">Edit</a>
           <a href="{{url_for('services.preview_report', client_id=client.id)}}" class="button is-success">Report</a>
         </div>
         <div class="tabs is-boxed">
           <ul>
             <li class="{% if tab == 'stool' %}is-active{% endif %}">
-              <a href="{{url_for('services.client_profile', client_id=client.id)}}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, project_id=project_id)}}">
                 <span class="icon is-small">
                   <i class="fa-solid fa-toilet"></i>
                 </span>
@@ -58,7 +58,7 @@
               </a>
             </li>
             <li class="{% if tab == 'others' %}is-active {% endif %}">
-              <a href="{{url_for('services.client_profile', client_id=client.id, tab='others')}}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='others', project_id=project_id)}}">
                 <span class="icon is-small">
                   <i class="fa-solid fa-vial"></i>
                 </span>
@@ -66,7 +66,7 @@
               </a>
             </li>
             <li class="{% if tab == 'physical' %}is-active {% endif %}">
-              <a href="{{url_for('services.client_profile', client_id=client.id, tab='physical')}}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='physical', project_id=project_id)}}">
                 <span class="icon is-small">
                   <i class="fa-solid fa-child"></i>
                 </span>
@@ -74,7 +74,7 @@
               </a>
             </li>
             <li class="{% if tab == 'health' %}is-active {% endif %}">
-              <a href="{{url_for('services.client_profile', client_id=client.id, tab='health')}}">
+              <a href="{{url_for('services.client_profile', client_id=client.id, tab='health', project_id=project_id)}}">
                 <span class="icon is-small">
                   <i class="fa-solid fa-heart"></i>
                 </span>

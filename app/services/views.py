@@ -55,9 +55,9 @@ def register_client(project_id):
     return render_template('services/clients/registration.html', form=form, project_id=project_id)
 
 
-@services.route('/clients/<int:client_id>/edit', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/edit', methods=['GET', 'POST'])
 @login_required
-def edit_client(client_id):
+def edit_client(client_id, project_id):
     client = Client.query.get(client_id)
     health_form = None
     if client:
@@ -74,6 +74,7 @@ def edit_client(client_id):
         db.session.commit()
         flash('Client data have been update.', 'success')
     return render_template('services/clients/registration.html',
+                           project_id=project_id,
                            form=form, client=client, health_form=health_form)
 
 
@@ -113,7 +114,11 @@ def get_client_list(project_id):
     length = request.args.get('length', type=int)
     total_filtered = query.count()
     query = query.offset(start).limit(length)
-    data = [r.to_dict() for r in query]
+    data = []
+    for r in query:
+        d = r.to_dict()
+        d['url'] = url_for('services.client_profile', client_id=r.id, project_id=project_id)
+        data.append(d)
     return jsonify({'data': data,
                     'recordsFiltered': total_filtered,
                     'recordsTotal': records_total,
@@ -189,12 +194,12 @@ def delete_physical_exam_profile(rec_id):
     return redirect(url_for('services.add_physical_exam_profile', client_id=client.id))
 
 
-@services.route('/clients/<int:client_id>/profile')
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/profile')
 @login_required
-def client_profile(client_id):
+def client_profile(client_id, project_id):
     tab = request.args.get('tab', 'stool')
     client = Client.query.get(client_id)
-    return render_template('services/clients/profile.html', client=client, tab=tab)
+    return render_template('services/clients/profile.html', client=client, tab=tab, project_id=project_id)
 
 
 @services.route('/tests')

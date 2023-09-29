@@ -47,10 +47,18 @@
       },
       columns: [
         { data: 'client_number' },
-        { data: 'fullname' },
+        {
+          data: 'fullname',
+        },
         { data: 'age' },
         { data: 'pid' },
         { data: 'address' },
+        {
+          data: 'url',
+          render: function (data) {
+            return '<a href=' + data + '><span class="icon"><i class="fa-regular fa-eye"></i></span><span>profile</span></a>'
+          }
+        }
       ],
       processing: true,
       serverSide: true,
