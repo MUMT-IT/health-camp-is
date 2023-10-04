@@ -52,7 +52,7 @@
             </div>
             <div class="field is-grouped is-grouped-centered">
               <div class="control">
-                <a class="button is-light" href="{{ url_for('services.index') }}">Cancel</a>
+                <a class="button is-light" href="{{ url_for('index') }}">Cancel</a>
               </div>
               <div class="control">
                 <input class="button is-primary" type="submit" value="Submit">
@@ -61,54 +61,7 @@
           </div>
         </form>
       </div>
-      {% if client %}
-      <div class="column">
-          <div class="box">
-            <h1 class="title">Register Stool Examination</h1>
-            <form method="get" action="{{url_for('services.stool_exam_main')}}">
-              <input type="hidden" name="client_id" value="{{client.id}}">
-              <input type="hidden" name="next" value="{{url_for('services.register_client')}}">
-              <div class="field">
-                <input class="input" name="lab_number">
-              </div>
-              <div class="field">
-                <label class="label">Collected At</label>
-                <div class="control">
-                  <input type="text" class="input" id="collectionDatetime" name="collection_datetime">
-                </div>
-              </div>
-              <div class="field">
-                <input type="submit" value="Register" class="button is-warning">
-              </div>
-            </form>
-          </div>
-      </div>
-      {% endif %}
     </div>
   </div>
 </section>
-{% endblock %}
-{% block scripts %}
-{{super()}}
-<script>
-  $('#dob').daterangepicker({
-    singleDatePicker: true,
-    showDropdowns: true,
-    locale: {
-      format: 'YYYY-MM-DD'
-    }
-  });
-</script>
-<script>
-  $('#collectionDatetime').daterangepicker({
-    singleDatePicker: true,
-    timePicker: true,
-    showDropdowns: true,
-    timePickerIncrement: 15,
-    timePicker24Hour: true,
-    locale: {
-      format: 'YYYY-MM-DD HH:mm:ss'
-    }
-  });
-</script>
 {% endblock %}
