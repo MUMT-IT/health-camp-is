@@ -712,9 +712,9 @@ def preview_report(client_id):
 def get_stool_exam_statistics(project_id):
     desc = [('name', 'string'), ('cases', 'number')]
     data_dict = defaultdict(int)
-    for rec in StoolTestReportItem.query.all():
-        if StoolTestReportItem.record.client.project_id == project_id:
-            data_dict[rec.organism.name] += 1
+    for report in StoolTestReportItem.query.all():
+        if report.record.client.project_id == project_id:
+            data_dict[report.organism.name] += 1
 
     data = [[name, data_dict[name]] for name in data_dict]
     data_table = gviz_api.DataTable(desc)
