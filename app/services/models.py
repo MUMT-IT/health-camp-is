@@ -313,6 +313,7 @@ class StoolTestRecord(db.Model):
         return {
             'id': self.id,
             'lab_number': self.lab_number,
+            'client': self.client.fullname,
             'updater': self.updated_by.fullname if self.updated_by else None,
             'updated_at': self.updated_at.astimezone(bkk_timezone).isoformat() if self.updated_at else None,
             'approver': self.approved_by.fullname if self.approved_by else None,

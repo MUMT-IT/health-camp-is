@@ -348,6 +348,7 @@ def get_stool_exam_records(project_id):
 @services.route('/stool-exam/records/<int:record_id>', methods=['GET', 'POST'])
 @login_required
 def edit_stool_exam_record(record_id):
+    # TODO: Use Select2js for the organism field
     not_found_org = Organism.query.filter_by(name='Not found').first()
     not_found_stage = Stage.query.filter_by(stage='Not found').first()
     record = StoolTestRecord.query.get(record_id)
@@ -524,6 +525,12 @@ def add_stool_report_item_entry():
               <label class="label">{item_form.stage.label}</label>
               <div class="select">
                 {item_form.stage()}
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">{item_form.comment.label}</label>
+              <div class="control">
+                {item_form.comment(class_='textarea')}
               </div>
             </div>
           </div>
