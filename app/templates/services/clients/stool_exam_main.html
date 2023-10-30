@@ -41,39 +41,6 @@
           <th></th>
           </thead>
           <tbody>
-          {% for record in records %}
-          <tr>
-            <td>{{record.lab_number}}</td>
-            <td>{{record.updated_at|localdatetime}} by {{record.updated_by.firstname}}</td>
-            <td>
-              {% if record.results == 'Not found' %}
-              <span class="tag is-success">
-                {{record.results}}
-              </span>
-              {% else %}
-              <span class="has-text-danger">
-                {{record.results|itemize(', ')}}
-              </span>
-              {% endif %}
-            </td>
-            <td>
-              {% if record.reported_at %}
-              {{record.reported_at|localdatetime}} by {{record.reported_by.firstname}}
-              {% endif %}
-            </td>
-            <td>
-              {% if record.approved_at %}
-              {{record.approved_at|localdatetime}} by {{record.approved_by.firstname}}
-              {% endif %}
-            </td>
-            <td>
-              <a href="{{url_for('services.edit_stool_exam_record', record_id=record.id)}}"
-              class="button is-link is-rounded is-small">
-                <span>view/edit</span>
-              </a>
-            </td>
-          </tr>
-          {% endfor %}
           </tbody>
         </table>
       </div>
@@ -86,6 +53,7 @@
 {{super()}}
 <script>
   $('document').ready(()=>{
+    let BASE_URL = '/services/stool-exam/records/'
     $('#recordTable').DataTable({
       processing: true,
       ajax: {
@@ -125,6 +93,12 @@
             return data ? moment(data).format('lll') : ''
           }
         },
+        {
+          data: "id",
+          render: function (data) {
+            return '<a href="' + BASE_URL + data +'" class="button is-link is-rounded is-small"><span>view</span></a>'
+          }
+        }
       ]
     })
   })

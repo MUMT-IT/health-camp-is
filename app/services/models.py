@@ -295,6 +295,7 @@ class StoolTestRecord(db.Model):
                               'choices': [(c, c) for c in ['ไม่เหมาะสม', 'พอใช้', 'เหมาะสม']],
                               'form_field_class': RadioField,
                               })
+    summary = db.Column('summary', db.Text(), info={'label': 'Summary/Suggestion'})
     reported_at = db.Column('reported_at', db.DateTime(timezone=True))
     reporter_id = db.Column('reporter_id', db.ForeignKey('users.id'))
     updater_id = db.Column('updater_id', db.ForeignKey('users.id'))
@@ -310,6 +311,7 @@ class StoolTestRecord(db.Model):
 
     def to_dict(self):
         return {
+            'id': self.id,
             'lab_number': self.lab_number,
             'updater': self.updated_by.fullname if self.updated_by else None,
             'updated_at': self.updated_at.astimezone(bkk_timezone).isoformat() if self.updated_at else None,
@@ -331,6 +333,7 @@ class StoolTestReportItem(db.Model):
     record_id = db.Column('record_id', db.ForeignKey('stool_test_records.id'))
     record = db.relationship(StoolTestRecord,
                              backref=db.backref('items', cascade='all, delete-orphan'))
+    comment = db.Column('comment', db.Text(), info={'label': 'Comment'})
 
     def __str__(self):
         if self.organism.name == 'Not found':

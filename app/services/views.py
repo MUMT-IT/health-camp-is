@@ -371,10 +371,13 @@ def edit_stool_exam_record(record_id):
     else:
         form.not_found.data = 'Found'
 
+    # client_body = [
+    #     ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number, "เพศ", record.client.gender or '-',
+    #      ''],
+    #     ['อายุ', record.client.age if record.client.age_ or record.client.dob else '-', 'หมายเลขบัตรประชาชน', record.client.pid or '-', '', '', ''],
+    # ]
     client_body = [
-        ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number, "เพศ", record.client.gender or '-',
-         ''],
-        ['อายุ', record.client.age, 'หมายเลขบัตรประชาชน', record.client.pid or '-', '', '', ''],
+        ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number],
     ]
     macro_stool_records = []
     occult_blood = []
@@ -382,9 +385,10 @@ def edit_stool_exam_record(record_id):
         ['ลำดับ', 'ชื่อปรสิต', 'ระยะ', 'หมายเหตุ', '']
     ]
     if record.reported_at:
-        macro_stool_records.append([
-            'สี', record.color or '-', 'ลักษณะ', record.form or '-', ''
-        ])
+        if record.color != 'ไม่ได้ส่งอุจจาระ' or record.form != 'ไม่ได้ส่งอุจจาระ':
+            macro_stool_records.append([
+                'สี', record.color or '-', 'ลักษณะ', record.form or '-', ''
+            ])
         if record.occult_blood is True:
             occult_blood_interpret = 'พบเลือดแฝงในอุจจาระ'
             occult_blood_result = 'ผลบวก'
@@ -405,15 +409,15 @@ def edit_stool_exam_record(record_id):
             else:
                 stool_records.append([
                     n, item.organism.name, item.stage.stage,
-                    '...........................................................', ''
+                    item.comment or '...........................................................', ''
                 ])
-    if not macro_stool_records:
-        macro_stool_records.append(['สี', '-', 'ลักษณะ', '-', ''])
-    if not occult_blood:
-        occult_blood.append(['ไม่ได้ทดสอบ', '', ''])
-    if len(stool_records) == 1:
-        stool_records.pop()
-        stool_records.append(['', 'ไม่ได้ทดสอบ', '', '', ''])
+    # if not macro_stool_records:
+    #     macro_stool_records.append(['สี', '-', 'ลักษณะ', '-', ''])
+    # if not occult_blood:
+    #     occult_blood.append(['ไม่ได้ทดสอบ', '', ''])
+    # if len(stool_records) == 1:
+    #     stool_records.pop()
+    #     stool_records.append(['', 'ไม่ได้ทดสอบ', '', '', ''])
     return render_template('services/clients/stool_exam_form.html',
                            form=form,
                            record=record,
@@ -422,6 +426,7 @@ def edit_stool_exam_record(record_id):
                            stool_records=stool_records,
                            macro_stool_records=macro_stool_records,
                            occult_blood=occult_blood,
+                           summary=record.summary,
                            reported_date=arrow.now('Asia/Bangkok').datetime.strftime('%d/%m/%Y'),
                            next_url=request.args.get('next'))
 
