@@ -31,9 +31,12 @@
         <table id="recordTable" class="table is-fullwidth">
           <thead>
           <th>Lab Number</th>
+          <th>Updated by</th>
           <th>Recieved/Updated At</th>
           <th>Results</th>
+          <th>Reported By</th>
           <th>Reported Datetime</th>
+          <th>Approved By</th>
           <th>Approved Datetime</th>
           <th></th>
           </thead>
@@ -83,7 +86,47 @@
 {{super()}}
 <script>
   $('document').ready(()=>{
-    $('#recordTable').DataTable()
+    $('#recordTable').DataTable({
+      processing: true,
+      ajax: {
+        url: {{ url_for('services.get_stool_exam_records', project_id=project_id)|tojson|safe }},
+      },
+      columns: [
+        {
+          data: "lab_number",
+        },
+        {
+          data: "updater",
+        },
+        {
+          data: "updated_at",
+          render: function (data) {
+            return data ? moment(data).format('lll') : ''
+          }
+        },
+        {
+          data: "results",
+        },
+        {
+          data: "reporter",
+        },
+        {
+          data: "reported_at",
+          render: function (data) {
+            return data ? moment(data).format('lll') : ''
+          }
+        },
+        {
+          data: "approver",
+        },
+        {
+          data: "approved_at",
+          render: function (data) {
+            return data ? moment(data).format('lll') : ''
+          }
+        },
+      ]
+    })
   })
 </script>
 {% endblock %}

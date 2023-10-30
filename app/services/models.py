@@ -1,5 +1,6 @@
 import datetime
 import decimal
+from pytz import timezone
 
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,6 +11,7 @@ from flask_login import UserMixin
 
 from app import db
 
+bkk_timezone = timezone('Asia/Bangkok')
 
 class Project(db.Model):
     __tablename__ = 'projects'
@@ -305,6 +307,18 @@ class StoolTestRecord(db.Model):
     @property
     def results(self):
         return ','.join([str(item) for item in self.items])
+
+    def to_dict(self):
+        return {
+            'lab_number': self.lab_number,
+            'updater': self.updated_by.fullname if self.updated_by else None,
+            'updated_at': self.updated_at.astimezone(bkk_timezone).isoformat() if self.updated_at else None,
+            'approver': self.approved_by.fullname if self.approved_by else None,
+            'approved_at': self.approved_at.astimezone(bkk_timezone).isoformat() if self.approved_at else None,
+            'reporter': self.reported_by.fullname if self.reported_by else None,
+            'reported_at': self.reported_at.astimezone(bkk_timezone).isoformat() if self.reported_at else None,
+            'results': self.results,
+        }
 
 
 class StoolTestReportItem(db.Model):

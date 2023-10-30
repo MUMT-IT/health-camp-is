@@ -336,6 +336,14 @@ def stool_exam_main(client_id=None, project_id=None):
                            project_id=project_id or client.project_id)
 
 
+@services.route('/api/projects/<int:project_id>/stool-exam/records')
+@login_required
+def get_stool_exam_records(project_id):
+    # TODO: add pagination
+    records = [rec.to_dict() for rec in StoolTestRecord.query.filter(StoolTestRecord.client.has(project_id=project_id))]
+    return jsonify({'data': records})
+
+
 @services.route('/stool-exam/records/<int:record_id>', methods=['GET', 'POST'])
 @login_required
 def edit_stool_exam_record(record_id):
