@@ -31,46 +31,16 @@
         <table id="recordTable" class="table is-fullwidth">
           <thead>
           <th>Lab Number</th>
+          <th>Updated by</th>
           <th>Recieved/Updated At</th>
           <th>Results</th>
+          <th>Reported By</th>
           <th>Reported Datetime</th>
+          <th>Approved By</th>
           <th>Approved Datetime</th>
           <th></th>
           </thead>
           <tbody>
-          {% for record in records %}
-          <tr>
-            <td>{{record.lab_number}}</td>
-            <td>{{record.updated_at|localdatetime}} by {{record.updated_by.firstname}}</td>
-            <td>
-              {% if record.results == 'Not found' %}
-              <span class="tag is-success">
-                {{record.results}}
-              </span>
-              {% else %}
-              <span class="has-text-danger">
-                {{record.results|itemize(', ')}}
-              </span>
-              {% endif %}
-            </td>
-            <td>
-              {% if record.reported_at %}
-              {{record.reported_at|localdatetime}} by {{record.reported_by.firstname}}
-              {% endif %}
-            </td>
-            <td>
-              {% if record.approved_at %}
-              {{record.approved_at|localdatetime}} by {{record.approved_by.firstname}}
-              {% endif %}
-            </td>
-            <td>
-              <a href="{{url_for('services.edit_stool_exam_record', record_id=record.id)}}"
-              class="button is-link is-rounded is-small">
-                <span>view/edit</span>
-              </a>
-            </td>
-          </tr>
-          {% endfor %}
           </tbody>
         </table>
       </div>
@@ -83,7 +53,54 @@
 {{super()}}
 <script>
   $('document').ready(()=>{
-    $('#recordTable').DataTable()
+    let BASE_URL = '/services/stool-exam/records/'
+    $('#recordTable').DataTable({
+      processing: true,
+      ajax: {
+        url: {{ url_for('services.get_stool_exam_records', project_id=project_id)|tojson|safe }},
+      },
+      columns: [
+        {
+          data: "lab_number",
+        },
+        {
+          data: "updater",
+        },
+        {
+          data: "updated_at",
+          render: function (data) {
+            return data ? moment(data).format('lll') : ''
+          }
+        },
+        {
+          data: "results",
+        },
+        {
+          data: "reporter",
+        },
+        {
+          data: "reported_at",
+          render: function (data) {
+            return data ? moment(data).format('lll') : ''
+          }
+        },
+        {
+          data: "approver",
+        },
+        {
+          data: "approved_at",
+          render: function (data) {
+            return data ? moment(data).format('lll') : ''
+          }
+        },
+        {
+          data: "id",
+          render: function (data) {
+            return '<a href="' + BASE_URL + data +'" class="button is-link is-rounded is-small"><span>view</span></a>'
+          }
+        }
+      ]
+    })
   })
 </script>
 {% endblock %}

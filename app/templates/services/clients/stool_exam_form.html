@@ -89,6 +89,12 @@
                   {{item_form.stage()}}
                 </div>
               </div>
+              <div class="field">
+                <label class="label">{{item_form.comment.label}}</label>
+                <div class="control">
+                  {{item_form.comment(class="textarea")}}
+                </div>
+              </div>
             </div>
             {% endfor %}
           </div>
@@ -110,6 +116,12 @@
                 </span>
                 <span>remove</span>
               </button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">{{form.summary.label}}</label>
+            <div class="control">
+              {{ form.summary(class="textarea") }}
             </div>
           </div>
           <div class="field">
@@ -312,10 +324,11 @@
           layout: 'frameOnly',
           table: {
             headerRow: 0,
-            widths: [50, 150, 'auto', 'auto', 'auto', '*', 'auto'],
+            widths: [50, 150, '*', 'auto'],
             body: {{client_body|tojson|safe}},
   },
   },
+    {% if macro_stool_records %}
     {
       text: 'ผลตรวจอุจจาระ',
               style: 'subheader'
@@ -332,6 +345,7 @@
               body: {{macro_stool_records|tojson|safe}},
     }
     },
+    {% endif %}
     {
       text: {{ record.method|tojson|safe }},
               style: 'strong'
@@ -367,7 +381,7 @@
               table: {
       headerRow: 0,
               body: [
-        ['..............................................................................................................................................................'],
+        [{{summary|tojson|safe}}],
         ['..............................................................................................................................................................'],
         ['..............................................................................................................................................................'],
         ['..............................................................................................................................................................'],

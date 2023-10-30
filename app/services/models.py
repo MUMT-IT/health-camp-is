@@ -1,5 +1,6 @@
 import datetime
 import decimal
+from pytz import timezone
 
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,6 +11,7 @@ from flask_login import UserMixin
 
 from app import db
 
+bkk_timezone = timezone('Asia/Bangkok')
 
 class Project(db.Model):
     __tablename__ = 'projects'
@@ -293,6 +295,7 @@ class StoolTestRecord(db.Model):
                               'choices': [(c, c) for c in ['ไม่เหมาะสม', 'พอใช้', 'เหมาะสม']],
                               'form_field_class': RadioField,
                               })
+    summary = db.Column('summary', db.Text(), info={'label': 'Summary/Suggestion'})
     reported_at = db.Column('reported_at', db.DateTime(timezone=True))
     reporter_id = db.Column('reporter_id', db.ForeignKey('users.id'))
     updater_id = db.Column('updater_id', db.ForeignKey('users.id'))
@@ -306,6 +309,19 @@ class StoolTestRecord(db.Model):
     def results(self):
         return ','.join([str(item) for item in self.items])
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'lab_number': self.lab_number,
+            'updater': self.updated_by.fullname if self.updated_by else None,
+            'updated_at': self.updated_at.astimezone(bkk_timezone).isoformat() if self.updated_at else None,
+            'approver': self.approved_by.fullname if self.approved_by else None,
+            'approved_at': self.approved_at.astimezone(bkk_timezone).isoformat() if self.approved_at else None,
+            'reporter': self.reported_by.fullname if self.reported_by else None,
+            'reported_at': self.reported_at.astimezone(bkk_timezone).isoformat() if self.reported_at else None,
+            'results': self.results,
+        }
+
 
 class StoolTestReportItem(db.Model):
     __tablename__ = 'stool_test_report_items'
@@ -317,6 +333,7 @@ class StoolTestReportItem(db.Model):
     record_id = db.Column('record_id', db.ForeignKey('stool_test_records.id'))
     record = db.relationship(StoolTestRecord,
                              backref=db.backref('items', cascade='all, delete-orphan'))
+    comment = db.Column('comment', db.Text(), info={'label': 'Comment'})
 
     def __str__(self):
         if self.organism.name == 'Not found':
