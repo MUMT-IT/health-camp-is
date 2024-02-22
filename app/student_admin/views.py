@@ -1,6 +1,6 @@
 import random
 
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 
 from app import db, superuser
@@ -43,6 +43,7 @@ def approve_user(user_id, project_id):
 @superuser
 @login_required
 def edit_address(addr_id=None):
+    project_id = request.args.get('project_id')
     addresses = ClientAddress.query.all()
     if addr_id:
         addr = ClientAddress.query.get(addr_id)
@@ -62,6 +63,7 @@ def edit_address(addr_id=None):
             db.session.add(new_addr)
         db.session.commit()
     return render_template('student_admin/address_form.html',
+                           project_id=project_id,
                            form=form, addresses=addresses, addr_id=addr_id)
 
 
@@ -70,6 +72,7 @@ def edit_address(addr_id=None):
 @superuser
 @login_required
 def edit_organism(org_id=None):
+    project_id = request.args.get('project_id')
     organisms = Organism.query.all()
     if org_id:
         org = Organism.query.get(org_id)
@@ -89,6 +92,7 @@ def edit_organism(org_id=None):
             db.session.add(new_org)
         db.session.commit()
     return render_template('student_admin/organism_form.html',
+                           project_id=project_id,
                            form=form, organisms=organisms, org_id=org_id)
 
 

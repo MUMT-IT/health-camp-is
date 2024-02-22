@@ -16,7 +16,7 @@
           <tr>
             <td>{{org.name}}</td>
             <td>
-              <a href="{{url_for('student_admin.edit_organism', org_id=org.id)}}" class="button is-light">
+              <a href="{{url_for('student_admin.edit_organism', org_id=org.id, project_id=project_id)}}" class="button is-light">
                 <span>edit</span>
               </a>
             </td>
@@ -42,7 +42,7 @@
           </div>
         </form>
         <div class="buttons is-centered">
-          <a class="button is-danger" href="{{url_for('student_admin.index')}}">
+          <a class="button is-danger" href="{{url_for('student_admin.index', project_id=project_id)}}">
             Back
           </a>
         </div>
