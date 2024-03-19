@@ -45,7 +45,7 @@
         </table>
         <div class="buttons is-centered">
           <a href="{{url_for('services.edit_client', client_id=client.id, project_id=project_id)}}" class="button is-primary">Edit</a>
-          <a href="{{url_for('services.preview_report', client_id=client.id)}}" class="button is-success">Report</a>
+          <a href="{{url_for('services.preview_report', client_id=client.id, project_id=project_id)}}" class="button is-success">Report</a>
         </div>
         <div class="tabs is-boxed">
           <ul>
@@ -162,7 +162,7 @@
             <td>{{test_record.updated_at|localdatetime}} by {{test_record.updated_by.firstname}}</td>
             <td>
               <a class="button is-light"
-                href="{{url_for('services.add_test_record', test_id=test_record.test_id, record_id=test_record.id, client_id=client.id, next=request.url)}}">
+                href="{{url_for('services.add_test_record', project_id=project_id, test_id=test_record.test_id, record_id=test_record.id, client_id=client.id, next=request.url)}}">
                 <span class="icon">
                   <i class="fa-solid fa-pencil"></i>
                 </span>
@@ -186,7 +186,7 @@
             <td>{{physical_record.id}}</td>
             <td>{{physical_record.updated_at|localdatetime}} by {{physical_record.updated_by.firstname}}</td>
             <td>
-              <a class="button is-light" href="{{url_for('services.edit_physical_exam_profile', rec_id=physical_record.id, next=request.url)}}">
+              <a class="button is-light" href="{{url_for('services.edit_physical_exam_profile', project_id=project_id, rec_id=physical_record.id, next=request.url)}}">
                 <span class="icon">
                   <i class="fa-solid fa-pencil"></i>
                 </span>
@@ -197,7 +197,7 @@
           {% endfor %}
           </tbody>
         </table>
-        <a href="{{url_for('services.add_physical_exam_profile', client_id=client.id, next=request.url)}}" class="button is-success">
+        <a href="{{url_for('services.add_physical_exam_profile', project_id=project_id, client_id=client.id, next=request.url)}}" class="button is-success">
           <span class="icon">
             <i class="fa-solid fa-plus"></i>
           </span>
@@ -216,7 +216,7 @@
             <td>{{health_record.id}}</td>
             <td>{{health_record.updated_at|localdatetime}} by {{health_record.updated_by.firstname}}</td>
             <td>
-              <a class="button is-light" href="{{url_for('services.add_health_record', record_id=health_record.id, client_id=client.id, next=request.url)}}">
+              <a class="button is-light" href="{{url_for('services.add_health_record', project_id=project_id, record_id=health_record.id, client_id=client.id, next=request.url)}}">
                 <span class="icon">
                   <i class="fa-solid fa-pencil"></i>
                 </span>
@@ -227,7 +227,7 @@
           {% endfor %}
           </tbody>
         </table>
-        <a href="{{url_for('services.add_health_record', client_id=client.id, next=request.url)}}" class="button is-success">
+        <a href="{{url_for('services.add_health_record', project_id=project_id, client_id=client.id, next=request.url)}}" class="button is-success">
           <span class="icon">
             <i class="fa-solid fa-plus"></i>
           </span>

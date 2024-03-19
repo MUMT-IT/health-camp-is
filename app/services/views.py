@@ -644,10 +644,11 @@ def delete_test(test_id):
     return redirect(url_for('services.list_tests'))
 
 
-@services.route('/clients/<int:client_id>/report-preview')
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/report-preview')
 @login_required
-def preview_report(client_id):
+def preview_report(project_id, client_id):
     client = Client.query.get(client_id)
+    project = Project.query.get(project_id)
     client_body = [
         ["ชื่อ", client.fullname or '-', "เพศ", client.gender or '-', ''],
         ['อายุ', client.age, 'หมายเลขบัตรประชาชน', client.pid or '-', ''],
@@ -727,6 +728,7 @@ def preview_report(client_id):
 
     return render_template('services/clients/report_preview.html',
                            client=client,
+                           project=project,
                            client_body=client_body,
                            physical_body=physical_exam,
                            underlying_diseases=underlying_diseases,

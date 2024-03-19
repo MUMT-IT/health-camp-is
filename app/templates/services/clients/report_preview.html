@@ -225,7 +225,7 @@
           alignment: 'center'
         },
         {
-          text: "โครงการเทคนิคการแพทย์มหิดลสร้างชุมชนสุขภาวะดี ครั้งที่ 30",
+          text: {{ project.name|tojson|safe }},
           style: 'header',
           alignment: 'center'
         },
@@ -283,7 +283,7 @@
           }
         },
         {
-          text: 'ผลการตรวจน้ำตาลด้วยการเจาะเลือดจากปลายนิ้ว',
+          text: 'ผลการตรวจน้ำตาลทางห้องปฏิบัติการ',
                   style: 'subheader'
         },
         {
