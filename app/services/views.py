@@ -582,21 +582,21 @@ def remove_stool_report_item_entry():
     return resp
 
 
-@services.route('/health_records')
+@services.route('/projects/<int:project_id>/health_records')
 @login_required
-def health_record_main():
+def health_record_main(project_id):
     client_number = request.args.get('client_number')
     if client_number:
         client = Client.query.filter_by(client_number=client_number).first()
         if client:
-            return redirect(url_for('services.add_health_record', client_id=client.id))
-    return render_template('services/clients/health_record_main.html')
+            return redirect(url_for('services.add_health_record', client_id=client.id, project_id=project_id))
+    return render_template('services/clients/health_record_main.html', project_id=project_id)
 
 
-@services.route('/clients/<int:client_id>/health-record', methods=['GET', 'POST'])
-@services.route('/clients/<int:client_id>/health-record/<int:record_id>', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/health-record', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/health-record/<int:record_id>', methods=['GET', 'POST'])
 @login_required
-def add_health_record(client_id, record_id=None):
+def add_health_record(project_id, client_id, record_id=None):
     if record_id:
         record = HealthRecord.query.get(record_id)
         form = HealthRecordForm(obj=record)
@@ -614,12 +614,13 @@ def add_health_record(client_id, record_id=None):
         flash('Data have been saved.', 'success')
         if request.args.get('next'):
             return redirect(request.args.get('next'))
-    return render_template('services/clients/health_record_form.html', form=form, client=client)
+    return render_template('services/clients/health_record_form.html',
+                           form=form, client=client, project_id=project_id)
 
 
-@services.route('/clients/<int:client_id>/health-record/<int:record_id>/delete', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/health-record/<int:record_id>/delete', methods=['GET', 'POST'])
 @login_required
-def delete_health_record(client_id, record_id):
+def delete_health_record(project_id, client_id, record_id):
     if record_id:
         record = HealthRecord.query.get(record_id)
         db.session.delete(record)
@@ -627,7 +628,7 @@ def delete_health_record(client_id, record_id):
         flash('The record has been deleted.', 'success')
     else:
         flash('The record was not found.', 'danger')
-    return redirect(url_for('services.add_health_record', client_id=client_id))
+    return redirect(url_for('services.add_health_record', client_id=client_id, project_id=project_id))
 
 
 @services.route('/tests/<int:test_id>/delete')
