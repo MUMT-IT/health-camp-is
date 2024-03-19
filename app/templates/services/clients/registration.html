@@ -97,6 +97,14 @@
               {{form.address()}}
             </div>
           </div>
+          {% if not client %}
+          <div class="field">
+            <label class="checkbox">
+              {{ form.use_pid_as_hn() }}
+              {{ form.use_pid_as_hn.label }}
+            </label>
+          </div>
+          {% endif %}
           <div class="field">
             <label class="label">{{form.client_number.label}}</label>
             <div class="control">

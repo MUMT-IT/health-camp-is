@@ -5,7 +5,7 @@
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><a href="{{url_for('services.index')}}">Home</a></li>
+                <li><a href="{{url_for('services.index', project_id=project_id)}}">Home</a></li>
                 <li class="is-active"><a href="#" aria-current="page">Tests</a></li>
             </ul>
         </nav>
@@ -26,11 +26,11 @@
                         <td>{{test.updated_at}}</td>
                         <td>
                             <a class="button is-success"
-                               href="{{url_for('services.test_record_main', test_id=test.id)}}">
+                               href="{{url_for('services.test_record_main', test_id=test.id, project_id=project_id)}}">
                                 add record
                             </a>
                             <a class="button"
-                               href="{{url_for('services.edit_test', test_id=test.id)}}">
+                               href="{{url_for('services.edit_test', test_id=test.id, project_id=project_id)}}">
                                 edit
                             </a>
                             <a class="button is-danger" onclick="confirmDelete({{test.id}})">
@@ -42,10 +42,10 @@
                     </tbody>
                 </table>
                 <div class="buttons is-centered">
-                    <a class="button is-light" href="{{url_for('services.index')}}">
+                    <a class="button is-light" href="{{url_for('services.index', project_id=project_id)}}">
                         Home
                     </a>
-                    <a class="button is-primary" href="{{url_for('services.register_test')}}">Add</a>
+                    <a class="button is-primary" href="{{url_for('services.register_test', project_id=project_id)}}">Add</a>
                 </div>
             </div>
         </div>

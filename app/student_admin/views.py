@@ -38,13 +38,12 @@ def approve_user(user_id, project_id):
         return redirect(url_for('student_admin.list_users', project_id=project_id))
 
 
-@admin.route('/addresses/add', methods=['GET', 'POST'])
-@admin.route('/addresses/<int:addr_id>/edit', methods=['GET', 'POST'])
+@admin.route('/projects/<int:project_id>/addresses/add', methods=['GET', 'POST'])
+@admin.route('/projects/<int:project_id>/addresses/<int:addr_id>/edit', methods=['GET', 'POST'])
 @superuser
 @login_required
-def edit_address(addr_id=None):
-    project_id = request.args.get('project_id')
-    addresses = ClientAddress.query.all()
+def edit_address(addr_id=None, project_id=None):
+    addresses = ClientAddress.query.filter_by(project_id=project_id)
     if addr_id:
         addr = ClientAddress.query.get(addr_id)
         form = AddressForm(obj=addr)

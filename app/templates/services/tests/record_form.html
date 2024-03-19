@@ -7,8 +7,8 @@
       <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
           <ul>
-            <li><a href="{{url_for('services.index')}}">Home</a></li>
-            <li><a href="{{url_for('services.list_tests')}}" aria-current="page">Tests</a></li>
+            <li><a href="{{url_for('services.index', project_id=project_id)}}">Home</a></li>
+            <li><a href="{{url_for('services.list_tests', project_id=project_id)}}" aria-current="page">Tests</a></li>
             <li class="is-active"><a href="#" aria-current="page">Test Record</a></li>
           </ul>
         </nav>
@@ -37,8 +37,8 @@
             <td>{{rec.value}}</td>
             <td>{{rec.updated_at|localdatetime}}</td>
             <td>
-              <a class="button" href="{{url_for('services.add_test_record', record_id=rec.id, client_id=client.id, test_id=test.id)}}">edit</a>
-              <a onclick="confirmDelete({{rec.id}}, {{client.id}}, {{test.id}})" class="button is-danger">delete</a>
+              <a class="button" href="{{url_for('services.add_test_record', record_id=rec.id, client_id=client.id, test_id=test.id, project_id=project_id)}}">edit</a>
+              <a onclick="confirmDelete({{project_id}}, {{rec.id}}, {{client.id}}, {{test.id}})" class="button is-danger">delete</a>
             </td>
           </tr>
           {% endfor %}
@@ -70,7 +70,7 @@
           </div>
           <div class="field">
             <div class="buttons is-centered">
-              <a href="{{url_for('services.test_record_main', test_id=test.id)}}" class="button">Back</a>
+              <a href="{{url_for('services.test_record_main', test_id=test.id, project_id=project_id)}}" class="button">Back</a>
               <input type="submit" value="Submit" class="button is-primary">
             </div>
           </div>
@@ -83,7 +83,7 @@
 {% block scripts %}
 {{super()}}
 <script>
-  let confirmDelete = function (rec_id, client_id, test_id) {
+  let confirmDelete = function (project_id, rec_id, client_id, test_id) {
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -94,7 +94,7 @@
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = "/services/clients/" + client_id + "/tests/" + test_id + "/records/" + rec_id + "/delete"
+        window.location.href = "/services/projects/" + project_id +  "/clients/" + client_id + "/tests/" + test_id + "/records/" + rec_id + "/delete"
       }
     })
   }

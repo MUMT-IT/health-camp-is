@@ -43,6 +43,8 @@ def register_client(project_id):
     if form.validate_on_submit():
         client = Client()
         form.populate_obj(client)
+        if form.use_pid_as_hn.data:
+            client.client_number = client.pid
         client.project_id = project_id
         client.updated_by = current_user
         db.session.add(client)
@@ -125,20 +127,20 @@ def get_client_list(project_id):
                     })
 
 
-@services.route('/clients/physical-exam')
+@services.route('/projects/<int:project_id>/clients/physical-exam')
 @login_required
-def physical_exam_profile_main():
+def physical_exam_profile_main(project_id):
     client_number = request.args.get('client_number')
     if client_number:
         client = Client.query.filter_by(client_number=client_number).first()
         if client:
-            return redirect(url_for('services.add_physical_exam_profile', client_id=client.id))
-    return render_template('services/clients/physical_exam_profile_main.html')
+            return redirect(url_for('services.add_physical_exam_profile', client_id=client.id, project_id=project_id))
+    return render_template('services/clients/physical_exam_profile_main.html', project_id=project_id)
 
 
-@services.route('/clients/<int:client_id>/physical-exam', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/physical-exam', methods=['GET', 'POST'])
 @login_required
-def add_physical_exam_profile(client_id):
+def add_physical_exam_profile(client_id, project_id):
     client = Client.query.get(client_id)
     if not client:
         flash('Client not found', 'danger')
@@ -153,13 +155,13 @@ def add_physical_exam_profile(client_id):
         db.session.add(pp)
         db.session.commit()
         flash('New data have been saved.', 'success')
-        return redirect(request.args.get('next') or url_for('services.physical_exam_profile_main'))
-    return render_template('services/clients/physical_exam_form.html', form=form, client=client)
+        return redirect(request.args.get('next') or url_for('services.physical_exam_profile_main', project_id=project_id))
+    return render_template('services/clients/physical_exam_form.html', form=form, client=client, project_id=project_id)
 
 
-@services.route('/clients/physical-exam/<int:rec_id>/edit', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>/clients/physical-exam/<int:rec_id>/edit', methods=['GET', 'POST'])
 @login_required
-def edit_physical_exam_profile(rec_id):
+def edit_physical_exam_profile(project_id, rec_id):
     rec = ClientPhysicalProfile.query.get(rec_id)
     form = ClientPhysicalProfileForm(obj=rec)
     if form.validate_on_submit():
@@ -170,16 +172,19 @@ def edit_physical_exam_profile(rec_id):
         flash('Data have been updated.', 'success')
         return redirect(request.args.get('next') or
                         url_for('services.add_physical_exam_profile',
-                                client_id=rec.client.id))
+                                project_id=project_id,
+                                client_id=rec.client.id,
+                                ))
     return render_template('services/clients/physical_exam_form.html',
+                           project_id=project_id,
                            form=form,
                            client=rec.client,
                            editing=True)
 
 
-@services.route('/clients/physical-exam/<int:rec_id>/delete', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>/clients/physical-exam/<int:rec_id>/delete', methods=['GET', 'POST'])
 @login_required
-def delete_physical_exam_profile(rec_id):
+def delete_physical_exam_profile(project_id, rec_id):
     rec = ClientPhysicalProfile.query.get(rec_id)
     client = rec.client
     if rec:
@@ -188,7 +193,7 @@ def delete_physical_exam_profile(rec_id):
         flash('Data have been removed.', 'success')
     else:
         flash('The record was not found.', 'danger')
-    return redirect(url_for('services.add_physical_exam_profile', client_id=client.id))
+    return redirect(url_for('services.add_physical_exam_profile', client_id=client.id, project_id=project_id))
 
 
 @services.route('/projects/<int:project_id>/clients/<int:client_id>/profile')
@@ -199,16 +204,16 @@ def client_profile(client_id, project_id):
     return render_template('services/clients/profile.html', client=client, tab=tab, project_id=project_id)
 
 
-@services.route('/tests')
+@services.route('/projects/<int:project_id>/tests')
 @login_required
-def list_tests():
+def list_tests(project_id):
     tests = Test.query.all()
-    return render_template('services/tests/list.html', tests=tests)
+    return render_template('services/tests/list.html', tests=tests, project_id=project_id)
 
 
-@services.route('/tests/register', methods=['POST', 'GET'])
+@services.route('/projects/<int:project_id>/tests/register', methods=['POST', 'GET'])
 @login_required
-def register_test():
+def register_test(project_id):
     form = TestForm()
     if form.validate_on_submit():
         test = Test()
@@ -216,16 +221,16 @@ def register_test():
         db.session.add(test)
         db.session.commit()
         flash('New test has been added.', 'success')
-        return redirect(url_for('services.list_tests'))
+        return redirect(url_for('services.list_tests', project_id=project_id))
     else:
         for field in form.errors:
             flash(f'{field}: {form.errors[field]}', 'danger')
-    return render_template('services/tests/register.html', form=form)
+    return render_template('services/tests/register.html', form=form, project_id=project_id)
 
 
-@services.route('/tests/<int:test_id>/edit', methods=['POST', 'GET'])
+@services.route('/projects/<int:project_id>/tests/<int:test_id>/edit', methods=['POST', 'GET'])
 @login_required
-def edit_test(test_id):
+def edit_test(test_id, project_id):
     test = Test.query.get(test_id)
     form = TestForm(obj=test)
     if form.validate_on_submit():
@@ -233,27 +238,30 @@ def edit_test(test_id):
         db.session.add(test)
         db.session.commit()
         flash('Test has been updated.', 'success')
-        return redirect(url_for('services.list_tests'))
-    return render_template('services/tests/register.html', form=form)
+        return redirect(url_for('services.list_tests', project_id=project_id))
+    return render_template('services/tests/register.html', form=form, project_id=project_id)
 
 
-@services.route('/tests/<int:test_id>/records')
+@services.route('/projects/<int:project_id>/tests/<int:test_id>/records')
 @login_required
-def test_record_main(test_id):
+def test_record_main(test_id, project_id):
     client_number = request.args.get('client_number')
     client = Client.query.filter_by(client_number=client_number).first()
     if client:
-        return redirect(url_for('services.add_test_record', test_id=test_id, client_id=client.id))
+        return redirect(url_for('services.add_test_record',
+                                test_id=test_id,
+                                client_id=client.id,
+                                project_id=project_id))
     # flash('Client number not found', 'danger')
-    return render_template('services/tests/main.html')
+    return render_template('services/tests/main.html', project_id=project_id)
 
 
-@services.route('/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/edit',
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/edit',
                 methods=['GET', 'POST'])
-@services.route('/clients/<int:client_id>/tests/<int:test_id>/records/add',
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/tests/<int:test_id>/records/add',
                 methods=['GET', 'POST'])
 @login_required
-def add_test_record(test_id, client_id, record_id=None):
+def add_test_record(project_id, test_id, client_id, record_id=None):
     client = Client.query.get(client_id)
     test = Test.query.get(test_id)
     if record_id:
@@ -274,18 +282,19 @@ def add_test_record(test_id, client_id, record_id=None):
         if request.args.get('next'):
             return redirect(request.args.get('next'))
         else:
-            return redirect(url_for('services.add_test_record', client_id=client_id, test_id=test_id))
+            return redirect(url_for('services.add_test_record', client_id=client_id, test_id=test_id, project_id=project_id))
     return render_template('services/tests/record_form.html',
                            form=form,
                            test=test,
+                           project_id=project_id,
                            record_id=record_id,
                            client=client)
 
 
-@services.route('/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/delete',
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/delete',
                 methods=['GET', 'POST'])
 @login_required
-def delete_test_record(test_id, client_id, record_id):
+def delete_test_record(project_id, test_id, client_id, record_id):
     client = Client.query.get(client_id)
     test = Test.query.get(test_id)
     rec = TestRecord.query.get(record_id)
@@ -296,7 +305,9 @@ def delete_test_record(test_id, client_id, record_id):
     else:
         flash('The record was not found.', 'danger')
     return redirect(url_for('services.add_test_record',
-                            test_id=test_id, client_id=client_id))
+                            project_id=project_id,
+                            test_id=test_id,
+                            client_id=client_id))
 
 
 @services.route('/projects/<int:project_id>/stool-exam')

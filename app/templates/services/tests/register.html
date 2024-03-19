@@ -6,7 +6,7 @@
   <div class="container">
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
-        <li><a href="{{url_for('services.index')}}">Home</a></li>
+        <li><a href="{{url_for('services.index', project_id=project_id)}}">Home</a></li>
         <li class="is-active"><a href="#" aria-current="page">Test Registration</a></li>
       </ul>
     </nav>
@@ -37,7 +37,7 @@
           </div>
           <div class="field">
             <div class="buttons is-centered">
-              <a href="{{url_for('services.list_tests')}}" class="button is-light">Cancel</a>
+              <a href="{{url_for('services.list_tests', project_id=project_id)}}" class="button is-light">Cancel</a>
               <input class="button is-primary" type="submit" value="Submit">
             </div>
           </div>

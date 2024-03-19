@@ -25,8 +25,8 @@
             <td>{{loop.index}}</td>
             <td>{{rec.updated_at}}</td>
             <td>
-              <a class="button" href="{{url_for('services.edit_physical_exam_profile', rec_id=rec.id)}}">edit</a>
-              <a id="deleteBtn" onclick="confirmDelete({{rec.id}})" class="button is-danger" >delete</a>
+              <a class="button" href="{{url_for('services.edit_physical_exam_profile', rec_id=rec.id, project_id=project_id)}}">edit</a>
+              <a id="deleteBtn" onclick="confirmDelete({{project_id}}, {{rec.id}})" class="button is-danger" >delete</a>
             </td>
           </tr>
           {% endfor %}
@@ -60,7 +60,7 @@
           </div>
           <div class="field">
             <div class="buttons is-centered">
-              <a class="button is-light" href="{{url_for('services.physical_exam_profile_main')}}">Cancel</a>
+              <a class="button is-light" href="{{url_for('services.physical_exam_profile_main', project_id=project_id)}}">Cancel</a>
               <input class="button is-primary" type="submit" value="Submit">
             </div>
           </div>
@@ -73,7 +73,7 @@
 {% block scripts %}
 {{super()}}
 <script>
-  let confirmDelete = function (rec_id) {
+  let confirmDelete = function (project_id, rec_id) {
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -84,7 +84,7 @@
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = "/services/clients/physical-exam/" + rec_id + "/delete"
+        window.location.href = "/services/projects/" + project_id + "/clients/physical-exam/" + rec_id + "/delete"
       }
     })
   }

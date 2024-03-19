@@ -22,6 +22,7 @@ def create_client_form(project_id):
         address = QuerySelectField('ที่อยู่',
                                    query_factory=lambda: ClientAddress.query.filter_by(project_id=project_id),
                                    get_label='name')
+        use_pid_as_hn = BooleanField('ใช้หมายเลขบัตรปชช.เป็นรหัสผู้รับบริการ', default=False)
 
     return ClientForm
 

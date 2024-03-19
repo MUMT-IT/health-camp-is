@@ -26,7 +26,7 @@
               Client List
             </span>
           </a>
-          <a class="panel-block is-active" href="{{url_for('services.physical_exam_profile_main')}}">
+          <a class="panel-block is-active" href="{{url_for('services.physical_exam_profile_main', project_id=project_id)}}">
             <span class="panel-icon">
               <i class="fa-solid fa-chevron-right"></i>
             </span>
@@ -34,7 +34,7 @@
               Physical Examination
             </span>
           </a>
-          <a class="panel-block is-active" href="{{url_for('services.health_record_main')}}">
+          <a class="panel-block is-active" href="{{url_for('services.health_record_main', project_id=project_id)}}">
             <span class="panel-icon">
               <i class="fa-solid fa-chevron-right"></i>
             </span>
@@ -50,7 +50,7 @@
               Stool Examination
             </span>
           </a>
-          <a class="panel-block is-active" href="{{url_for('services.list_tests')}}">
+          <a class="panel-block is-active" href="{{url_for('services.list_tests', project_id=project_id)}}">
             <span class="panel-icon">
               <i class="fa-solid fa-chevron-right"></i>
             </span>
