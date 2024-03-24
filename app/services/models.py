@@ -177,6 +177,8 @@ class Test(db.Model):
                            server_default=func.now(), onupdate=func.now())
     min_interpret = db.Column('min_interpret', db.Text())
     max_interpret = db.Column('max_interpret', db.Text())
+    result_choices = db.Column('result_choices', db.String())
+    is_quantitative = db.Column('is_quantitative', db.Boolean(), info={'label': 'The test is quantitative.'})
 
 
 class TestRecord(db.Model):
@@ -197,12 +199,14 @@ class TestRecord(db.Model):
 
     @property
     def interpret(self):
-        if float(self.value) > self.test.max_value:
-            return 'สูง'
-        elif float(self.value) < self.test.min_value:
-            return 'ต่ำ'
-        else:
-            return 'ปกติ'
+        if self.test.is_quantitative:
+            if float(self.value) > self.test.max_value:
+                return 'สูง'
+            elif float(self.value) < self.test.min_value:
+                return 'ต่ำ'
+            else:
+                return 'ปกติ'
+        return self.value
 
 
 class Organism(db.Model):

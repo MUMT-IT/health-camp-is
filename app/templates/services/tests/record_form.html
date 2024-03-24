@@ -54,16 +54,24 @@
         <form method="post">
           {{form.hidden_tag()}}
           <label class="label">{{form.value.label}}</label>
-          <div class="field has-addons">
-            <div class="control">
-              {{form.value(class="input")}}
+          {% if form.results.choices %}
+            <div class="field">
+              <div class="select">
+                {{form.results()}}
+              </div>
             </div>
-            <p class="control">
-              <a class="button is-static">
-                {{test.unit}}
-              </a>
-            </p>
-          </div>
+          {% else %}
+            <div class="field has-addons">
+              <div class="control">
+                {{form.value(class="input")}}
+              </div>
+              <p class="control">
+                <a class="button is-static">
+                  {{test.unit}}
+                </a>
+              </p>
+            </div>
+          {% endif %}
           <div class="field">
             <label class="label">{{form.note.label}}</label>
             {{form.note(class="textarea")}}

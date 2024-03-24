@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import FormField, FieldList, BooleanField
+from wtforms.validators import DataRequired, Optional
 from wtforms_alchemy import model_form_factory, QuerySelectField, QuerySelectMultipleField
+from wtforms_components import SelectField
 
 from app import db
 from app.services.models import *
@@ -40,6 +42,8 @@ class TestForm(ModelForm):
 class TestRecordForm(ModelForm):
     class Meta:
         model = TestRecord
+
+    results = SelectField('Results', validators=[Optional()])
 
 
 class StoolTestReportItemForm(ModelForm):

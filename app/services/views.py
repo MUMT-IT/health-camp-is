@@ -266,27 +266,39 @@ def add_test_record(project_id, test_id, client_id, record_id=None):
     test = Test.query.get(test_id)
     if record_id:
         rec = TestRecord.query.get(record_id)
-        form = TestRecordForm(obj=rec)
+        form = TestRecordForm(obj=rec, results=rec.value)
     else:
+        rec = None
         form = TestRecordForm()
-    if form.validate_on_submit():
-        if not record_id:
-            rec = TestRecord()
-        form.populate_obj(rec)
-        rec.test = test
-        rec.updated_by = current_user
-        rec.client_id = client_id
-        db.session.add(rec)
-        db.session.commit()
-        flash('Test has been updated.', 'success')
-        if request.args.get('next'):
-            return redirect(request.args.get('next'))
+    if test.result_choices:
+        form.results.choices = [(c, c) for c in test.result_choices.split(',')]
+    else:
+        form.results.choices = []
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if not record_id:
+                rec = TestRecord()
+            form.populate_obj(rec)
+            if test.result_choices:
+                rec.value = form.results.data
+            rec.test = test
+            rec.updated_by = current_user
+            rec.client_id = client_id
+            db.session.add(rec)
+            db.session.commit()
+            flash('Test has been updated.', 'success')
+            if request.args.get('next'):
+                return redirect(request.args.get('next'))
+            else:
+                return redirect(url_for('services.add_test_record',
+                                        client_id=client_id, test_id=test_id, project_id=project_id))
         else:
-            return redirect(url_for('services.add_test_record', client_id=client_id, test_id=test_id, project_id=project_id))
+            flash(f'{form.errors}', 'light')
     return render_template('services/tests/record_form.html',
                            form=form,
                            test=test,
                            project_id=project_id,
+                           record=rec,
                            record_id=record_id,
                            client=client)
 

@@ -24,6 +24,17 @@
             {{form.unit(class='input')}}
           </div>
           <div class="field">
+            <div class="checkbox">
+              {{form.is_quantitative(class='checkbox')}}
+              {{form.is_quantitative.label}}
+            </div>
+          </div>
+          <div class="field">
+            <div class="label">{{form.result_choices.label}}</div>
+            {{form.result_choices(class='input')}}
+            <p class="help">พิมพ์ตัวเลือกผลโดยคั่นด้วยเครื่องหมายคอมม่า เช่น positive,negative</p>
+          </div>
+          <div class="field">
             <div class="label">{{form.reference.label}}</div>
             {{form.reference(class='input')}}
           </div>
