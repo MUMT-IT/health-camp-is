@@ -5,19 +5,66 @@
   <div class="container">
     <div class="columns">
       <div class="column">
+        <h1 class="title has-text-centered">เพิ่ม/แก้ไขผลการทดสอบ{{test.name}}</h1>
         <form method="get">
           <div class="field">
+            <label class="label">ระบุรหัสผู้รับบริการ</label>
             <input class="input" name="client_number" placeholder="Client Number">
           </div>
           <div class="field">
             <div class="buttons is-centered">
               <a class="button is-light" href="{{url_for('services.index', project_id=project_id)}}">Back</a>
-              <input class="button" type="submit" value="Submit">
+              <input class="button is-info" type="submit" value="Go">
             </div>
           </div>
         </form>
       </div>
     </div>
+    <div class="columns">
+      <div class="column">
+        <table id="clientTable" class="table is-striped is-fullwidth">
+          <thead>
+          <th>Client Number</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>PID</th>
+          <th>Address</th>
+          <th></th>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+  $('document').ready(()=>{
+    $('#clientTable').DataTable({
+      ajax: {
+        url: {{ url_for('services.get_client_list', project_id=project_id, test_id=test.id)|tojson|safe }},
+  },
+    columns: [
+      { data: 'client_number' },
+      {
+        data: 'fullname',
+      },
+      { data: 'age' },
+      { data: 'pid' },
+      { data: 'address' },
+      {
+        data: 'url',
+        render: function (data) {
+          return '<a class="has-text-info" href=' + data + '><span class="icon"><i class="fas fa-plus"></i></span><span>เพิ่มข้อมูล</span></a>'
+        }
+      }
+    ],
+            processing: true,
+            serverSide: true,
+  });
+  })
+</script>
 {% endblock %}

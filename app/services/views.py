@@ -30,6 +30,12 @@ def index(project_id):
     return render_template('services/index.html', project_id=project_id)
 
 
+@services.route('/projects/<int:project_id>/statistics')
+@login_required
+def show_statistics(project_id):
+    return render_template('services/statistics.html', project_id=project_id)
+
+
 @services.route('/projects/<int:project_id>/clients/registration', methods=['GET', 'POST'])
 @login_required
 def register_client(project_id):
@@ -99,8 +105,9 @@ def list_clients(project_id):
 
 
 @services.route('/api/projects/<int:project_id>/clients')
+@services.route('/api/projects/<int:project_id>/tests/<int:test_id>')
 @login_required
-def get_client_list(project_id):
+def get_client_list(project_id, test_id=None):
     query = Client.query.filter_by(project_id=project_id)
     records_total = query.count()
     search = request.args.get('search[value]')
@@ -118,7 +125,21 @@ def get_client_list(project_id):
     data = []
     for r in query:
         d = r.to_dict()
-        d['url'] = url_for('services.client_profile', client_id=r.id, project_id=project_id)
+        if test_id:
+            d['url'] = url_for('services.add_test_record',
+                               client_id=r.id,
+                               project_id=project_id,
+                               test_id=test_id)
+        elif request.args.get('for') == 'physical-exam':
+            d['url'] = url_for('services.add_physical_exam_profile',
+                               client_id=r.id,
+                               project_id=project_id)
+        elif request.args.get('for') == 'health-record':
+            d['url'] = url_for('services.add_health_record',
+                               client_id=r.id,
+                               project_id=project_id)
+        else:
+            d['url'] = url_for('services.client_profile', client_id=r.id, project_id=project_id)
         data.append(d)
     return jsonify({'data': data,
                     'recordsFiltered': total_filtered,
@@ -247,13 +268,14 @@ def edit_test(test_id, project_id):
 def test_record_main(test_id, project_id):
     client_number = request.args.get('client_number')
     client = Client.query.filter_by(client_number=client_number).first()
+    test = Test.query.get(test_id)
     if client:
         return redirect(url_for('services.add_test_record',
                                 test_id=test_id,
                                 client_id=client.id,
                                 project_id=project_id))
     # flash('Client number not found', 'danger')
-    return render_template('services/tests/main.html', project_id=project_id)
+    return render_template('services/tests/main.html', project_id=project_id, test=test)
 
 
 @services.route('/projects/<int:project_id>/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/edit',

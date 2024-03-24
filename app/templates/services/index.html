@@ -58,6 +58,14 @@
               Tests
             </span>
           </a>
+          <a class="panel-block is-active" href="{{url_for('services.show_statistics', project_id=project_id)}}">
+            <span class="panel-icon">
+              <i class="fa-solid fa-chevron-right"></i>
+            </span>
+            <span class="is-size-4">
+              Statistics
+            </span>
+          </a>
         </nav>
         <div class="buttons is-centered">
           <a class="button is-warning" href="{{url_for('student_admin.index', project_id=project_id)}}">
@@ -72,99 +80,6 @@
         </div>
       </div>
     </div>
-    <div class="columns">
-      <div class="column">
-        <h1 class="title has-text-centered">Statistics</h1>
-      </div>
-    </div>
-    <div class="columns">
-      <div class="column">
-        <div id="piechart" style="width: 900px; height: 500px;"></div>
-      </div>
-    </div>
-    <div class="columns">
-      <div class="column">
-        <div id="piechart2" style="width: 900px; height: 500px;"></div>
-      </div>
-    </div>
-    <div class="columns">
-      <div class="column">
-        <div id="piechart3" style="width: 900px; height: 500px;"></div>
-      </div>
-    </div>
   </div>
 </section>
-{% endblock %}
-{% block scripts %}
-{{super()}}
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
-
-  function drawChart() {
-
-    let jsonData = $.ajax({
-      url: "{{url_for('services.get_stool_exam_statistics', project_id=project_id)}}",
-      dataType: "json",
-      async: false
-      }).responseText;
-
-    let data = new google.visualization.DataTable(jsonData);
-
-    let options = {
-      title: 'Stool Exam Summary'
-    };
-
-    let chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-    chart.draw(data, options);
-  }
-</script>
-<script type="text/javascript">
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
-
-  function drawChart() {
-
-    let jsonData = $.ajax({
-      url: "{{url_for('services.get_stool_exam_statistics_address', project_id=project_id)}}",
-      dataType: "json",
-      async: false
-    }).responseText;
-
-    let data = new google.visualization.DataTable(jsonData);
-
-    let options = {
-      title: 'Stool Exam Specimens Collected'
-    };
-
-    let chart2 = new google.visualization.ColumnChart(document.getElementById('piechart2'));
-
-    chart2.draw(data, options);
-  }
-</script>
-<script type="text/javascript">
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
-
-  function drawChart() {
-
-    let jsonData = $.ajax({
-      url: "{{url_for('services.get_stool_exam_statistics_processed', project_id=project_id)}}",
-      dataType: "json",
-      async: false
-    }).responseText;
-
-    let data = new google.visualization.DataTable(jsonData);
-
-    let options = {
-      title: 'Stool Exam Specimens Processed'
-    };
-
-    let chart3 = new google.visualization.PieChart(document.getElementById('piechart3'));
-
-    chart3.draw(data, options);
-  }
-</script>
 {% endblock %}
