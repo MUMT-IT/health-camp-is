@@ -12,9 +12,9 @@ from sqlalchemy import or_
 from app import db, superuser
 from app.services import service_bp as services
 from app.services.forms import create_client_form, ClientPhysicalProfileForm, TestForm, TestRecordForm, StoolTestForm, \
-    HealthRecordForm
+    HealthRecordForm, create_test_profile_record_form
 from app.services.models import Client, ClientPhysicalProfile, Test, TestRecord, StoolTestRecord, HealthRecord, \
-    Organism, Stage, StoolTestReportItem, Project
+    Organism, Stage, StoolTestReportItem, Project, TestProfile
 
 
 @services.route('/projects')
@@ -102,6 +102,49 @@ def random_pid():
 @login_required
 def list_clients(project_id):
     return render_template('services/clients/list.html', project_id=project_id)
+
+
+@services.route('/api/projects/<int:project_id>/profiles/<int:profile_id>')
+@login_required
+def get_client_list_profile(project_id, profile_id):
+    query = Client.query.filter_by(project_id=project_id)
+    records_total = query.count()
+    search = request.args.get('search[value]')
+    query = query.filter(or_(Client.client_number.ilike('%{}%'.format(search)),
+                             Client.firstname.ilike('%{}%'.format(search)),
+                             Client.lastname.ilike('%{}%'.format(search)),
+                             Client.pid.ilike('%{}%'.format(search)),
+                             Client.address.has(name=search),
+                             ),
+                         )
+    start = request.args.get('start', type=int)
+    length = request.args.get('length', type=int)
+    total_filtered = query.count()
+    query = query.offset(start).limit(length)
+    data = []
+    for r in query:
+        d = r.to_dict()
+        if profile_id:
+            d['url'] = url_for('services.add_test_profile_record',
+                               client_id=r.id,
+                               project_id=project_id,
+                               profile_id=profile_id)
+        elif request.args.get('for') == 'physical-exam':
+            d['url'] = url_for('services.add_physical_exam_profile',
+                               client_id=r.id,
+                               project_id=project_id)
+        elif request.args.get('for') == 'health-record':
+            d['url'] = url_for('services.add_health_record',
+                               client_id=r.id,
+                               project_id=project_id)
+        else:
+            d['url'] = url_for('services.client_profile', client_id=r.id, project_id=project_id)
+        data.append(d)
+    return jsonify({'data': data,
+                    'recordsFiltered': total_filtered,
+                    'recordsTotal': records_total,
+                    'draw': request.args.get('draw', type=int),
+                    })
 
 
 @services.route('/api/projects/<int:project_id>/clients')
@@ -229,7 +272,11 @@ def client_profile(client_id, project_id):
 @login_required
 def list_tests(project_id):
     tests = Test.query.all()
-    return render_template('services/tests/list.html', tests=tests, project_id=project_id)
+    profiles = TestProfile.query.all()
+    return render_template('services/tests/list.html',
+                           tests=tests,
+                           project_id=project_id,
+                           profiles=profiles)
 
 
 @services.route('/projects/<int:project_id>/tests/register', methods=['POST', 'GET'])
@@ -278,12 +325,20 @@ def test_record_main(test_id, project_id):
     return render_template('services/tests/main.html', project_id=project_id, test=test)
 
 
+@services.route('/projects/<int:project_id>/profiles/<int:profile_id>/records')
+@login_required
+def test_profile_record_main(profile_id, project_id):
+    test_profile = TestProfile.query.get(profile_id)
+    return render_template('services/tests/profile_main.html',
+                           project_id=project_id, test_profile=test_profile)
+
+
 @services.route('/projects/<int:project_id>/clients/<int:client_id>/tests/<int:test_id>/records/<int:record_id>/edit',
                 methods=['GET', 'POST'])
 @services.route('/projects/<int:project_id>/clients/<int:client_id>/tests/<int:test_id>/records/add',
                 methods=['GET', 'POST'])
 @login_required
-def add_test_record(project_id, test_id, client_id, record_id=None):
+def add_test_record(project_id, test_id, client_id, record_id=None, profile_id=None):
     client = Client.query.get(client_id)
     test = Test.query.get(test_id)
     if record_id:
@@ -322,6 +377,49 @@ def add_test_record(project_id, test_id, client_id, record_id=None):
                            project_id=project_id,
                            record=rec,
                            record_id=record_id,
+                           client=client)
+
+
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/profiles/<int:profile_id>/records/add',
+                methods=['GEt', 'POST'])
+@login_required
+def add_test_profile_record(project_id, client_id, profile_id):
+    client = Client.query.get(client_id)
+    test_profile = TestProfile.query.get(profile_id)
+    form = create_test_profile_record_form(test_profile)()
+    for test in test_profile.tests:
+        _form = getattr(form, test.name)
+        if request.method == 'GET':
+            test_record = TestRecord.query.filter_by(test=test, client_id=client_id).first()
+            if test_record:
+                _form.value.process_data(test_record.value)
+                _form.results.process_data(test_record.value)
+        if test.result_choices:
+            _form.results.choices = [(c, c) for c in test.result_choices.split(',')]
+        else:
+            _form.results.choices = []
+    if form.validate_on_submit():
+        print(form.data)
+        for test in test_profile.tests:
+            _form = getattr(form, test.name)
+            test_record = TestRecord.query.filter_by(test=test, client_id=client_id).first()
+            if not test_record:
+                test_record = TestRecord(test=test, client_id=client_id)
+            if test.result_choices:
+                test_record.value = _form.results.data
+            else:
+                print(f'Old value={test_record.value}, new value={_form.value.data}')
+                test_record.value = _form.value.data
+            test_record.updated_at = arrow.now('Asia/Bangkok').datetime
+            db.session.add(test_record)
+            db.session.commit()
+        return redirect(url_for('services.test_profile_record_main', profile_id=test_profile.id, project_id=project_id))
+    if form.errors:
+        flash(f'{form.errors}', 'danger')
+    return render_template('services/tests/profile_record_form.html',
+                           form=form,
+                           test_profile=test_profile,
+                           project_id=project_id,
                            client=client)
 
 

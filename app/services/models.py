@@ -13,6 +13,13 @@ from app import db
 
 bkk_timezone = timezone('Asia/Bangkok')
 
+
+test_test_profiles = db.Table('test_test_profiles',
+                        db.Column('test_id', db.Integer, db.ForeignKey('tests.id'), primary_key=True),
+                        db.Column('test_profile_id', db.Integer, db.ForeignKey('test_profiles.id'), primary_key=True)
+                        )
+
+
 class Project(db.Model):
     __tablename__ = 'projects'
     id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
@@ -179,6 +186,16 @@ class Test(db.Model):
     max_interpret = db.Column('max_interpret', db.Text())
     result_choices = db.Column('result_choices', db.String())
     is_quantitative = db.Column('is_quantitative', db.Boolean(), info={'label': 'The test is quantitative.'})
+
+    def __str__(self):
+        return self.name
+
+
+class TestProfile(db.Model):
+    __tablename__ = 'test_profiles'
+    id = db.Column('id', db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column('name', db.String(), nullable=False, unique=True)
+    tests = db.relationship(Test, backref=db.backref('profile'), secondary=test_test_profiles)
 
 
 class TestRecord(db.Model):

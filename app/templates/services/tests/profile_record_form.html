@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><a href="{{url_for('services.index', project_id=project_id)}}">Home</a></li>
+            <li><a href="{{url_for('services.list_tests', project_id=project_id)}}" aria-current="page">Tests</a></li>
+            <li class="is-active"><a href="#" aria-current="page">Test Record</a></li>
+          </ul>
+        </nav>
+        {% include "messages.html" %}
+        <h1 class="title has-text-centered">New Profile Record</h1>
+        <h1 class="subtitle has-text-centered">การทดสอบ {{test_profile.name}}</h1>
+        <div class="box">
+          <p>
+            Name: <strong>{{client.fullname}}</strong>
+          </p>
+          <p>
+            Client number: <strong>{{client.client_number}}</strong>
+          </p>
+        </div>
+        <hr>
+        {% if record_id %}
+        <h1 class="title">Edit Record</h1>
+        <h1 class="subtitle">Record ID = {{record_id}}</h1>
+        {% else %}
+        <h1 class="title">New Record</h1>
+        {% endif %}
+        <form method="post">
+          {{form.hidden_tag()}}
+          {% for test in test_profile.tests %}
+          {% set test_form = form[test.name] %}
+          {{test_form.hidden_tag()}}
+            <label class="label">{{test.name}}</label>
+            {% if test_form.results.choices %}
+              <div class="field">
+                <div class="select">
+                  {{test_form.results()}}
+                </div>
+              </div>
+            {% else %}
+              <div class="field has-addons">
+                <div class="control">
+                  {{test_form.value(class="input")}}
+                </div>
+                <p class="control">
+                  <a class="button is-static">
+                    {{test.unit}}
+                  </a>
+                </p>
+              </div>
+            {% endif %}
+          {% endfor %}
+          <div class="field">
+            <div class="buttons is-centered">
+              <a href="{{url_for('services.test_profile_record_main', profile_id=test_profile.id, project_id=project_id)}}" class="button">Back</a>
+              <input type="submit" value="Submit" class="button is-primary">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+  let confirmDelete = function (project_id, rec_id, client_id, test_id) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/services/projects/" + project_id +  "/clients/" + client_id + "/tests/" + test_id + "/records/" + rec_id + "/delete"
+      }
+    })
+  }
+</script>
+{% endblock %}

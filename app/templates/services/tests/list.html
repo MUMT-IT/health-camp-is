@@ -12,18 +12,16 @@
         <h1 class="title has-text-centered">Test List</h1>
         {% include "messages.html" %}
         <div class="columns">
-            <div class="column">
+            <div class="column is-two-thirds is-offset-2">
                 <table class="table is-fullwidth is-striped">
                     <thead>
                     <th>Name</th>
-                    <th>Updated At</th>
                     <th></th>
                     </thead>
                     <tbody>
                     {% for test in tests %}
                     <tr>
                         <td>{{test.name}}</td>
-                        <td>{{test.updated_at}}</td>
                         <td>
                             <a class="button is-success"
                                href="{{url_for('services.test_record_main', test_id=test.id, project_id=project_id)}}">
@@ -34,6 +32,24 @@
                                 edit
                             </a>
                             <a class="button is-danger" onclick="confirmDelete({{test.id}})">
+                                delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% for profile in profiles %}
+                    <tr>
+                        <td>{{profile.name}}</td>
+                        <td>
+                            <a class="button is-success"
+                               href="{{url_for('services.test_profile_record_main', profile_id=profile.id, project_id=project_id)}}">
+                                add record
+                            </a>
+                            <a class="button"
+                               href="">
+                                edit
+                            </a>
+                            <a class="button is-danger">
                                 delete
                             </a>
                         </td>
