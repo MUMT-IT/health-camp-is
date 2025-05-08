@@ -44,6 +44,9 @@
           </tr>
         </table>
         <div class="buttons is-centered">
+          <a class="button is-danger"
+             hx-confirm="ต้องการลบรายการนี้ใช่หรือไม่ ข้อมูลที่เกี่ยวข้องจะถูกลบไปด้วย"
+             hx-delete="{{url_for('services.edit_client', project_id=project_id, client_id=client.id)}}">Delete</a>
           <a href="{{url_for('services.edit_client', client_id=client.id, project_id=project_id)}}" class="button is-primary">Edit</a>
           <a href="{{url_for('services.preview_report', client_id=client.id, project_id=project_id)}}" class="button is-success">Report</a>
         </div>

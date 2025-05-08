@@ -63,12 +63,19 @@ def register_client(project_id):
     return render_template('services/clients/registration.html', form=form, project_id=project_id)
 
 
-@services.route('/projects/<int:project_id>/clients/<int:client_id>/edit', methods=['GET', 'POST'])
+@services.route('/projects/<int:project_id>/clients/<int:client_id>/edit', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def edit_client(client_id, project_id):
     client = Client.query.get(client_id)
     health_form = None
     if client:
+        if request.method == "DELETE":
+            db.session.delete(client)
+            db.session.commit()
+            resp = make_response()
+            resp.headers['HX-Redirect'] = url_for('services.list_clients', project_id=project_id)
+            return resp
+
         ClientForm = create_client_form(project_id=client.project_id)
         form = ClientForm(obj=client)
         health_form = HealthRecordForm()
