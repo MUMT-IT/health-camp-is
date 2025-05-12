@@ -523,12 +523,12 @@ def edit_stool_exam_record(record_id):
         form.not_found.data = 'Found'
 
     # client_body = [
-    #     ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number, "เพศ", record.client.gender or '-',
-    #      ''],
-    #     ['อายุ', record.client.age if record.client.age_ or record.client.dob else '-', 'หมายเลขบัตรประชาชน', record.client.pid or '-', '', '', ''],
+    #     ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number, "เพศ", record.client.gender or '-'],
+    #     ['อายุ', record.client.age if record.client.age_ or record.client.dob else '-', 'หมายเลขบัตรประชาชน', record.client.pid if not record.client.pid.startswith('fake') else '-'],
     # ]
     client_body = [
         ["ชื่อ", record.client.fullname or '-', 'รหัส', record.client.client_number],
+        ['อายุ', record.client.age if record.client.age_ or record.client.dob else '-', 'หมายเลขบัตรประชาชน', record.client.pid if not record.client.pid.startswith('fake') else '-'],
     ]
     macro_stool_records = []
     occult_blood = []
@@ -788,9 +788,10 @@ def delete_test(test_id):
 def preview_report(project_id, client_id):
     client = Client.query.get(client_id)
     project = Project.query.get(project_id)
+    client_pid = '-' if client.pid.startswith('fake') else client.pid
     client_body = [
         ["ชื่อ", client.fullname or '-', "เพศ", client.gender or '-', ''],
-        ['อายุ', client.age, 'หมายเลขบัตรประชาชน', client.pid or '-', ''],
+        ['อายุ', client.age, 'หมายเลขบัตรประชาชน', client_pid, ''],
     ]
     physical_exam = []
     for rec in client.physical_profiles:
