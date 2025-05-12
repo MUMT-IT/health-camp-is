@@ -1,6 +1,6 @@
 import random
 
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, make_response
 from flask_login import login_required, current_user
 
 from app import db, superuser
@@ -39,7 +39,7 @@ def approve_user(user_id, project_id):
 
 
 @admin.route('/projects/<int:project_id>/addresses/add', methods=['GET', 'POST'])
-@admin.route('/projects/<int:project_id>/addresses/<int:addr_id>/edit', methods=['GET', 'POST'])
+@admin.route('/projects/<int:project_id>/addresses/<int:addr_id>/edit', methods=['GET', 'POST', 'DELETE'])
 @superuser
 @login_required
 def edit_address(addr_id=None, project_id=None):
@@ -47,6 +47,11 @@ def edit_address(addr_id=None, project_id=None):
     if addr_id:
         addr = ClientAddress.query.get(addr_id)
         form = AddressForm(obj=addr)
+        if request.method == 'DELETE':
+            db.session.delete(addr)
+            db.session.commit()
+            resp = make_response()
+            return resp
     else:
         form = AddressForm()
 
@@ -56,7 +61,7 @@ def edit_address(addr_id=None, project_id=None):
             flash('The address has been updated.', 'success')
             db.session.add(addr)
         else:
-            new_addr = ClientAddress()
+            new_addr = ClientAddress(project_id=project_id)
             form.populate_obj(new_addr)
             flash('New addresss has been added.', 'success')
             db.session.add(new_addr)

@@ -17,7 +17,15 @@
             <td>{{addr.name}}</td>
             <td>
               <a href="{{url_for('student_admin.edit_address', addr_id=addr.id, project_id=project_id)}}" class="button is-light">
-                <span>edit</span>
+                <span class="icon">
+                  <i class="fas fa-pencil-alt"></i>
+                </span>
+              </a>
+              <a hx-delete="{{url_for('student_admin.edit_address', addr_id=addr.id, project_id=project_id)}}" class="button is-danger" hx-target="closest tr" hx-swap="outerHTML"
+                 hx-indicator="this"
+                 hx-confirm="Do you want to delete this record?"
+              >
+                <span class="icon"><i class="fas fa-trash-alt"></i></span>
               </a>
             </td>
           </tr>
@@ -42,7 +50,7 @@
           </div>
         </form>
         <div class="buttons is-centered">
-          <a class="button is-danger" href="{{url_for('student_admin.index', project_id=project_id)}}">
+          <a class="button is-light" href="{{url_for('student_admin.index', project_id=project_id)}}">
             Back
           </a>
         </div>
