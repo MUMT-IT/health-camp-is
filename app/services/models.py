@@ -128,7 +128,7 @@ class Client(db.Model):
             'client_number': self.client_number,
             'age': self.age,
             'pid': self.pid,
-            'address': self.address.name
+            'address': self.address.name if self.address else ''
         }
 
 
